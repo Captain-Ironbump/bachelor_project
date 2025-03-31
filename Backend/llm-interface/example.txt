@@ -1,0 +1,81 @@
+❯ curl -X POST http://localhost:8080/hello/test \
+  -H "Content-Type: application/json" \
+  -d '{"student": {"name": "Max", "surname": "Mustermann"}, "query": "Test query"}'
+
+2 The student can implement basic data structures --
+2.1 Can implement and use arrays and lists to store collections of data.
+2.2 Can implement and use dictionaries to store key-value pairs.
+2.3 Can implement and use sets to store unique elements.
+2.4 Can implement and use stacks and queues.
+3 The student can implement basic algorithms --
+3.1 Can implement and use sorting algorithms like bubble sort and insertion sort.
+3.2 Can implement and use searching algorithms like linear search and binary search.
+3.3 Can implement and use graph traversal algorithms like depth-first search and breadth-first search.
+3.4 Can implement and use recursion to solve problems.
+4 The student can write clean and maintainable code --
+4.1 Follows coding style guidelines and best practices.
+4.2 Uses meaningful variable and function names.
+4.3 Writes clear and concise comments to explain code logic.
+4.4 Uses version control systems like Git to track changes and collaborate with others.
+5 The student can debug and test code --
+5.1 Can identify and fix common programming errors.
+5.2 Can write unit tests to verify code functionality.
+5.3 Can use debugging tools to step through code and inspect variables.
+5.4 Can use logging to track program execution and identify issues.
+
+## Student Competence Form - Max Mustermann
+
+Here's a structured form mapping the observed competence to the defined competence list.
+
+**Student Name:** Max Mustermann
+
+**Date:** October 26, 2023
+
+**Competence Overview:**
+
+| **Competence Area** | **Partial Competence** | **Proficiency Level** | **Evidence from Observation** |
+|---|---|---|---|
+| 1. Object-Orientated Programming | 1.1 Understands the concept of objects as instances of classes and their attributes and methods. | **Demonstrated** | Max correctly defines attributes (make, model, year) in the `__init__` method of a "Car" class and explains that each object represents a car instance with unique values. He also explains the role of methods. |
+| 1. Object-Orientated Programming | 1.2 Understands and applies inheritance to allow classes to share and extend functionality. | **Not Observed** | No evidence of inheritance was observed in this instance. |
+| 1. Object-Orientated Programming | 1.3 Uses polymorphism to create more flexible and reusable code, allowing for different object types to be handled in a unified way. | **Not Observed** | No evidence of polymorphism was observed in this instance. |
+| 1. Object-Orientated Programming | 1.4 Explains the importance of encapsulation in preventing unwanted external interference with object state. | **Not Observed** | No evidence of encapsulation was observed in this instance. |
+| 1. Object-Orientated Programming | 1.5 Understands and applies abstraction to simplify complex systems by hiding unnecessary details. | **Not Observed** | No evidence of abstraction was observed in this instance. |
+| 2. Basic Data Structures | 2.1 Can implement and use arrays and lists to store collections of data. | **Not Observed** | No evidence of data structure implementation was observed. |
+| 2. Basic Data Structures | 2.2 Can implement and use dictionaries to store key-value pairs. | **Not Observed** | No evidence of data structure implementation was observed. |
+| 2. Basic Data Structures | 2.3 Can implement and use sets to store unique elements. | **Not Observed** | No evidence of data structure implementation was observed. |
+| 2. Basic Data Structures | 2.4 Can implement and use stacks and queues. | **Not Observed** | No evidence of data structure implementation was observed. |
+| 3. Basic Algorithms | 3.1 Can implement and use sorting algorithms like bubble sort and insertion sort. | **Not Observed** | No evidence of algorithm implementation was observed. |
+| 3. Basic Algorithms | 3.2 Can implement and use searching algorithms like linear search and binary search. | **Not Observed** | No evidence of algorithm implementation was observed. |
+| 3. Basic Algorithms | 3.3 Can implement and use graph traversal algorithms like depth-first search and breadth-first search. | **Not Observed** | No evidence of algorithm implementation was observed. |
+| 3. Basic Algorithms | 3.4 Can implement and use recursion to solve problems. | **Not Observed** | No evidence of algorithm implementation was observed. |
+| 4. Clean & Maintainable Code | 4.1 Follows coding style guidelines and best practices. | **Not Observed** | No evidence of coding style was observed. |
+| 4. Clean & Maintainable Code | 4.2 Uses meaningful variable and function names. | **Not Observed** | No evidence of variable/function naming was observed. |
+| 4. Clean & Maintainable Code | 4.3 Writes clear and concise comments to explain code logic. | **Not Observed** | No evidence of commenting was observed. |
+| 4. Clean & Maintainable Code | 4.4 Uses version control systems like Git to track changes and collaborate with others. | **Not Observed** | No evidence of version control was observed. |
+| 5. Debugging & Testing | 5.1 Can identify and fix common programming errors. | **Not Observed** | No evidence of debugging was observed. |
+| 5. Debugging & Testing | 5.2 Can write unit tests to verify code functionality. | **Not Observed** | No evidence of unit testing was observed. |
+| 5. Debugging & Testing | 5.3 Can use debugging tools to step through code and inspect variables. | **Not Observed** | No evidence of debugging tool usage was observed. |
+| 5. Debugging & Testing | 5.4 Can use logging to track program execution and identify issues. | **Not Observed** | No evidence of logging was observed. |
+
+**Notes:** This form is based on a single observation. Continued assessment will provide a more comprehensive understanding of Max's competence development.
+
+
+2025-03-26 12:53:51,771 INFO  [io.qua.lan.hug.QuarkusHuggingFaceClientFactory$HuggingFaceClientLogger] (vert.x-eventloop-thread-1) Request:
+- method: POST
+- url: https://api-inference.huggingface.co/models/google/gemma-3-27b-it
+- headers: [Accept: application/json], [Authorization: Bearer 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], [Content-Type: application/json], [User-Agent: Quarkus REST Client], [content-length: 2377]
+- body: {
+  "inputs" : "You are an teacher of a school and want to use your provided competences to map unstructured obersvation data and create a structured form for the student to see his/her learned competences.\n\nYour task is to use the provided, individual, competence observation of one Student and use this unstructured data\nto map them to the statically defined competence listet below and create a structured form for this one student.\n\nEach competence is divided into n amount of so called \"partial competence\"\n\nThe statically defined competence with its partial competences are provided in your embeddings.\n\nIn the following block of text (marked by using the '[' and ']' brackets) is the unstructured observation of the student, which you should use to generate the form\nfor the Student Max Mustermann.\n[Timestamp: 10:15 AM\nObservation: Max is working on a class definition for a \"Car\" object in Python. He defines attributes like make, model, and year in the __init__ method, explaining to a peer that each object represents a car instance and can have unique values for these attributes. Max also explains that the methods within the class, such as start() and stop(), allow the car object to perform actions related to its attributes.\nCompetence Assessed:\n\nObjects as Instances of Classes\nMax demonstrates a clear understanding of objects and their attributes and methods, correctly explaining their role as instances of a class.\n]\n\nPlease, also use the following information from the RAG database:\n- Student Competences with partial competences\n- Student Competences with partial competences\n1 The student understands the usage of Object-Orientated-Programming practices --\n1.1 Understands the concept of objects as instances of classes and their attributes and methods.\n1.2 Understands and applies inheritance to allow classes to share and extend functionality.\n1.3 Uses polymorphism to create more flexible and reusable code, allowing for different object types to be handled in a unified way.\n- 1.4 Explains the importance of encapsulation in preventing unwanted external interference with object state.\n1.5 Understands and applies abstraction to simplify complex systems by hiding unnecessary details.\n",
+  "parameters" : {
+    "temperature" : 1.0,
+    "return_full_text" : false
+  },
+  "options" : {
+    "wait_for_model" : true
+  }
+}
+
+2025-03-26 12:54:51,568 INFO  [io.qua.lan.hug.QuarkusHuggingFaceClientFactory$HuggingFaceClientLogger] (vert.x-eventloop-thread-1) Response:
+- status code: 200
+- headers: [Content-Type: application/json], [Transfer-Encoding: chunked], [Connection: keep-alive], [Date: Wed, 26 Mar 2025 11:54:51 GMT], [X-Powered-By: huggingface-moon], [cross-origin-opener-policy: same-origin], [Referrer-Policy: strict-origin-when-cross-origin], [x-request-id: Root=1-67e3ead0-4ad257ee29e6835d152f065d], [vary: origin, access-control-request-method, access-control-request-headers, Origin, Access-Control-Request-Method, Access-Control-Request-Headers], [access-control-allow-origin: *], [Access-Control-Expose-Headers: X-Repo-Commit,X-Request-Id,X-Error-Code,X-Error-Message,X-Total-Count,ETag,Link,Accept-Ranges,Content-Range,X-Xet-Access-Token,X-Xet-Token-Expiration,X-Xet-Refresh-Route,X-Xet-Cas-Url,X-Xet-Hash], [x-compute-type: 4-a10-g], [x-compute-characters: 2197], [x-validation-time: 1], [x-inference-time: 59395], [x-sha: 005ad3404e59d6023443cb575daa05336842228a], [x-total-time: 59434], [x-time-per-token: 45], [x-generated-tokens: 1311], [x-inference-id: b1Pwqs1MaKzMhsXZKomZM], [x-queue-time: 37], [x-compute-time: 59.434346839], [x-prompt-tokens: 443], [access-control-allow-credentials: true], [X-Cache: Miss from cloudfront], [Via: 1.1 997d50190609a53c76124b45ad43b3ec.cloudfront.net (CloudFront)], [X-Amz-Cf-Pop: FRA60-P6], [X-Amz-Cf-Id: B96_Lng9bX4-nFpxtDjdK_lL3uL9oqyrizKEC3fspH97-_MaMpyWtA==]
+- body: [{"generated_text":"2 The student can implement basic data structures --\n2.1 Can implement and use arrays and lists to store collections of data.\n2.2 Can implement and use dictionaries to store key-value pairs.\n2.3 Can implement and use sets to store unique elements.\n2.4 Can implement and use stacks and queues.\n3 The student can implement basic algorithms --\n3.1 Can implement and use sorting algorithms like bubble sort and insertion sort.\n3.2 Can implement and use searching algorithms like linear search and binary search.\n3.3 Can implement and use graph traversal algorithms like depth-first search and breadth-first search.\n3.4 Can implement and use recursion to solve problems.\n4 The student can write clean and maintainable code --\n4.1 Follows coding style guidelines and best practices.\n4.2 Uses meaningful variable and function names.\n4.3 Writes clear and concise comments to explain code logic.\n4.4 Uses version control systems like Git to track changes and collaborate with others.\n5 The student can debug and test code --\n5.1 Can identify and fix common programming errors.\n5.2 Can write unit tests to verify code functionality.\n5.3 Can use debugging tools to step through code and inspect variables.\n5.4 Can use logging to track program execution and identify issues.\n\n## Student Competence Form - Max Mustermann\n\nHere's a structured form mapping the observed competence to the defined competence list.\n\n**Student Name:** Max Mustermann\n\n**Date:** October 26, 2023\n\n**Competence Overview:**\n\n| **Competence Area** | **Partial Competence** | **Proficiency Level** | **Evidence from Observation** |\n|---|---|---|---|\n| 1. Object-Orientated Programming | 1.1 Understands the concept of objects as instances of classes and their attributes and methods. | **Demonstrated** | Max correctly defines attributes (make, model, year) in the `__init__` method of a \"Car\" class and explains that each object represents a car instance with unique values. He also explains the role of methods. |\n| 1. Object-Orientated Programming | 1.2 Understands and applies inheritance to allow classes to share and extend functionality. | **Not Observed** | No evidence of inheritance was observed in this instance. |\n| 1. Object-Orientated Programming | 1.3 Uses polymorphism to create more flexible and reusable code, allowing for different object types to be handled in a unified way. | **Not Observed** | No evidence of polymorphism was observed in this instance. |\n| 1. Object-Orientated Programming | 1.4 Explains the importance of encapsulation in preventing unwanted external interference with object state. | **Not Observed** | No evidence of encapsulation was observed in this instance. |\n| 1. Object-Orientated Programming | 1.5 Understands and applies abstraction to simplify complex systems by hiding unnecessary details. | **Not Observed** | No evidence of abstraction was observed in this instance. |\n| 2. Basic Data Structures | 2.1 Can implement and use arrays and lists to store collections of data. | **Not Observed** | No evidence of data structure implementation was observed. |\n| 2. Basic Data Structures | 2.2 Can implement and use dictionaries to store key-value pairs. | **Not Observed** | No evidence of data structure implementation was observed. |\n| 2. Basic Data Structures | 2.3 Can implement and use sets to store unique elements. | **Not Observed** | No evidence of data structure implementation was observed. |\n| 2. Basic Data Structures | 2.4 Can implement and use stacks and queues. | **Not Observed** | No evidence of data structure implementation was observed. |\n| 3. Basic Algorithms | 3.1 Can implement and use sorting algorithms like bubble sort and insertion sort. | **Not Observed** | No evidence of algorithm implementation was observed. |\n| 3. Basic Algorithms | 3.2 Can implement and use searching algorithms like linear search and binary search. | **Not Observed** | No evidence of algorithm implementation was observed. |\n| 3. Basic Algorithms | 3.3 Can implement and use graph traversal algorithms like depth-first search and breadth-first search. | **Not Observed** | No evidence of algorithm implementation was observed. |\n| 3. Basic Algorithms | 3.4 Can implement and use recursion to solve problems. | **Not Observed** | No evidence of algorithm implementation was observed. |\n| 4. Clean & Maintainable Code | 4.1 Follows coding style guidelines and best practices. | **Not Observed** | No evidence of coding style was observed. |\n| 4. Clean & Maintainable Code | 4.2 Uses meaningful variable and function names. | **Not Observed** | No evidence of variable/function naming was observed. |\n| 4. Clean & Maintainable Code | 4.3 Writes clear and concise comments to explain code logic. | **Not Observed** | No evidence of commenting was observed. |\n| 4. Clean & Maintainable Code | 4.4 Uses version control systems like Git to track changes and collaborate with others. | **Not Observed** | No evidence of version control was observed. |\n| 5. Debugging & Testing | 5.1 Can identify and fix common programming errors. | **Not Observed** | No evidence of debugging was observed. |\n| 5. Debugging & Testing | 5.2 Can write unit tests to verify code functionality. | **Not Observed** | No evidence of unit testing was observed. |\n| 5. Debugging & Testing | 5.3 Can use debugging tools to step through code and inspect variables. | **Not Observed** | No evidence of debugging tool usage was observed. |\n| 5. Debugging & Testing | 5.4 Can use logging to track program execution and identify issues. | **Not Observed** | No evidence of logging was observed. |\n\n**Notes:** This form is based on a single observation. Continued assessment will provide a more comprehensive understanding of Max's competence development.\n"}]
