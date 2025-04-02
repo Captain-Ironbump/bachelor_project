@@ -34,6 +34,19 @@ class _HomePageState extends State<HomePage> {
                       )
                     ),
                   ),
+                ),
+                Container(
+                  padding: const EdgeInsets.only(top: 10),
+                ),
+                Center(
+                  child: CupertinoButton.filled(
+                    child: const Text('Student init with Sliders'),
+                    onPressed: () => Navigator.of(context, rootNavigator: true).push(
+                      AppRoutes.studentSliderPage.route(
+                        PageArgs(previousPageTitle: 'HomePage')
+                      )
+                    ),
+                  ),
                 )
               ]
             ),

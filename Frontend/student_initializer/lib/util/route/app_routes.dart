@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:student_initializer/app.dart';
 import 'package:student_initializer/presenter/chat_bot_session_page.dart';
 import 'package:student_initializer/presenter/llm_response_page.dart';
+import 'package:student_initializer/presenter/student_slider_page.dart';
 import 'package:student_initializer/presenter/student_text_field_page.dart';
 import 'package:student_initializer/util/argumets/chat_bot_session_page_arguments.dart';
 
@@ -12,7 +13,8 @@ enum AppRoutes<T> {
   homePage<Null>(),
   chatBotSessionPage<ChatBotSessionPageArguments>(),
   studentTextFieldPage<PageArgs>(),
-  llmResponsePage<ResponsePageArgs>();
+  llmResponsePage<ResponsePageArgs>(),
+  studentSliderPage<PageArgs>();
 
   String get routeName => '/$name';
   RouteSettings get _settings => RouteSettings(name: routeName);
@@ -26,7 +28,8 @@ enum AppRoutes<T> {
         );
       case AppRoutes.chatBotSessionPage:
         return CupertinoPageRoute(
-          builder: (context) => ChatBotSessionPage(args: args as ChatBotSessionPageArguments),
+          builder: (context) =>
+              ChatBotSessionPage(args: args as ChatBotSessionPageArguments),
           settings: _settings,
         );
       case AppRoutes.studentTextFieldPage:
@@ -37,6 +40,11 @@ enum AppRoutes<T> {
       case AppRoutes.llmResponsePage:
         return CupertinoPageRoute(
           builder: (context) => LlmResponsePage(args: args as ResponsePageArgs),
+          settings: _settings,
+        );
+      case AppRoutes.studentSliderPage:
+        return CupertinoPageRoute(
+          builder: (context) => StudentSliderPage(args: args as PageArgs),
           settings: _settings,
         );
     }

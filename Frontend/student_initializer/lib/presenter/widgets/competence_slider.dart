@@ -1,0 +1,91 @@
+import 'package:flutter/cupertino.dart';
+import 'package:student_initializer/presenter/widgets/scoring_slider.dart';
+
+typedef CompetenceSliderCallback = void Function(Map<String, double>);
+
+class CompetenceSlider extends StatefulWidget {
+  final String competence;
+  final double height;
+  const CompetenceSlider(
+      {super.key, required this.competence, this.height = 150});
+
+  @override
+  State<CompetenceSlider> createState() => _CompetenceSliderState();
+}
+
+class _CompetenceSliderState extends State<CompetenceSlider> {
+  final Map<String, double> _competenceValue = {};
+
+  @override
+  void initState() {
+    super.initState();
+    final entry = <String, double>{widget.competence: 1.0};
+    _competenceValue.addEntries(entry.entries);
+  }
+
+  void updateMap(double val) {
+    setState(() {
+      _competenceValue[widget.competence] = val;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: CupertinoColors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: CupertinoColors.systemGrey.withOpacity(0.3),
+                  spreadRadius: 4,
+                  blurRadius: 12,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            height: widget.height,
+          ),
+          Container(
+            width: double.infinity,
+            height: widget.height,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: CupertinoColors.black,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    widget.competence,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: ScoringSlider(
+                      callback: (val) => updateMap(val),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

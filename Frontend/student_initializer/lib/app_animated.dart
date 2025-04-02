@@ -8,6 +8,14 @@ class MyCupertinoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoApp(
+      theme: const CupertinoThemeData(
+        textTheme: CupertinoTextThemeData(
+          textStyle: TextStyle(
+            fontSize: 18,
+            color: CupertinoColors.black,
+          )
+        )
+      ),
       home: MyCupertinoAppHomePage(),
     );
   }
