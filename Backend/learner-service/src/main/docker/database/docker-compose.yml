@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  ba-mysql:
+    image: mysql:8.0
+    container_name: ba-database
+    environment:
+      MYSQL_USER: 'mysql'
+      MYSQL_DATABASE: 'ba-database'
+      MYSQL_ROOT_PASSWORD: 'admin'
+      MYSQL_PASSWORD: 'admin'
+    ports:
+      - 3306:3306
+    volumes:
+      - ba_database_data:/var/lib/ba_database_data
+
+volumes:
+  ba_database_data:

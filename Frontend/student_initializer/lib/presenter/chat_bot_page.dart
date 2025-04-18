@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:student_initializer/domain/chat_bot_socket.dart';
+import 'package:student_initializer/domain_old/chat_bot_socket.dart';
 import 'package:student_initializer/util/argumets/chat_bot_session_page_arguments.dart';
 import 'package:student_initializer/util/argumets/page_arguments.dart';
 import 'package:student_initializer/util/route/app_routes.dart';
@@ -35,8 +35,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: CupertinoColors.white,
+    return SizedBox(
       child: CustomScrollView(
         slivers: <Widget>[
           CupertinoSliverNavigationBar(

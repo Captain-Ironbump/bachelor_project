@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:student_initializer/data/local/models/student.dart';
-import 'package:student_initializer/domain/llmTextService.dart';
+import 'package:student_initializer/data_old/local/models/student.dart';
+import 'package:student_initializer/domain_old/llmTextService.dart';
 import 'package:student_initializer/presenter/llm_response_page.dart';
 import 'package:student_initializer/util/argumets/page_arguments.dart';
 import 'package:student_initializer/util/argumets/response_page_arguments.dart';

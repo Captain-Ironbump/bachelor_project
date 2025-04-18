@@ -5,9 +5,16 @@ typedef CompetenceSliderCallback = void Function(Map<String, double>);
 
 class CompetenceSlider extends StatefulWidget {
   final String competence;
+  final List<String> indicators;
   final double height;
+  final CompetenceSliderCallback callback;
+
   const CompetenceSlider(
-      {super.key, required this.competence, this.height = 150});
+      {super.key,
+      required this.competence,
+      required this.indicators,
+      this.height = 150,
+      required this.callback});
 
   @override
   State<CompetenceSlider> createState() => _CompetenceSliderState();
@@ -27,6 +34,30 @@ class _CompetenceSliderState extends State<CompetenceSlider> {
     setState(() {
       _competenceValue[widget.competence] = val;
     });
+    widget.callback(_competenceValue);
+  }
+
+  void _showSpeechBubble(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: const Text('Indicator(s)'),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: widget.indicators.map((indicator) {
+              return Text(indicator);
+            }).toList(),
+          ),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -41,36 +72,36 @@ class _CompetenceSliderState extends State<CompetenceSlider> {
             decoration: BoxDecoration(
               color: CupertinoColors.white,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: CupertinoColors.systemGrey.withOpacity(0.3),
-                  spreadRadius: 4,
-                  blurRadius: 12,
-                  offset: const Offset(0, 8),
-                ),
-              ],
             ),
             height: widget.height,
           ),
-          Container(
+          SizedBox(
             width: double.infinity,
             height: widget.height,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: CupertinoColors.black,
-              ),
-              borderRadius: BorderRadius.circular(20),
-            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    widget.competence,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        widget.competence,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () => _showSpeechBubble(context),
+                        child: const Icon(
+                          CupertinoIcons.exclamationmark_circle_fill,
+                          color: CupertinoColors.systemGrey,
+                        ),
+                      )
+                    ],
                   ),
                 ),
                 Padding(

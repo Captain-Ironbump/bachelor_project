@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:student_initializer/data/local/models/student.dart'; // To decode the JSON response
+import 'package:student_initializer/data_old/local/models/student.dart'; // To decode the JSON response
 
 class LlmTextService {
   final Uri uri;

@@ -41,7 +41,7 @@ class MyCupertinoAppHomePage extends StatelessWidget {
             returnValue = CupertinoTabView(
               builder: (context) {
                 return Container(
-                  color: CupertinoColors.white,
+                  color: CupertinoColors.systemGrey,
                   child: CustomScrollView(
                     slivers: <Widget>[
                       const CupertinoSliverNavigationBar(

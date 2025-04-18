@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:student_initializer/app.dart';
 import 'package:student_initializer/presenter/chat_bot_session_page.dart';
+import 'package:student_initializer/presenter/learner_page.dart';
 import 'package:student_initializer/presenter/llm_response_page.dart';
+import 'package:student_initializer/presenter/new_student_page.dart';
 import 'package:student_initializer/presenter/student_slider_page.dart';
 import 'package:student_initializer/presenter/student_text_field_page.dart';
 import 'package:student_initializer/util/argumets/chat_bot_session_page_arguments.dart';
+import 'package:student_initializer/util/argumets/learner_page_arguments.dart';
 
 import 'package:student_initializer/util/argumets/page_arguments.dart';
 import 'package:student_initializer/util/argumets/response_page_arguments.dart';
@@ -14,7 +17,9 @@ enum AppRoutes<T> {
   chatBotSessionPage<ChatBotSessionPageArguments>(),
   studentTextFieldPage<PageArgs>(),
   llmResponsePage<ResponsePageArgs>(),
-  studentSliderPage<PageArgs>();
+  studentSliderPage<PageArgs>(),
+  newStudentPage<PageArgs>(),
+  learnerPage<LearnerPageArgs>();
 
   String get routeName => '/$name';
   RouteSettings get _settings => RouteSettings(name: routeName);
@@ -45,6 +50,16 @@ enum AppRoutes<T> {
       case AppRoutes.studentSliderPage:
         return CupertinoPageRoute(
           builder: (context) => StudentSliderPage(args: args as PageArgs),
+          settings: _settings,
+        );
+      case AppRoutes.newStudentPage:
+        return CupertinoPageRoute(
+          builder: (context) => NewStudentPage(args: args as PageArgs),
+          settings: _settings,
+        );
+      case AppRoutes.learnerPage:
+        return CupertinoPageRoute(
+          builder: (context) => LearnerPage(args: args as LearnerPageArgs),
           settings: _settings,
         );
     }

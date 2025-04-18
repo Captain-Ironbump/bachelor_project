@@ -40,8 +40,7 @@ class _ChatBotSessionPageState extends State<ChatBotSessionPage> {
         middle: const Text('Session'),
       ),
       child: SafeArea(
-        child: Container(
-          color: CupertinoColors.white,
+        child: SizedBox(
           child: CustomScrollView(
             slivers: [
               SliverList(

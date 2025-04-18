@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  learner-mysql:
+    image: mysql:8.0
+    container_name: learner-database
+    environment:
+      MYSQL_USER: 'mysql'
+      MYSQL_DATABASE: 'learners'
+      MYSQL_ROOT_PASSWORD: 'admin'
+      MYSQL_PASSWORD: 'admin'
+    ports:
+      - 3306:3306
+    volumes:
+      - learner_database_data:/var/lib/learner_database_data
+  observation-mysql:
+    image: mysql:8.0
+    container_name: observation-database
+    environment:
+      MYSQL_USER: 'mysql'
+      MYSQL_DATABASE: 'observations'
+      MYSQL_ROOT_PASSWORD: 'admin'
+      MYSQL_PASSWORD: 'admin'
+    ports:
+      - 3307:3306
+    volumes:
+      - observation_database_data:/var/lib/observation_database_data
+
+volumes:
+  learner_database_data:
+  observation_database_data:

@@ -1,22 +1,24 @@
 import 'package:flutter/cupertino.dart';
+import 'package:student_initializer/config/router/go_router.dart';
 import 'package:student_initializer/presenter/chat_bot_page.dart';
 import 'package:student_initializer/presenter/home_page.dart';
+import 'package:student_initializer/presenter/learners_page.dart';
 
 class MyCupertinoApp extends StatelessWidget {
   const MyCupertinoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    return CupertinoApp.router(
       theme: const CupertinoThemeData(
-        textTheme: CupertinoTextThemeData(
-          textStyle: TextStyle(
-            fontSize: 18,
-            color: CupertinoColors.black,
-          )
-        )
-      ),
-      home: MyCupertinoAppHomePage(),
+        barBackgroundColor: CupertinoColors.systemGrey6,
+        scaffoldBackgroundColor: CupertinoColors.systemGrey6,
+          textTheme: CupertinoTextThemeData(
+              textStyle: TextStyle(
+        fontSize: 18,
+        color: CupertinoColors.black,
+      ))),
+      routerConfig: GoRouterCustom().router,
     );
   }
 }
@@ -35,6 +37,10 @@ class MyCupertinoAppHomePage extends StatefulWidget {
     ),
     Container(
       key: const ValueKey(2),
+      child: const LearnersPage(),
+    ),
+    Container(
+      key: const ValueKey(3),
       child: const Center(
         child: Text('Settings'),
       ),
@@ -72,6 +78,10 @@ class _MyCupertinoAppHomePageState extends State<MyCupertinoAppHomePage> {
         BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.bubble_left_bubble_right_fill),
             label: 'ChatBot'),
+        BottomNavigationBarItem(
+          icon: Icon(CupertinoIcons.collections_solid),
+          label: 'Learners',
+        ),
         BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.settings), label: 'Settings'),
       ],

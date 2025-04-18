@@ -8,7 +8,7 @@ import io.smallrye.mutiny.Multi;
 @SessionScoped
 @RegisterAiService(modelName = "llama")
 public interface ChatBot {
-    @SystemMessage(    
+    @SystemMessage(
     """
     You are chatbot that helps the user (teacher) to map unstructured data to structured data.
     The structured data will be competences and their partial competences for example:
