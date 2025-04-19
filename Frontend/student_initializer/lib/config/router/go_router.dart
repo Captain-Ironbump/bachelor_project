@@ -4,11 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:student_initializer/presentation/_widgets/scaffold_with_navbar.dart';
 import 'package:student_initializer/presentation/cubits/learner/get_learners/get_learners_cubit.dart';
+import 'package:student_initializer/presentation/cubits/observation/get_observations_count/get_observations_count_cubit.dart';
 import 'package:student_initializer/presentation/view/home_view.dart';
 import 'package:student_initializer/presentation/view/observations_view.dart';
 import 'package:student_initializer/presentation/view/settings_view.dart';
+import 'package:student_initializer/presentation/view/timespan_setting_edit_form_view.dart';
 import 'package:student_initializer/providers/learner_use_case_provider.dart';
 import 'package:student_initializer/providers/observation_use_case_provider.dart';
+import 'package:student_initializer/providers/settings_use_case_provider.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -50,26 +53,37 @@ class GoRouterCustom {
                       return MultiBlocProvider(
                           providers: [
                             BlocProvider(
-                              create: (context) => container.read(getLearnersCubitProvider)..getAllLearnerDetails(),
+                              create: (context) =>
+                                  container.read(getLearnersCubitProvider)
+                                    ..getAllLearnerDetails(),
                             ),
                             BlocProvider(
-                              create: (context) => container.read(getObservationsCountProvider),
+                              create: (context) =>
+                                  container.read(getObservationsCountProvider),
                             )
-                          ], 
-                          child: BlocListener<GetLearnersCubit, GetLearnersState>(
+                          ],
+                          child:
+                              BlocListener<GetLearnersCubit, GetLearnersState>(
                             listenWhen: (previous, current) =>
-                                current is GetLearnersLoaded && previous is GetLearnersLoading
+                                current is GetLearnersLoaded &&
+                                previous is GetLearnersLoading,
                             listener: (context, state) {
                               if (state is GetLearnersLoaded) {
                                 final learners = state.learners!;
-                              }; 
-                            }, ));
-
-                      return BlocProvider(
-                        create: (_) => container.read(getLearnersCubitProvider)
-                          ..getAllLearnerDetails(),
-                        child: const ObservationsView(title: 'Observations'),
-                      );
+                                context
+                                    .read<GetObservationsCountCubit>()
+                                    .getObservationCountWithQueries(
+                                      timespanInDays: 14,
+                                      learners: learners
+                                          .map((learner) => learner.learnerId!)
+                                          .toList(),
+                                    );
+                              }
+                              ;
+                            },
+                            child:
+                                const ObservationsView(title: 'Observations'),
+                          ));
                     },
                   ),
                   GoRoute(
@@ -83,12 +97,47 @@ class GoRouterCustom {
                 navigatorKey: _settingsNavigatorKey,
                 routes: <GoRoute>[
                   GoRoute(
-                    path: '/settings',
-                    name: 'Settings',
-                    builder: (context, state) => const SettingsView(
-                      title: 'Settings',
-                    ),
-                  )
+                      path: '/settings',
+                      name: 'Settings',
+                      builder: (context, state) {
+                        final container = ProviderScope.containerOf(context);
+                        return MultiBlocProvider(providers: [
+                          BlocProvider(
+                            create: (context) => container
+                                .read(getSettingsIntCubitProvider)
+                              ..getSettingsValueByKey(key: "timespanInDays"),
+                          ),
+                          BlocProvider(
+                            create: (context) =>
+                                container.read(saveSettingsIntCubitProvider),
+                          )
+                        ], child: const SettingsView(title: "Settings"));
+                      },
+                      routes: [
+                        GoRoute(
+                          path: "/timespan",
+                          name: "Timespan",
+                          builder: (context, state) {
+                            final container =
+                                ProviderScope.containerOf(context);
+                            return MultiBlocProvider(
+                              providers: [
+                                BlocProvider(
+                                  create: (context) => container
+                                      .read(getSettingsIntCubitProvider)
+                                    ..getSettingsValueByKey(
+                                        key: "timespanInDays"),
+                                ),
+                                BlocProvider(
+                                  create: (context) => container
+                                      .read(saveSettingsIntCubitProvider),
+                                ),
+                              ],
+                              child: TimespanSettingEditFormView(),
+                            );
+                          },
+                        )
+                      ])
                 ])
           ],
         )

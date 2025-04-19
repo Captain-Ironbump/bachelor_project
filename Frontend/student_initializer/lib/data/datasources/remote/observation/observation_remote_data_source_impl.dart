@@ -40,8 +40,16 @@ class ObservationRemoteDataSourceImpl implements ObservationRemoteDataSource {
   Future<List<ObservationDetailModel>> getObservationsByLearnerId(
       {required int learnerId}) async {
     try {
-      final response = await http.get(Uri.parse(
-          '${PlattformUri.getUri()}/observations/learnerId/$learnerId'));
+      final queryParams = {
+        "sort": "createdDateTime",
+        "learners": "ASC",
+      };
+
+      final Uri uri = SimplifiedUri.uri(
+          '${PlattformUri.getUri()}/observations/learnerId/$learnerId',
+          queryParams);
+
+      final response = await http.get(uri);
       final List<dynamic> items = json.decode(response.body);
       return items
           .map((item) => ObservationDetailModel.fromJson(item))

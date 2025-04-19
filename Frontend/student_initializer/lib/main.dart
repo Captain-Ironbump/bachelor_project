@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:student_initializer/data_old/providers/count_map_provider.dart';
 import 'package:student_initializer/data_old/providers/learner_provider.dart';
 import 'package:student_initializer/data_old/providers/observation_provider.dart';
+import 'package:student_initializer/util/init/shared_preferences.dart';
 import 'app_animated.dart';
 
 void main() async {
@@ -18,9 +19,10 @@ void main() async {
     systemNavigationBarColor: CupertinoColors.transparent,
   ));
   await dotenv.load();
+  await initializeDefaults();
   return runApp(
     const ProviderScope(
       child: MyCupertinoApp(),
-      ),
+    ),
   );
 }

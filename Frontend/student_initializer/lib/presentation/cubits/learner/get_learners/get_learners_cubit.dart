@@ -10,9 +10,9 @@ class GetLearnersCubit extends Cubit<GetLearnersState> {
 
   Future<void> getAllLearnerDetails() async {
     try {
-      if (state is! GetLearnersLoaded) {
-        emit(const GetLearnersLoading());
-      }
+      //if (state is! GetLearnersLoaded) {
+      emit(const GetLearnersLoading());
+      //}
       final result = await _learnerUsecases.getAllLearnerDetails();
       result.fold((error) => emit(GetLearnersError(message: error.message)),
           (success) => emit(GetLearnersLoaded(learners: success)));
