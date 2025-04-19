@@ -1,17 +1,34 @@
 package org.ba.repositories;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
 import org.ba.entities.db.ObservationEntity;
+import org.ba.utils.FieldValidator;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class ObservationRepository implements PanacheRepositoryBase<ObservationEntity, Long> {
-    public List<ObservationEntity> findAllByLearnerId(Long learnerId) {
-        return find("learner.learnerId", learnerId).list();
+    public List<ObservationEntity> findAllByLearnerId(Long learnerId, String sortField, String sortOrder) {
+        String sortBy = "createdDateTime"; // Default field is createdDateTime
+        String order = "ASC"; // Default order is ascending
+        
+        if (sortField != null && !sortField.isEmpty() && FieldValidator.isValidSortField(sortField, ObservationEntity.class)) {
+            sortBy = sortField;
+        }
+
+        if (sortOrder != null) {
+            if (sortOrder.equalsIgnoreCase("DESC")) {
+                order = "DESC";
+            } else if (sortOrder.equalsIgnoreCase("ASC")) {
+                order = "ASC";
+            }
+        }
+
+        return find("learner.learnerId = ?1 ORDER BY o." + sortBy + " " + order, learnerId).list();
     }
 
     public List<Object[]> getEntriesCountPerLearnerId() {

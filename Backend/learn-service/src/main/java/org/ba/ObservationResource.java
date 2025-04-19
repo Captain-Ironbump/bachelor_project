@@ -81,8 +81,8 @@ public class ObservationResource {
             schema = @Schema(type = SchemaType.ARRAY, implementation = ObservationDTO.class)
         )
     )
-    public Response getAllByLearnerId(@RestPath Long learnerId) {
-        return Response.ok(service.findAllByLearnerId(learnerId)).build();
+    public Response getAllByLearnerId(@RestPath Long learnerId, @QueryParam("sort") String sortField, @QueryParam("order") String sortOrder) {
+        return Response.ok(service.findAllByLearnerId(learnerId, sortField, sortOrder)).build();
     }
 
     @GET

@@ -37,8 +37,8 @@ public class ObservationService {
         mapper.updateDomainFromEntity(entity, observation);
     }
 
-    public List<ObservationDTO> findAllByLearnerId(Long learnerId) {
-        return this.mapper.toDomainList(repository.findAllByLearnerId(learnerId));
+    public List<ObservationDTO> findAllByLearnerId(Long learnerId, String sortField, String sortOrder) {
+        return this.mapper.toDomainList(repository.findAllByLearnerId(learnerId, sortField, sortOrder));
     }
 
     public Map<Long, Long> getCountMapPerLearnerId() {
