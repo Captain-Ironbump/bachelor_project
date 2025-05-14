@@ -1,10 +1,18 @@
 package org.ba.entities.dto;
 
-import lombok.Data;
 import io.smallrye.common.constraint.NotNull;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.Getter;
 
-@Data
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReportDTO {
     private Long reportId;
     @NotNull

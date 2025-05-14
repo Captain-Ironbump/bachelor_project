@@ -36,6 +36,8 @@ public class ReportResource {
     ReportService service;
 
     @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @APIResponse(
         responseCode = "201",
         description = "Report Created",
@@ -49,8 +51,9 @@ public class ReportResource {
         description = "Invalid Report",
         content = @Content(mediaType = MediaType.APPLICATION_JSON)
     )
-    public Response createReport(@NotNull @Valid ReportDTO report, @Context UriInfo uriInfo) {
+    public Response createReport(@NotNull ReportDTO report, @Context UriInfo uriInfo) {
         try {
+            log.info("Report created with ID: {}", report.toString());
             service.saveReport(report);
             URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(report.getReportId())).build();
             return Response.created(uri).entity(report).build();

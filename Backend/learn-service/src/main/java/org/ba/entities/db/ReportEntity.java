@@ -15,12 +15,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.NoArgsConstructor;
+import jakarta.persistence.PrePersist;
 
 @Entity(name = "Report")
 @Table(name = "report")
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 // @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ReportEntity {
     @Id
@@ -31,6 +34,13 @@ public class ReportEntity {
 
     @Column(name = "created_date")
     private LocalDateTime createdDateTime;
+
+    @PrePersist
+    public void prePresist() {
+        if (createdDateTime == null) {
+            createdDateTime = LocalDateTime.now();
+        }
+    }
 
     @ManyToOne
     @JoinColumn(name = "learner_id", foreignKey = @ForeignKey(name = "fk_report_learner"), referencedColumnName = "learner_id", nullable = false)
