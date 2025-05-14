@@ -108,3 +108,4 @@ INSERT INTO observation_tags (observation_id, tag)
     4,
     "python"
   );
+
