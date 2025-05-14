@@ -26,39 +26,44 @@ INSERT INTO event (name)
     'Database Systems'
   );
 
-INSERT INTO observation (event_id, learner_id, raw_observation)
+INSERT INTO observation (event_id, learner_id, raw_observation, created_date)
   VALUES(
     1,
     1,
-    'sdasdfsdfad'
+    'sdasdfsdfad',
+    '2025-05-14 00:00:00.000000'
   );
 
-INSERT INTO observation (event_id, learner_id, raw_observation)
+INSERT INTO observation (event_id, learner_id, raw_observation, created_date)  
   VALUES(
     1,
     2,
-    'sdasdafdfdfeqwedq'
+    'sdasdafdfdfeqwedq',
+    '2025-05-14 00:00:00.000000'
   );
 
-INSERT INTO observation (event_id, learner_id, raw_observation)
+INSERT INTO observation (event_id, learner_id, raw_observation, created_date)  
   VALUES(
     2,
     1,
-    'adiufhoqijdofiheo'
+    'adiufhoqijdofiheo',
+    '2025-05-14 00:00:00.000000'
   );
 
-INSERT INTO observation (event_id, learner_id, raw_observation)
+INSERT INTO observation (event_id, learner_id, raw_observation, created_date)
   VALUES(
     2,
     1,
-    'dofidoipiowepofkperij'
+    'dofidoipiowepofkperij',
+    '2025-05-14 00:00:00.000000'
   );
 
-INSERT INTO observation (event_id, learner_id, raw_observation)
+INSERT INTO observation (event_id, learner_id, raw_observation, created_date)
   VALUES(
     1,
     1,
-    'The student demonstrated a solid understanding of object-oriented principles by creating a Vehicle superclass with common attributes and methods, and extending it through subclasses like Car and Bike. Each subclass overrode the startEngine() method to provide behavior specific to the vehicle type, effectively applying polymorphism. The student also instantiated objects through the Vehicle reference, showcasing runtime polymorphism in action.'
+    'The student demonstrated a solid understanding of object-oriented principles by creating a Vehicle superclass with common attributes and methods, and extending it through subclasses like Car and Bike. Each subclass overrode the startEngine() method to provide behavior specific to the vehicle type, effectively applying polymorphism. The student also instantiated objects through the Vehicle reference, showcasing runtime polymorphism in action.',
+    '2025-05-14 00:00:00.000000'
   );
 
 INSERT INTO learner_event (event_id, learner_id)
