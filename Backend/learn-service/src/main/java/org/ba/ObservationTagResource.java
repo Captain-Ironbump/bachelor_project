@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.ba.core.ObservationTagService;
+import org.ba.entities.db.ObservationEntity;
 import org.ba.entities.dto.ObservationDTO;
 import org.ba.entities.dto.ObservationWithTagsDTO;
 import org.ba.entities.dto.TagDTO;
@@ -20,6 +21,7 @@ import io.smallrye.common.constraint.NotNull;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -31,6 +33,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import jakarta.ws.rs.QueryParam;
 
 @Path("/observations/tags")
 @Produces(MediaType.APPLICATION_JSON)
@@ -106,6 +109,32 @@ public class ObservationTagResource {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorResponse("Invalid Parameters", e.getMessage()))
                     .build();
+        }
+    }
+
+    @GET
+    @Path("/learner/{learnerId}")
+    public Response getObservationsWithTagsByLearnerAndEvent(@RestPath Long learnerId, @QueryParam("eventId") Long eventId, @QueryParam("sort") String sortField, @QueryParam("order") String sortOrder, @QueryParam("timespanInDays") int timespanInDays) {
+        try {
+            List<ObservationWithTagsDTO> observationWithTagsDTOs = this.service.fetchObservationsWithTagsByLearnerAndEvent(learnerId, sortField, sortOrder, eventId, timespanInDays);
+            return Response.ok().entity(observationWithTagsDTOs).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity(new ErrorResponse("Invalid Parameters", e.getMessage()))
+                .build();
+        }
+    }
+
+    @GET
+    @Path("/observation/{observationId}")
+    public Response getObservationWithTagsById(@RestPath Long observationId) {
+        try {
+            ObservationWithTagsDTO dto = this.service.fetchObservationWithTagsById(observationId);
+            return Response.ok().entity(dto).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity(new ErrorResponse("Invalid Parameters", e.getMessage()))
+                .build(); 
         }
     }
 }

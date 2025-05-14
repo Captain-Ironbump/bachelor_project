@@ -1,5 +1,6 @@
 package org.ba.core;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -9,6 +10,7 @@ import org.ba.core.mapper.TagMapper;
 import org.ba.entities.db.ObservationEntity;
 import org.ba.entities.db.TagEntity;
 import org.ba.entities.dto.ObservationDTO;
+import org.ba.entities.dto.ObservationWithTagsDTO;
 import org.ba.entities.dto.TagDTO;
 import org.ba.exceptions.LearnerNotFoundException;
 import org.ba.repositories.ObservationRepository;
@@ -20,8 +22,10 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.WebApplicationException;
+import lombok.extern.slf4j.Slf4j;
 
 @ApplicationScoped
+@Slf4j
 public class ObservationTagService {
     @Inject
     ObservationRepository observationRepository;
@@ -73,5 +77,36 @@ public class ObservationTagService {
             observationEntity.setTags(tagEntities);
         }
         this.observationMapper.updateDomainFromEntity(observationEntity, observation);
+    }
+
+    public List<ObservationWithTagsDTO> fetchObservationsWithTagsByLearnerAndEvent(Long learnerId, String sortField, String sortOrder, Long eventId, int timespanInDays) {
+        List<ObservationWithTagsDTO> data = new LinkedList<>();
+        try {
+            List<ObservationEntity> observationEntities = this.observationRepository.fetchObservationsWithTagsByLearnerAndEvent(learnerId, sortField, sortOrder, eventId, timespanInDays);
+            observationEntities.forEach(entity -> 
+                data.add(new ObservationWithTagsDTO(
+                    this.observationMapper.toDomain(entity),
+                    this.tagMapper.toDomainList(entity.getTags().stream().toList())
+                ))
+            );
+        } catch (Exception e) {
+            log.error("Error fetching observations", e);
+            throw e;
+        }
+        return data;
+    }
+
+    public ObservationWithTagsDTO fetchObservationWithTagsById(Long observationId) {
+        try {
+            ObservationEntity observationEntity = this.observationRepository.findById(observationId);
+            ObservationWithTagsDTO dto = new ObservationWithTagsDTO(
+                this.observationMapper.toDomain(observationEntity),
+                this.tagMapper.toDomainList(observationEntity.getTags().stream().toList())
+            );
+            return dto;
+        } catch (Exception e) {
+            log.error("Error fetching observation", e);
+        }
+        return null;
     }
 }

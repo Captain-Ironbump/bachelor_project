@@ -17,4 +17,26 @@ class SettingsUsecases {
     return _settingsRepository.saveSettingsKeyValueIntPair(
         key: key, value: value);
   }
+
+  Future<Either<LocalStorageException, String>> getSettingsValueStringFromKey(
+      {required String key}) async {
+    return _settingsRepository.getSettingsValueStringFromKey(key: key);
+  }
+
+  Future<Either<LocalStorageException, void>> saveSettingsKeyValueStringPair(
+      {required String key, required String value}) async {
+    return _settingsRepository.saveSettingsKeyValueStringPair(
+        key: key, value: value);
+  }
+
+  Future<Either<LocalStorageException, bool>> getSettingsValueBooleanFromKey(
+      {required String key}) async {
+    return _settingsRepository.getSettingsValueBooleanFromKey(key: key);
+  }
+
+  Future<Either<LocalStorageException, void>> saveSettingsKeyValueBooleanPair(
+      {required String key, required bool value}) async {
+    return _settingsRepository.saveSettingsKeyValueBooleanPair(
+        key: key, value: value);
+  }
 }

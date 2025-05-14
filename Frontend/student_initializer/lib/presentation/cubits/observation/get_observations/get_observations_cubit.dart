@@ -10,15 +10,19 @@ class GetObservationsCubit extends Cubit<GetObservationsState> {
       : super(const GetObservationsInitial());
 
   Future<void> getObservationDetailsByLearnerId(
-      {required int learnerId}) async {
+      {required int learnerId, required Map<String, dynamic> queryParams}) async {
     try {
-      if (state is! GetObservationsLoaded) {
-        emit(const GetObservationsLoading());
-      }
+      //if (state is! GetObservationsLoaded) {
+      emit(const GetObservationsLoading());
+      print("loading");
+      //}
       final result = await _observationUsecases
-          .getObservationDetailsByLearnerId(learnerId: learnerId);
+          .getObservationDetailsByLearnerId(learnerId: learnerId, queryParams: queryParams);
       result.fold((error) => emit(GetObservationsError(message: error.message)),
-          (success) => emit(GetObservationsLoaded(observations: success)));
+          (success) {
+        print("✅ Emitting GetObservationsLoaded with ${success.length} items");
+        emit(GetObservationsLoaded(observations: List.from(success)));
+      });
     } catch (_) {
       rethrow;
     }

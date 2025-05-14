@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:student_initializer/util/controller/spell_checker_controller.dart';
+import 'package:list_english_words/list_english_words.dart';
 
 typedef SavedObservationCallback = void Function(String value);
 
@@ -12,13 +14,17 @@ class NewObservationFrom extends StatefulWidget {
 }
 
 class _NewObservationFormState extends State<NewObservationFrom> {
-  late TextEditingController _controller;
   final FocusNode _focusNode = FocusNode();
+
+  final List<String> listErrorTexts = [];
+  final List<String> listTexts = [];
+
+  SpellCheckerController _controller = SpellCheckerController();
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
+    _controller = SpellCheckerController(listErrorTexts: listErrorTexts);
   }
 
   @override
@@ -26,6 +32,39 @@ class _NewObservationFormState extends State<NewObservationFrom> {
     _focusNode.dispose();
     _controller.dispose();
     super.dispose();
+  }
+
+  void _handleOnChange(String text) {
+    _handleSpellCheck(text, true);
+  }
+
+  void _handleSpellCheck(String text, bool ignoreLastWord) {
+    if (!text.contains(' ')) {
+      return;
+    }
+    final List<String> arr = text.split(' ');
+    if (ignoreLastWord) {
+      arr.removeLast();
+    }
+    for (var word in arr) {
+      if (word.isEmpty) {
+        continue;
+      } else if (_isWordHasNumberOrBracket(word)) {
+        continue;
+      }
+      final wordToCheck = word.replaceAll(RegExp(r"[^\s\w]"), '');
+      final wordToCheckInLowercase = wordToCheck.toLowerCase();
+       if (!listTexts.contains(wordToCheckInLowercase)) {
+        listTexts.add(wordToCheckInLowercase);
+        if (!list_english_words.contains(wordToCheckInLowercase)) {
+          listErrorTexts.add(wordToCheck);
+        }
+      }
+    }
+  }
+
+  bool _isWordHasNumberOrBracket(String s) {
+    return s.contains(RegExp(r'[0-9\()]'));
   }
 
   @override
@@ -38,13 +77,12 @@ class _NewObservationFormState extends State<NewObservationFrom> {
           focusNode: _focusNode,
           placeholder: "Enter Observation here ...",
           expands: true,
-          minLines: null,
+          minLines: 3,
           maxLines: null,
           textInputAction: TextInputAction.newline,
-          onTapOutside: (value) => {
-            _focusNode.unfocus(),
-            widget.callback(_controller.text)
-          },
+          onChanged: _handleOnChange,
+          onTapOutside: (value) =>
+              {_focusNode.unfocus(), widget.callback(_controller.text)},
           suffix: CupertinoButton(
             child: const Icon(CupertinoIcons.clear),
             onPressed: () => _controller.clear(),

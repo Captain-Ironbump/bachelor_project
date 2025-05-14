@@ -9,6 +9,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.jboss.resteasy.reactive.RestPath;
 
 import io.smallrye.common.constraint.NotNull;
 import jakarta.inject.Inject;
@@ -53,6 +54,20 @@ public class LearnerResource {
         service.save(learner);
         URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(learner.getLearnerId())).build();
         return Response.created(uri).entity(learner).build();
+    }
+
+    @GET
+    @Path("/{learnerId}")
+    @APIResponse(
+        responseCode = "200",
+        description = "Get Learner Detail by ID",
+        content = @Content(
+            mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(type = SchemaType.OBJECT, implementation = LearnerDTO.class)
+        )
+    )
+    public Response getLearnerById(@RestPath Long learnerId) {
+        return Response.ok(service.findById(learnerId)).build();
     }
 
     @GET

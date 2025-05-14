@@ -35,18 +35,21 @@ class TimespanSettingEditFormView extends StatelessWidget {
             builder: (context, state) {
               if (state is GetSettingsIntLoaded) {
                 _controller.text = state.value.toString();
-                return Form(
-                  onChanged: () {
-                    Form.maybeOf(primaryFocus!.context!)?.save();
-                  },
-                  child: CupertinoFormSection.insetGrouped(
-                    children: [
-                      CupertinoTextFormFieldRow(
-                        controller: _controller,
-                        prefix: const Text("Timespan (Day)"),
-                        keyboardType: const TextInputType.numberWithOptions(),
-                      )
-                    ],
+                return Container(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Form(
+                    onChanged: () {
+                      Form.maybeOf(primaryFocus!.context!)?.save();
+                    },
+                    child: CupertinoFormSection.insetGrouped(
+                      children: [
+                        CupertinoTextFormFieldRow(
+                          controller: _controller,
+                          prefix: const Text("Timespan (Day)"),
+                          keyboardType: const TextInputType.numberWithOptions(),
+                        )
+                      ],
+                    ),
                   ),
                 );
               }

@@ -1,0 +1,55 @@
+package org.ba.service.bots.betterAgents;
+
+import org.ba.service.tools.TimestampCalculator;
+
+import dev.langchain4j.agent.tool.Tool;
+import dev.langchain4j.service.UserMessage;
+import io.quarkiverse.langchain4j.RegisterAiService;
+import io.quarkiverse.langchain4j.ToolBox;
+
+@RegisterAiService(modelName = "llama")
+public interface ReportAgent {
+    @UserMessage("""
+        /no_think
+        You are a teacher who wants to create a markdown form for a student feedback report.
+
+        Using the provided message of another agent, create a markdown form for the student feedback report with the following template:
+        ```markdown
+        # {studentName} - {courseName}
+
+        ## Summary
+        (include a Summary here)
+
+        ### [Competence Title]
+        #### [Indicator Code and Text]
+        Observation: [If any]
+        Rating: [1-4 or blank]
+        (repeat here for ALL indicators with their indicator code, meaning also include those, which dont have any matched rating or observations)
+        
+        # created at [timestamp now]
+        ```
+
+        The message of the other agent is:
+        {agentRespone}
+
+        The student name is: {studentName}
+        The course name is: {courseName}
+
+        Objective: Generate a markdown-formatted student feedback report with the following format:
+        - Student name and course at the top
+        - Summary paragraph
+        - Only show competences, which are semantically from the same course as the provided course name.
+        - For each competence:
+            - List ALL of its indicators
+            - For each indicator, show:
+                - Observation (if any), otherwise leave blank or write "None"
+                - Rating (1-4), or blank
+
+        IMOPRTANT:
+        - DONT include any rating if there is no observation for the indicator or it the observation is not clearly supporting the indicator.
+        - ONLY return the markdown form, no other text or explanation like 'Here is the markdown form' or similar. This should help later for deserialization.
+        - you have to include ALL the numbered Indicator in the Markdown form.
+        """)
+    @Tool(name = "report", value = "Creates a markdown form for the student feedback report based on studenName, courseName and the response of another agent.")
+    String report(String studentName, String courseName, String agentRespone);
+}

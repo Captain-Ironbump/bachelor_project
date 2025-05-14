@@ -12,4 +12,14 @@ class PlattformUri {
     }
     throw UnsupportedError('Platform not supported');
   }
+
+  static String getLlUri() {
+    if (Platform.isAndroid) {
+      return dotenv.env['ANDROID_BASE_LLM_HTTP']!;
+    }
+    if (Platform.isIOS) {
+      return dotenv.env['IOS_BASE_LLM_HTTP']!;
+    }
+    throw UnsupportedError('Platform not supported');
+  }
 }

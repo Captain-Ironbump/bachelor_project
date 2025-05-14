@@ -81,8 +81,8 @@ public class ObservationResource {
             schema = @Schema(type = SchemaType.ARRAY, implementation = ObservationDTO.class)
         )
     )
-    public Response getAllByLearnerId(@RestPath Long learnerId, @QueryParam("sort") String sortField, @QueryParam("order") String sortOrder) {
-        return Response.ok(service.findAllByLearnerId(learnerId, sortField, sortOrder)).build();
+    public Response getAllByLearnerId(@RestPath Long learnerId, @QueryParam("sort") String sortField, @QueryParam("order") String sortOrder, @QueryParam("eventId") Long eventId, @QueryParam("timespanInDays") int timeSpamInDays) {
+        return Response.ok(service.findAllByLearnerId(learnerId, sortField, sortOrder, eventId, timeSpamInDays)).build();
     }
 
     @GET
@@ -95,8 +95,22 @@ public class ObservationResource {
             schema = @Schema(type = SchemaType.OBJECT, implementation = Map.class)
         )
     )
-    public Response getCountMap(@QueryParam("timeSpanInDays") Integer timeSpamInDays, @QueryParam("learners") List<Integer> learners) {
+    public Response getCountMap(@QueryParam("eventId") Integer eventId, @QueryParam("timeSpanInDays") Integer timeSpamInDays, @QueryParam("learners") List<Integer> learners) {
         
-        return Response.ok(service.getCountMapPerLearnerId(timeSpamInDays, learners)).build();
+        return Response.ok(service.getCountMapPerLearnerId(eventId, timeSpamInDays, learners)).build();
+    }
+
+    @GET
+    @Path("/observationId/{observationId}")
+    @APIResponse(
+        responseCode = "200",
+        description = "Get Observation by the provided ID",
+        content = @Content(
+            mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(type = SchemaType.OBJECT, implementation = ObservationDTO.class)
+        )
+    )
+    public Response getObservation(@RestPath Long observationId) {
+        return Response.ok(service.getObservationById(observationId)).build();
     }
 }

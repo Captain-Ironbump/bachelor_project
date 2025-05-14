@@ -4,10 +4,18 @@ import 'package:student_initializer/domain/entities/learner_detail/learner_detai
 import 'package:go_router/go_router.dart';
 import 'package:student_initializer/presentation/cubits/observation/get_observations_count/get_observations_count_cubit.dart';
 
-class LearnersListWidget extends StatelessWidget {
-  final List<LearnerDetailEntity> learners;
+typedef OnTabRoutingCallback = void Function(int learnerId);
 
-  const LearnersListWidget({super.key, required this.learners});
+class LearnersListWidget extends StatelessWidget {
+  final dynamic eventId;
+  final List<LearnerDetailEntity> learners;
+  final OnTabRoutingCallback onTabRoutingCallback;
+
+  const LearnersListWidget(
+      {super.key,
+      required this.learners,
+      required this.eventId,
+      required this.onTabRoutingCallback});
 
   @override
   Widget build(BuildContext context) {
@@ -19,16 +27,14 @@ class LearnersListWidget extends StatelessWidget {
             : CupertinoFormSection.insetGrouped(
                 children: List<Widget>.generate(learners.length, (int index) {
                   return CupertinoListTile(
-                    additionalInfo: _ObservationCountAdditonalInfo(
-                        learnerId: learners[index].learnerId!),
-                    title: Text(
-                        "${learners[index].firstName} ${learners[index].lastName}"),
-                    trailing: const CupertinoListTileChevron(),
-                    onTap: () => context.pushNamed('ObservationLearner',
-                        pathParameters: {
-                          'id': learners[index].learnerId.toString()
-                        }),
-                  );
+                      additionalInfo: _ObservationCountAdditonalInfo(
+                          learnerId: learners[index].learnerId!),
+                      title: Text(
+                          "${learners[index].firstName} ${learners[index].lastName}"),
+                      trailing: const CupertinoListTileChevron(),
+                      onTap: () {
+                        onTabRoutingCallback(learners[index].learnerId!);
+                      });
                 }),
               ),
       ),
@@ -46,14 +52,14 @@ class _ObservationCountAdditonalInfo extends StatelessWidget {
     return BlocBuilder<GetObservationsCountCubit, GetObservationsCountState>(
       builder: (context, state) {
         if (state is GetObservationsCountLoaded) {
-          if (state.countMap != null &&
-              state.countMap!.containsKey(learnerId.toString()) &&
-              state.countMap![learnerId.toString()] != null) {
-            return Text(
-              '${state.countMap![learnerId.toString()]!.count}/${state.countMap![learnerId.toString()]!.countWithTimespan}',
-            );
+          final entry = state.countMap?[learnerId.toString()];
+          //print(entry);
+          if (entry != null) {
+            return Text(entry.countWithTimespan != null
+                ? '${entry.count}/${entry.countWithTimespan}'
+                : '${entry.count}');
           } else {
-            return const SizedBox.shrink(); // or any fallback widget you prefer
+            return const SizedBox.shrink();
           }
         }
         return const CupertinoActivityIndicator();

@@ -45,4 +45,26 @@ class SettingsLocaleDataSourceImpl implements SettingsLocaleDataSource {
       rethrow;
     }
   }
+
+  @override
+  Future<bool> getValueBooleanFromKey({required String key}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final value = prefs.getBool(key);
+      return value!;
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> saveKeyValueBooleanPair(
+      {required String key, required bool value}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(key, value);
+    } catch (_) {
+      rethrow;
+    }
+  }
 }

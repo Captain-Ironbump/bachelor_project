@@ -9,6 +9,7 @@ class RetryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min, // Ensures the Column shrinks to fit its children
       children: [
         Text(
           text,
@@ -17,15 +18,15 @@ class RetryButton extends StatelessWidget {
         const SizedBox(
           height: 12,
         ),
-        Expanded(
-          child: Center(
-            child: CupertinoButton(
-              onPressed: () => retryAction.call(),
-              child: const Text('Retry'),
-            ),
+        // Removed the Expanded widget
+        Center(
+          child: CupertinoButton(
+            onPressed: () => retryAction.call(),
+            child: const Text('Retry'),
           ),
         ),
       ],
     );
   }
 }
+

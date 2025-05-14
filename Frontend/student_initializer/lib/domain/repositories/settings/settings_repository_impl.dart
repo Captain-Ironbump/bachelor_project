@@ -56,4 +56,26 @@ class SettingsRepositoryImpl implements SettingsRepository {
       return Left(LocalStorageException.fromError(e));
     }
   }
+  
+  @override
+  Future<Either<LocalStorageException, bool>> getSettingsValueBooleanFromKey({required String key}) async {
+    try {
+      final result =
+          await _settingsLocaleDataSource.getValueBooleanFromKey(key: key);
+      return Right(result);
+    } on Exception catch (e) {
+      return Left(LocalStorageException.fromError(e));
+    }
+  }
+  
+  @override
+  Future<Either<LocalStorageException, void>> saveSettingsKeyValueBooleanPair({required String key, required bool value}) async {
+    try {
+      await _settingsLocaleDataSource.saveKeyValueBooleanPair(
+          key: key, value: value);
+      return const Right(null);
+    } on Exception catch (e) {
+      return Left(LocalStorageException.fromError(e));
+    }
+  }
 }

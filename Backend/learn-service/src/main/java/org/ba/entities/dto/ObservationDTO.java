@@ -14,4 +14,6 @@ public class ObservationDTO {
     private byte[] rawObservation;
     @NotNull
     private Long learnerId;
+    @NotNull
+    private Long eventId;
 }

@@ -10,16 +10,19 @@ class GetObservationsCountCubit extends Cubit<GetObservationsCountState> {
       : super(const GetObservationsCountInitial());
 
   Future<void> getObservationCountWithQueries(
-      {int? timespanInDays, List<int>? learners}) async {
+      {int? timespanInDays, List<int>? learners, int? eventId}) async {
     try {
       if (state is! GetObservationsCountLoaded) {
         emit(const GetObservationsCountLoading());
       }
       final result = await _observationUsecases.getObserationCountWithQueries(
-          timespanInDays: timespanInDays, learners: learners);
+          timespanInDays: timespanInDays, learners: learners, eventId: eventId);
       result.fold(
           (error) => emit(GetObservationsCountError(message: error.message)),
-          (success) => emit(GetObservationsCountLoaded(countMap: success)));
+          (success) {
+        print("✅ Emitting GetObservationsCountLoaded with ${success.toString()}");
+        emit(GetObservationsCountLoaded(countMap: success));
+      });
     } catch (_) {
       rethrow;
     }

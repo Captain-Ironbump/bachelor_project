@@ -10,7 +10,7 @@ class LearnerRepositoryImpl implements LearnerRepository {
   LearnerRepositoryImpl(this._learnerRemoteDataSource);
 
   @override
-  Future<Either<NetworkExcpetion, List<LearnerDetailEntity>>>
+  Future<Either<NetworkException, List<LearnerDetailEntity>>>
       getAllLearnerDetails() async {
     try {
       late List<LearnerDetailEntity> data = [];
@@ -20,19 +20,24 @@ class LearnerRepositoryImpl implements LearnerRepository {
       }
       return Right(data);
     } on Exception catch (e) {
-      return Left(NetworkExcpetion.fromHttpError(e));
+      return Left(NetworkException.fromHttpError(e));
     }
   }
 
   @override
-  Future<Either<NetworkExcpetion, LearnerDetailEntity>> getLearnerDetailById(
-      {required int learnerId}) {
-    // TODO: implement getLearnerDetailById
-    throw UnimplementedError();
+  Future<Either<NetworkException, LearnerDetailEntity>> getLearnerDetailById(
+      {required int learnerId}) async {
+    try {
+      final result =
+          await _learnerRemoteDataSource.getLearnerById(learnerId: learnerId);
+      return Right(result.toEntity());
+    } on Exception catch (e) {
+      return Left(NetworkException.fromHttpError(e));
+    }
   }
 
   @override
-  Future<Either<NetworkExcpetion, void>> saveLearnerDetails(
+  Future<Either<NetworkException, void>> saveLearnerDetails(
       {required LearnerDetailEntity? learnerDetailEntity}) async {
     try {
       await _learnerRemoteDataSource.saveLearnerDetails(
@@ -40,7 +45,23 @@ class LearnerRepositoryImpl implements LearnerRepository {
           lastName: learnerDetailEntity.lastName!);
       return const Right(null);
     } on Exception catch (e) {
-      return Left(NetworkExcpetion.fromHttpError(e));
+      return Left(NetworkException.fromHttpError(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, List<LearnerDetailEntity>>>
+      getLearnersByEventId({required int eventId}) async {
+    try {
+      late List<LearnerDetailEntity> data = [];
+      final result =
+          await _learnerRemoteDataSource.getLearnersByEventId(eventId: eventId);
+      for (var element in result) {
+        data.add(element.toEntity());
+      }
+      return Right(data);
+    } on Exception catch (e) {
+      return Left(NetworkException.fromHttpError(e));
     }
   }
 }

@@ -1,24 +1,46 @@
 package org.ba;
 
 
-import org.ba.bots.CompetenceLLMService;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
+import org.ba.infrastructure.restclient.dto.Event;
+import org.ba.infrastructure.restclient.dto.Learner;
+import org.ba.infrastructure.restclient.dto.Observation;
 //import org.ba.rag.Ingestor;
 import org.ba.requests.pojo.RequestStudentText;
 import org.ba.requests.pojo.Student;
+import org.ba.service.bots.CompetencMapperAgent;
+import org.ba.service.bots.CompetenceLLMService;
+import org.ba.service.bots.CompetenceRaterAgent;
+import org.ba.service.bots.CompetenceSummaryAgent;
+import org.ba.service.bots.FormGeneratorAgent;
+import org.ba.service.bots.betterAgents.OrchestratorAgent;
+import org.ba.service.bots.test.TestAgent;
+import org.ba.service.restclient.EventService;
+import org.ba.service.restclient.LearnerService;
+import org.ba.service.restclient.ObservationService;
+import org.ba.service.tools.TimestampCalculator;
 import org.jboss.resteasy.reactive.PartType;
 import org.jboss.resteasy.reactive.ResponseHeader;
 import org.jboss.resteasy.reactive.ResponseStatus;
 import org.jboss.resteasy.reactive.RestForm;
 
 import dev.langchain4j.model.embedding.EmbeddingModel;
+import io.quarkus.logging.Log;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.concurrent.CompletableFuture;
 
 @Path("/hello")
 public class GreetingResource {
@@ -49,6 +71,31 @@ public class GreetingResource {
     @Inject
     CompetenceLLMService competenceLLMService;
 
+    @Inject
+    CompetencMapperAgent competencMapperAgent;
+
+    @Inject
+    CompetenceRaterAgent competenceRaterAgent;
+
+    @Inject
+    CompetenceSummaryAgent competenceSummaryAgent;
+
+    @Inject
+    FormGeneratorAgent formGeneratorAgent;
+
+    @Inject
+    TestAgent testAgent;
+
+    @Inject
+    OrchestratorAgent orchestratorAgent;
+
+    @Inject
+    LearnerService learnerService;
+    @Inject
+    ObservationService observationService;
+    @Inject
+    EventService eventService;
+
     @POST
     @Path("/hello")
     public String hello() {
@@ -63,5 +110,76 @@ public class GreetingResource {
         Student student = body.getStudent();
         return competenceLLMService.sendCompetenceData(student.getName(), student.getSurname(), query1);
     }
+
+    @GET
+    @Path("/testi")
+    public String testi() {
+        return competenceLLMService.createForm("Max Mustermann", "Software Engineering", List.of("For the final project, the student developed a specialized account type tailored for learners, building upon a more general user framework. This new version included added features such as managing course participation and monitoring academic performance, while still relying on the foundational elements like login procedures and credential checks from the original design. By reusing existing components rather than recreating them, the student demonstrated an ability to extend and adapt previous work efficiently."), "short");
+    }
     
+    @GET
+    @Path("/testo")
+    public String testo() {
+        String competenceMapperResponse = competencMapperAgent.matchObservationsToIndicators("Software Engineering", List.of("For the final project, the student developed a specialized account type tailored for learners, building upon a more general user framework. This new version included added features such as managing course participation and monitoring academic performance, while still relying on the foundational elements like login procedures and credential checks from the original design. By reusing existing components rather than recreating them, the student demonstrated an ability to extend and adapt previous work efficiently."));
+        Log.info(competenceMapperResponse);
+        String competenceRaterResponse = competenceRaterAgent.rateObservationsByIndicator("Software Engineering", competenceMapperResponse);
+        Log.info(competenceRaterResponse);
+        String competenceSummarizerResponse = competenceSummaryAgent.generateSummary("short", competenceRaterResponse);
+        Log.info(competenceSummarizerResponse);
+        String competenceMarkdownGeneratorResponse = formGeneratorAgent.assembleMarkdown("Max Mustermann", "Software Engineering", competenceSummarizerResponse, competenceMapperResponse, competenceRaterResponse, "");
+        return competenceMarkdownGeneratorResponse;
+    }
+
+    @GET
+    @Path("/testoo")
+    public String testoo() {
+        return testAgent.testPrompt("Database Systems", List.of("inheritance"));
+    }
+
+    @POST
+    @Path("/testoo2")
+    public String testoo2() {
+        try {
+            CompletableFuture<Set<Observation>> observationsFuture = 
+                CompletableFuture.supplyAsync(() -> observationService.getObservationByEventAndLeanrner(1L, 1L));
+
+            CompletableFuture<Event> eventFuture = 
+                CompletableFuture.supplyAsync(() -> eventService.getEventById(1L));
+
+            CompletableFuture<Learner> learnerFuture = 
+                CompletableFuture.supplyAsync(() -> learnerService.getLearnerById(1L));
+        
+            CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(observationsFuture, eventFuture, learnerFuture);
+            combinedFuture.join();
+
+            Log.info(observationsFuture.get());
+
+            List<String> observations = observationsFuture.get()
+                .stream()
+                .map(obs -> new String(obs.getRawObservation(), StandardCharsets.UTF_8))
+                .collect(Collectors.toList());
+            Event event = eventFuture.get();
+            Learner learner = learnerFuture.get();
+            return orchestratorAgent.orchestrate(
+                String.format("%1$s %2$s", learner.getFirstName(), learner.getLastName()), 
+                event.getName(), 
+                observations
+            );
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @GET
+    @Path("/now")
+    public String now() {
+        TimestampCalculator timestampCalculator = new TimestampCalculator();
+        return timestampCalculator.getTimestampOfNow();
+    }
+
+    @GET
+    @Path("/agentNow")
+    public String agentNow() {
+        return testAgent.getCurrentDateTime();
+    }
 }

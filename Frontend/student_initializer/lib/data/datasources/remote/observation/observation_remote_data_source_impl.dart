@@ -4,18 +4,25 @@ import 'package:student_initializer/data/datasources/remote/observation/observat
 import 'package:student_initializer/data/models/observation_count_detail/observation_count_detail_model.dart';
 import 'package:student_initializer/data/models/observation_detail/observation_detail_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:student_initializer/data/models/observation_detail_with_tags/observation_detail_with_tags_model.dart';
+import 'package:student_initializer/domain/entities/tag_detail/tag_detail_entity.dart';
 import 'package:student_initializer/util/plattform_uri.dart';
 import 'package:student_initializer/util/simplified_uri.dart';
 
 class ObservationRemoteDataSourceImpl implements ObservationRemoteDataSource {
   @override
   Future<Map<String, ObservationCountDetailModel>> getCountMap(
-      {int? timespanInDays, List<int>? learners}) async {
+      {int? timespanInDays, List<int>? learners, int? eventId}) async {
+    //TODO: BUG: Event filtering is not taken into account when fetching for timespan count
     try {
       final queryParams = {
         "timespanInDays": timespanInDays,
         "learners": learners,
       };
+
+      if (eventId != null) {
+        queryParams.addEntries([MapEntry('eventId', eventId)]);
+      }
 
       final Uri uri = SimplifiedUri.uri(
           '${PlattformUri.getUri()}/observations/count-map', queryParams);
@@ -38,13 +45,9 @@ class ObservationRemoteDataSourceImpl implements ObservationRemoteDataSource {
 
   @override
   Future<List<ObservationDetailModel>> getObservationsByLearnerId(
-      {required int learnerId}) async {
+      {required int learnerId,
+      required Map<String, dynamic> queryParams}) async {
     try {
-      final queryParams = {
-        "sort": "createdDateTime",
-        "learners": "ASC",
-      };
-
       final Uri uri = SimplifiedUri.uri(
           '${PlattformUri.getUri()}/observations/learnerId/$learnerId',
           queryParams);
@@ -61,18 +64,81 @@ class ObservationRemoteDataSourceImpl implements ObservationRemoteDataSource {
 
   @override
   Future<void> saveObservation(
-      {required int learnerId, required String observation}) async {
+      {required int learnerId,
+      required int eventId,
+      required String observation,
+      required List<TagDetailEntity> selectedTags}) async {
     try {
-      final response = await http
-          .post(Uri.parse('${PlattformUri.getUri()}/observations'), headers: {
-        "Content-Type": "application/json",
-      }, body: {
-        "learnerId": learnerId,
-        "rawObservation": base64.encode(utf8.encode(observation)),
+      final body = jsonEncode({
+        "observationDTO": {
+          "learnerId": learnerId,
+          "eventId": eventId,
+          "rawObservation": base64.encode(utf8.encode(observation)),
+        },
+        "tags": selectedTags
+            .map((tag) => {
+                  "tag": tag.tag,
+                  "color": tag.tagColor,
+                })
+            .toList(),
       });
+      final response = await http.post(
+          Uri.parse('${PlattformUri.getUri()}/observations/tags'),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: body);
       if (response.statusCode != 201) {
         throw Exception();
       }
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ObservationDetailModel> getObservationDetailById(
+      {required int observationId}) async {
+    try {
+      final Uri uri = SimplifiedUri.uri(
+          '${PlattformUri.getUri()}/observations/observationId/$observationId',
+          null);
+      final response = await http.get(uri);
+      return ObservationDetailModel.fromJson(json.decode(response.body));
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<ObservationDetailWithTagsModel>>
+      getObservationsWithTagsByLearnerId({
+    required int learnerId,
+    required Map<String, dynamic> queryParams,
+  }) async {
+    try {
+      final Uri uri = SimplifiedUri.uri(
+          '${PlattformUri.getUri()}/observations/tags/learner/$learnerId',
+          queryParams);
+
+      final response = await http.get(uri);
+      final List<dynamic> items = json.decode(response.body);
+      return items
+          .map((item) => ObservationDetailWithTagsModel.fromJson(item))
+          .toList();
+    } catch (_) {
+      rethrow;
+    }
+  }
+  
+  @override
+  Future<ObservationDetailWithTagsModel> getObservationWithTagsById({required int observationId}) async{
+    try {
+      final Uri uri = SimplifiedUri.uri(
+          '${PlattformUri.getUri()}/observations/tags/observation/$observationId',
+          null);
+      final response = await http.get(uri);
+      return ObservationDetailWithTagsModel.fromJson(json.decode(response.body));
     } catch (_) {
       rethrow;
     }

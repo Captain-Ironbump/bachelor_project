@@ -1,6 +1,6 @@
 package org.ba;
 
-import org.ba.bots.ChatBot;
+import org.ba.service.bots.ChatBot;
 
 import io.quarkus.websockets.next.OnOpen;
 import io.quarkus.websockets.next.OnTextMessage;

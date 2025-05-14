@@ -37,8 +37,12 @@ public class ObservationService {
         mapper.updateDomainFromEntity(entity, observation);
     }
 
-    public List<ObservationDTO> findAllByLearnerId(Long learnerId, String sortField, String sortOrder) {
-        return this.mapper.toDomainList(repository.findAllByLearnerId(learnerId, sortField, sortOrder));
+    public List<ObservationDTO> findAllByLearnerId(Long learnerId, String sortField, String sortOrder, Long eventId, int timespanInDays) {
+        return this.mapper.toDomainList(repository.findAllByLearnerId(learnerId, sortField, sortOrder, eventId, timespanInDays));
+    }
+
+    public ObservationDTO getObservationById(Long observationId) {
+        return this.mapper.toDomain(this.repository.findById(observationId));
     }
 
     public Map<Long, Long> getCountMapPerLearnerId() {
@@ -50,10 +54,16 @@ public class ObservationService {
             );
     }
 
-    public Map<Long, ObservationsDataDTO> getCountMapPerLearnerId(Integer timespanInDays, List<Integer> learners) {
+    public Map<Long, ObservationsDataDTO> getCountMapPerLearnerId(Integer eventId, Integer timespanInDays, List<Integer> learners) {
         StringBuilder query = new StringBuilder("SELECT o.learner.learnerId, COUNT(o) FROM Observation o WHERE 1=1");
         Map<String, Object> params = new HashMap<>();
     
+        if (eventId != null) {
+            System.out.println("adding eventId");
+            query.append(" AND o.event.eventId = :eventId");
+            params.put("eventId", eventId);
+        }
+
         if (learners != null && !learners.isEmpty()) {
             query.append(" AND o.learner.learnerId IN :ids");
             params.put("ids", learners);
@@ -86,6 +96,10 @@ public class ObservationService {
     
             if (learners != null && !learners.isEmpty()) {
                 timespanQuery.append(" AND o.learner.learnerId IN :ids");
+            }
+
+            if (eventId != null) {
+                timespanQuery.append(" AND o.event.eventId = :eventId");
             }
     
             timespanQuery.append(" GROUP BY o.learner.learnerId");

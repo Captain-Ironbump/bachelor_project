@@ -6,4 +6,20 @@ Future<void> initializeDefaults() async {
   if (!prefs.containsKey('timespanInDays')) {
     await prefs.setInt('timespanInDays', 0);
   }
+
+  if (!prefs.containsKey('sortOrder')) {
+    await prefs.setString('sortOrder', 'DESC');
+  }
+
+  if (!prefs.containsKey('sortParameter')) {
+    await prefs.setString('sortParameter', 'createdDateTime');
+  }
+
+  if (!prefs.containsKey('withLearnerCount')) {
+    await prefs.setBool('withLearnerCount', true);
+  }
+
+  if (!prefs.containsKey('eventSortReason')) {
+    await prefs.setString('eventSortReason', 'alpabeticASC');
+  }
 }

@@ -11,7 +11,8 @@ ObservationDetailModel _$ObservationDetailModelFromJson(
     ObservationDetailModel(
       observationId: (json['observationId'] as num?)?.toInt(),
       learnerId: (json['learnerId'] as num?)?.toInt(),
-      createdDate: json['createdDate'] as String?,
+      eventId: (json['eventId'] as num?)?.toInt(),
+      createdDate: json['createdDateTime'] as String?,
       rawObservation: json['rawObservation'] as String?,
     );
 
@@ -20,6 +21,7 @@ Map<String, dynamic> _$ObservationDetailModelToJson(
     <String, dynamic>{
       'observationId': instance.observationId,
       'learnerId': instance.learnerId,
-      'createdDate': instance.createdDate,
+      'eventId': instance.eventId,
+      'createdDateTime': instance.createdDate,
       'rawObservation': instance.rawObservation,
     };

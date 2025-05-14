@@ -4,7 +4,9 @@ import 'package:student_initializer/data/datasources/remote/learner/learner_remo
 import 'package:student_initializer/domain/repositories/learner/learner_repository.dart';
 import 'package:student_initializer/domain/repositories/learner/learner_repository_impl.dart';
 import 'package:student_initializer/domain/usecases/learner/learner_usecases.dart';
+import 'package:student_initializer/presentation/cubits/learner/get_learner_by_id/get_learner_by_id_cubit.dart';
 import 'package:student_initializer/presentation/cubits/learner/get_learners/get_learners_cubit.dart';
+import 'package:student_initializer/presentation/cubits/learner/get_learners_by_event_id/get_learners_by_event_id_cubit.dart';
 
 final learnerUsecasesProvider = Provider<LearnerUsecases>((ref) {
   final learnerRepository = ref.read(learnerRepositoryProvider);
@@ -21,7 +23,18 @@ final learnerRemoteDataSourceProvider =
   return LearnerRemoteDataSourceImpl();
 });
 
-final getLearnersCubitProvider = Provider<GetLearnersCubit>((ref) {
+final getLearnersCubitProvider = Provider.autoDispose<GetLearnersCubit>((ref) {
   final learnerUsecases = ref.read(learnerUsecasesProvider);
   return GetLearnersCubit(learnerUsecases);
+});
+
+final getLearnerByIdCubitProvider =
+    Provider.autoDispose<GetLearnerByIdCubit>((ref) {
+  final learnerUsecases = ref.read(learnerUsecasesProvider);
+  return GetLearnerByIdCubit(learnerUsecases);
+});
+
+final getLearnersByEventIdCubitProvider =
+    Provider.autoDispose<GetLearnersByEventIdCubit>((ref) {
+  return GetLearnersByEventIdCubit(ref.read(learnerUsecasesProvider));
 });

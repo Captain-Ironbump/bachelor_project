@@ -26,7 +26,9 @@ class TimespanSettingForm extends StatelessWidget {
               trailing: const CupertinoListTileChevron(),
               onTap: () async {
                 final result = await context.push('/settings/timespan');
-                callback(result as bool);
+                if (result != null) {
+                  callback(result as bool);
+                }
               },
             )
           ],

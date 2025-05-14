@@ -34,4 +34,8 @@ public class LearnerService {
     public List<LearnerDTO> findAll() {
         return this.mapper.toDomainList(repository.findAll().list());
     }
+
+    public LearnerDTO findById(Long learnerId) {
+        return this.mapper.toDomain(this.repository.findById(learnerId));
+    }
 }

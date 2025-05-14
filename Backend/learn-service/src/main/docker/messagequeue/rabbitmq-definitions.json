@@ -1,0 +1,39 @@
+{
+    "users": [
+      {
+        "name": "user",
+        "password": "password",
+        "tags": "administrator"
+      }
+    ],
+    "vhosts": [
+      { "name": "/" }
+    ],
+    "permissions": [
+      {
+        "user": "user",
+        "vhost": "/",
+        "configure": ".*",
+        "write": ".*",
+        "read": ".*"
+      }
+    ],
+    "queues": [
+      {
+        "name": "observation.data.request",
+        "vhost": "/",
+        "durable": true
+      },
+      {
+        "name": "observation.data.response",
+        "vhost": "/",
+        "durable": true
+      },
+      {
+        "name": "observation.tagging.result",
+        "vhost": "/",
+        "durable": true
+      }
+    ]
+  }
+  

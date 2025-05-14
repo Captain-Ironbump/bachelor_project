@@ -10,21 +10,26 @@ class LearnerUsecases {
 
   //* REMOTE
   /// This method gets Learner Details from the remote data source.
-  Future<Either<NetworkExcpetion, LearnerDetailEntity>> getLearnerDetailById(
+  Future<Either<NetworkException, LearnerDetailEntity>> getLearnerDetailById(
       {required int learnerId}) async {
     return _learnerRepository.getLearnerDetailById(learnerId: learnerId);
   }
 
   /// This method gets all Learner Details from the remote data source.
-  Future<Either<NetworkExcpetion, List<LearnerDetailEntity>>>
+  Future<Either<NetworkException, List<LearnerDetailEntity>>>
       getAllLearnerDetails() async {
     return _learnerRepository.getAllLearnerDetails();
   }
 
   /// Save the Learner Details to the remote data source.
-  Future<Either<NetworkExcpetion, void>> saveLearnerDetails(
+  Future<Either<NetworkException, void>> saveLearnerDetails(
       {required LearnerDetailEntity? learnerDetailEntity}) async {
     return _learnerRepository.saveLearnerDetails(
         learnerDetailEntity: learnerDetailEntity);
+  }
+
+  Future<Either<NetworkException, List<LearnerDetailEntity>>>
+      getLearnersByEventId({required int eventId}) async {
+    return _learnerRepository.getLearnersByEventId(eventId: eventId);
   }
 }

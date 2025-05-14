@@ -14,7 +14,9 @@ class ObservationDetailModel extends Equatable
   final int? observationId;
   @JsonKey(name: "learnerId")
   final int? learnerId;
-  @JsonKey(name: "createdDate")
+  @JsonKey(name: "eventId")
+  final int? eventId;
+  @JsonKey(name: "createdDateTime")
   final String? createdDate;
   @JsonKey(name: "rawObservation")
   final String? rawObservation;
@@ -22,6 +24,7 @@ class ObservationDetailModel extends Equatable
   const ObservationDetailModel({
     this.observationId,
     this.learnerId,
+    this.eventId,
     this.createdDate,
     this.rawObservation,
   });
@@ -34,12 +37,13 @@ class ObservationDetailModel extends Equatable
 
   @override
   List<Object?> get props =>
-      [observationId, learnerId, createdDate, rawObservation];
+      [observationId, learnerId, eventId, createdDate, rawObservation];
 
   @override
   ObservationDetailEntity toEntity() => ObservationDetailEntity(
       observationId: observationId,
       learnerId: learnerId,
+      eventId: eventId,
       createdDate: createdDate,
       observation: utf8.decode(base64.decode(rawObservation!)));
 }
