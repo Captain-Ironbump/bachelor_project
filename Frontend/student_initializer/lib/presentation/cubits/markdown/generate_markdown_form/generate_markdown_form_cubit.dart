@@ -18,7 +18,7 @@ class GenerateMarkdownFormCubit extends Cubit<GenerateMarkdownFormState> {
       result.fold((error) => emit(GenerateMarkdownFormError(error.message)),
           (success) {
         print("✅ Emitting GenerateMarkdownFormLoaded with $success");
-        emit(GenerateMarkdownFormLoaded(markdownForm: success));
+        emit(GenerateMarkdownFormLoaded(message: success));
       });
     } catch (_) {
       rethrow;

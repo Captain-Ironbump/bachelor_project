@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,18 +7,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:student_initializer/core/components/indicators/base_indicator.dart';
 import 'package:student_initializer/presentation/cubits/learner/save_learner/save_learner_cubit.dart';
+import 'package:student_initializer/presentation/cubits/markdown/get_markdowns_by_learner/get_markdowns_by_learner_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/get_observation_by_id_with_tags/get_observation_by_id_with_tags_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/get_observations_with_tags/get_observations_with_tags_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/save_observation/save_observation_cubit.dart';
 import 'package:student_initializer/providers/observation_use_case_provider.dart';
 
-class ReportPopupView extends StatefulWidget {
+class ReportsPopupView extends StatefulWidget {
   final int learnerId;
   final int eventId;
   final Function onChangeRouteCallback;
   final Function onCloseCallback;
 
-  const ReportPopupView({
+  const ReportsPopupView({
     super.key,
     required this.learnerId,
     required this.eventId,
@@ -26,10 +28,10 @@ class ReportPopupView extends StatefulWidget {
   });
 
   @override
-  State<ReportPopupView> createState() => _ReportPopupViewState();
+  State<ReportsPopupView> createState() => _ReportPopupViewState();
 }
 
-class _ReportPopupViewState extends State<ReportPopupView> {
+class _ReportPopupViewState extends State<ReportsPopupView> {
   @override
   void initState() {
     super.initState();
@@ -53,10 +55,10 @@ class _ReportPopupViewState extends State<ReportPopupView> {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              BlocBuilder<GetObservationsWithTagsCubit,
-                  GetObservationsWithTagsState>(
+              BlocBuilder<GetMarkdownsByLearnerCubit,
+                  GetMarkdownsByLearnerState>(
                 builder: (context, state) {
-                  if (state is GetObservationsWithTagsLoading) {
+                  if (state is GetMarkdownsByLearnerLoading) {
                     // Ladeindikator anzeigen
                     return CupertinoFormSection.insetGrouped(
                       header: const Text("Test"),
@@ -68,26 +70,28 @@ class _ReportPopupViewState extends State<ReportPopupView> {
                         ),
                       ],
                     );
-                  } else if (state is GetObservationsWithTagsLoaded) {
+                  } else if (state is GetMarkdownsByLearnerLoaded) {
                     // Dynamische Inhalte basierend auf dem Zustand
                     return CupertinoFormSection.insetGrouped(
-                      header: const Text("Test"),
                       children: List<Widget>.generate(
-                        state.observations!.length,
+                        state.markdownForms!.length,
                         (index) {
+                          final date = DateTime.tryParse(state.markdownForms![index].createdDateTime ?? "");
+                          final formattedDate = date != null
+                              ? "${date.day.toString().padLeft(2, '0')} ${DateFormat('MMM').format(date)} ${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}"
+                              : "-";
                           return CupertinoListTile(
                             title: Text(
-                              "${state.observations![index].observationDetail!.observationId}",
+                              "${state.markdownForms![index].reportId}",
                             ),
                             additionalInfo: Text(
-                              "${state.observations![index].observationDetail!.createdDate}",
+                              formattedDate,
                             ),
                             trailing: const CupertinoListTileChevron(),
                             onTap: () {
                               widget.onChangeRouteCallback(
                                 context,
-                                state.observations![index].observationDetail!
-                                    .observationId,
+                                state.markdownForms![index].reportId,
                               );
                             },
                           );
@@ -142,7 +146,7 @@ class MyNav extends SliverPersistentHeaderDelegate {
               padding: EdgeInsets.zero,
               child: const Icon(CupertinoIcons.clear_circled_solid),
               onPressed: () {
-                Navigator.of(context, rootNavigator: true).pop();
+                //Navigator.of(context, rootNavigator: true).pop();
                 onCloseCallback();
               },
             ),

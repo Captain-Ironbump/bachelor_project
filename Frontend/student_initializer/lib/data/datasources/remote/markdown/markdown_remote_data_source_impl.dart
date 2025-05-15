@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 class MarkdownRemoteDataSourceImpl implements MarkdownRemoteDataSource {
   @override
-  Future<MarkdownFormModel> generateMarkdownForm(
+  Future<String> generateMarkdownForm(
       {required int eventId, required int learnerId, String? length}) async {
     try {
       var queryParam = {};
@@ -16,10 +16,52 @@ class MarkdownRemoteDataSourceImpl implements MarkdownRemoteDataSource {
         queryParam = Map.of({"length": length});
       }
       final Uri uri = SimplifiedUri.uri(
-          '${PlattformUri.getLlUri()}/reporttrigger/new/event/$eventId/learner/$learnerId',
+          '${PlattformUri.getLlUri()}/reporttrigger/new/event/$eventId/learner/$learnerId', // change to correct URL when LLM interface is ready!! (class TriggerSomethingResource.java)
           queryParam);
       final response = await http.get(uri);
-      return MarkdownFormModel(markdownText: response.body);
+      dynamic decodedJson = json.decode(response.body);
+      return decodedJson.toString();
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<MarkdownFormModel> getMarkdownForm({required int reportId}) async {
+    try {
+      final Uri uri = SimplifiedUri.uri(
+          '${PlattformUri.getUri()}/reports/report/$reportId', null);
+      final response = await http.get(uri);
+      dynamic decodedJson = json.decode(response.body);
+      return MarkdownFormModel.fromJson(decodedJson);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<MarkdownFormModel>> getMarkdownFormsByLearnerAndEvent(
+      {required int learnerId,
+      int? eventId,
+      String? sortBy,
+      String? sortOrder,
+      int? timespanInDays}) async {
+    try {
+      var queryParams = {
+        "eventId": eventId,
+        "sortBy": sortBy,
+        "sortOrder": sortOrder,
+        "timespanInDays": timespanInDays
+      };
+      final Uri uri = SimplifiedUri.uri(
+          '${PlattformUri.getUri()}/reports/learner/$learnerId',
+          queryParams);
+      
+      final response = await http.get(uri);
+      List<dynamic> decodedJson = json.decode(response.body);
+      return decodedJson
+          .map((item) => MarkdownFormModel.fromJson(item))
+          .toList();
     } catch (_) {
       rethrow;
     }

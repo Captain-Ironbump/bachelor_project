@@ -8,9 +8,29 @@ class MarkdownUsecases {
 
   const MarkdownUsecases(this._markdownRepository);
 
-  Future<Either<NetworkException, MarkdownFormEntity>> generateMarkdownForm(
+  Future<Either<NetworkException, String>> generateMarkdownForm(
       {required int eventId, required int learnerId, String? length}) async {
     return _markdownRepository.generateMarkdownForm(
         eventId: eventId, learnerId: learnerId, length: length);
+  }
+
+  Future<Either<NetworkException, MarkdownFormEntity>> getMarkdownForm(
+      {required int reportId}) async {
+    return _markdownRepository.getMarkdownForm(reportId: reportId);
+  }
+
+  Future<Either<NetworkException, List<MarkdownFormEntity>>>
+      getMarkdownFormsByLearnerAndEvent(
+          {required int learnerId,
+          int? eventId,
+          String? sortBy,
+          String? sortOrder,
+          int? timespanInDays}) async {
+    return _markdownRepository.getMarkdownFormsByLearnerAndEvent(
+        learnerId: learnerId,
+        eventId: eventId,
+        sortBy: sortBy,
+        sortOrder: sortOrder,
+        timespanInDays: timespanInDays);
   }
 }

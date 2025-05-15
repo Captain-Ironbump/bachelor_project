@@ -3,6 +3,15 @@ import 'package:student_initializer/domain/entities/markdown_from/markdown_form_
 import 'package:student_initializer/util/exceptions/network_excpetion.dart';
 
 abstract class MarkdownRepository {
-  Future<Either<NetworkException, MarkdownFormEntity>> generateMarkdownForm(
+  Future<Either<NetworkException, String>> generateMarkdownForm(
       {required int eventId, required int learnerId, String? length});
+  Future<Either<NetworkException, MarkdownFormEntity>> getMarkdownForm(
+      {required int reportId});
+  Future<Either<NetworkException, List<MarkdownFormEntity>>>
+      getMarkdownFormsByLearnerAndEvent(
+          {required int learnerId,
+          int? eventId,
+          String? sortBy,
+          String? sortOrder,
+          int? timespanInDays});
 }

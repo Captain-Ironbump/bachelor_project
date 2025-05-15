@@ -8,10 +8,18 @@ part of 'markdown_form_model.dart';
 
 MarkdownFormModel _$MarkdownFormModelFromJson(Map<String, dynamic> json) =>
     MarkdownFormModel(
-      markdownText: json['markdownText'] as String?,
+      reportId: (json['reportId'] as num?)?.toInt(),
+      learnerId: (json['learnerId'] as num?)?.toInt(),
+      eventId: (json['eventId'] as num?)?.toInt(),
+      reportData: json['reportData'] as String?,
+      createdDateTime: json['createdDateTime'] as String?,
     );
 
 Map<String, dynamic> _$MarkdownFormModelToJson(MarkdownFormModel instance) =>
     <String, dynamic>{
-      'markdownText': instance.markdownText,
+      'reportId': instance.reportId,
+      'learnerId': instance.learnerId,
+      'eventId': instance.eventId,
+      'reportData': instance.reportData,
+      'createdDateTime': instance.createdDateTime,
     };

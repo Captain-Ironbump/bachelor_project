@@ -14,14 +14,18 @@ import 'package:student_initializer/presentation/_widgets/observation_detail_wid
 import 'package:student_initializer/presentation/cubits/event/get_event_details_by_id/get_event_details_by_id_cubit.dart';
 import 'package:student_initializer/presentation/cubits/learner/get_learner_by_id/get_learner_by_id_cubit.dart';
 import 'package:student_initializer/presentation/cubits/markdown/generate_markdown_form/generate_markdown_form_cubit.dart';
+import 'package:student_initializer/presentation/cubits/markdown/get_markdown_by_id/get_markdown_by_id_cubit.dart';
+import 'package:student_initializer/presentation/cubits/markdown/get_markdowns_by_learner/get_markdowns_by_learner_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/get_observations_with_tags/get_observations_with_tags_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/save_observation/save_observation_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/get_settings_int/get_settings_int_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/get_settings_string/get_settings_string_cubit.dart';
 import 'package:student_initializer/presentation/cubits/tag/get_tags/get_tags_cubit.dart';
 import 'package:student_initializer/presentation/view/new_observation_popup_view.dart';
+import 'package:student_initializer/presentation/view/report_detail_popup_view.dart';
 import 'package:student_initializer/presentation/view/reports_popup_view.dart';
 import 'package:student_initializer/providers/learner_use_case_provider.dart';
+import 'package:student_initializer/providers/markdown_form_use_case_provider.dart';
 import 'package:student_initializer/providers/observation_use_case_provider.dart';
 import 'package:student_initializer/providers/settings_use_case_provider.dart';
 import 'package:student_initializer/providers/tag_use_case_provider.dart';
@@ -217,8 +221,8 @@ class _ObservationListViewState extends State<ObservationListView>
               }
 
               if (state is GenerateMarkdownFormLoaded) {
-                _markdown = state.markdownForm!.markdownText!;
-                _callShare();
+                // show status here
+                print("Markdown generated");
               }
             },
           )
@@ -327,7 +331,8 @@ class _ObservationDetailView extends StatelessWidget {
             BlocProvider<GetLearnerByIdCubit>(
               create: (context) => container.read(getLearnerByIdCubitProvider)
                 ..getLearnerDetailsById(learnerId: learnerId!),
-            )
+            ),
+            // Insert all settings cubits here
           ],
           child: CupertinoPopupSurface(
             isSurfacePainted: true,
@@ -335,24 +340,28 @@ class _ObservationDetailView extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.95,
                 child: Navigator(
                   key: _popupNavigatorKey,
-                  initialRoute: "page1",
+                  initialRoute: "reports",
                   onGenerateRoute: (settings) {
                     WidgetBuilder builder;
                     switch (settings.name) {
-                      case 'page1':
+                      case 'reports':
                         builder = (context) =>
-                            BlocProvider<GetObservationsWithTagsCubit>(
-                              create: (context) =>
-                                  container.read(getObservationsWithTagsProvider)
-                                    ..getObservationDetailsByLearnerId(
-                                        learnerId: 1, queryParams: Map.of({})),
-                              child: ReportPopupView(
+                            BlocProvider<GetMarkdownsByLearnerCubit>(
+                              create: (context) => container.read(
+                                  getMarkdownFormsByLearnerAndEventCubitProvider)
+                                ..getMarkdownsByLearnerId(
+                                    learnerId: 1,
+                                    eventId: eventId,
+                                    sortBy: 'createdDateTime',
+                                    sortOrder: 'DESC',
+                                    timespanInDays: 0),
+                              child: ReportsPopupView(
                                 learnerId: learnerId!,
                                 eventId: eventId!,
-                                onChangeRouteCallback: (context, observationId) {
+                                onChangeRouteCallback: (context, reportId) {
                                   _popupNavigatorKey.currentState?.pushNamed(
-                                      "page2",
-                                      arguments: {'reportId': observationId});
+                                      "report",
+                                      arguments: {'reportId': reportId});
                                 },
                                 onCloseCallback: (context) async {
                                   await animationController.reverse();
@@ -361,31 +370,99 @@ class _ObservationDetailView extends StatelessWidget {
                                 },
                               ),
                             );
-                        break;
-                      case 'page2':
+                        // Animation von rechts nach links (reverse)
+                        return PageRouteBuilder(
+                          pageBuilder: (context, animation, secondaryAnimation) => builder(context),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            const begin = Offset(1.0, 0.0); // Start von rechts
+                            const end = Offset.zero;
+                            const curve = Curves.ease;
+                            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                            return SlideTransition(
+                              position: animation.drive(tween),
+                              child: child,
+                            );
+                          },
+                          settings: settings,
+                        );
+                      case 'report':
                         final args = settings.arguments as Map<String, dynamic>;
                         print(args);
-                        builder = (context) => ReportPopupView(
-                              learnerId: learnerId!,
-                              eventId: eventId!,
-                              onChangeRouteCallback: () {
-                                _popupNavigatorKey.currentState
-                                    ?.pushNamed("page1");
-                              },
-                              onCloseCallback: (context) async {
-                                await animationController.reverse();
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
-                              },
+                        builder = (context) =>
+                            BlocProvider<GetMarkdownByIdCubit>(
+                              create: (context) => container
+                                  .read(getMarkdownByIdCubitProvider)
+                                ..getMarkdownById(
+                                    reportId: args['reportId']!),
+                              child: ReportDetailPopupView(
+                                reportId: args['reportId']!,
+                                onCloseCallback: (context) async {
+                                  _popupNavigatorKey.currentState?.pushReplacement(
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation, secondaryAnimation) =>
+                                          BlocProvider<GetMarkdownsByLearnerCubit>(
+                                            create: (context) => container.read(
+                                                getMarkdownFormsByLearnerAndEventCubitProvider)
+                                              ..getMarkdownsByLearnerId(
+                                                  learnerId: 1,
+                                                  eventId: eventId,
+                                                  sortBy: 'createdDateTime',
+                                                  sortOrder: 'DESC',
+                                                  timespanInDays: 0),
+                                            child: ReportsPopupView(
+                                              learnerId: learnerId!,
+                                              eventId: eventId!,
+                                              onChangeRouteCallback: (context, reportId) {
+                                                _popupNavigatorKey.currentState?.pushNamed(
+                                                    "report",
+                                                    arguments: {'reportId': reportId});
+                                              },
+                                              onCloseCallback: (context) async {
+                                                await animationController.reverse();
+                                                Navigator.of(context, rootNavigator: true)
+                                                    .pop();
+                                              },
+                                            ),
+                                          ),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        const begin = Offset(-1.0, 0.0); // Animation von links nach rechts
+                                        const end = Offset.zero;
+                                        const curve = Curves.ease;
+                                        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                        return SlideTransition(
+                                          position: animation.drive(tween),
+                                          child: child,
+                                        );
+                                      },
+                                      settings: settings,
+                                    ),
+                                  );
+                                },
+                                onChangeRouteCallback: (context) {},
+                              ),
                             );
-                        break;
+                        // Animation von rechts nach links (reverse)
+                        return PageRouteBuilder(
+                          pageBuilder: (context, animation, secondaryAnimation) => builder(context),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            const begin = Offset(1.0, 0.0); // Start von rechts
+                            const end = Offset.zero;
+                            const curve = Curves.ease;
+                            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                            return SlideTransition(
+                              position: animation.drive(tween),
+                              child: child,
+                            );
+                          },
+                          settings: settings,
+                        );
                       default:
                         builder = (context) => const SizedBox.shrink();
+                        return CupertinoPageRoute(
+                          builder: builder,
+                          settings: settings,
+                        );
                     }
-                    return CupertinoPageRoute(
-                      builder: builder,
-                      settings: settings,
-                    );
                   },
                 )),
           ),
@@ -459,10 +536,10 @@ class _ObservationDetailView extends StatelessWidget {
       children: [
         CupertinoButton(
           padding: const EdgeInsets.symmetric(horizontal: 2.0),
-          child: const Icon(CupertinoIcons.share_up),
           onPressed: eventId! == -1
               ? null
               : () => _showShareObservationDialog(context, learnerId, eventId!),
+          child: const Icon(CupertinoIcons.doc_text),
         ),
         CupertinoButton(
           disabledColor: CupertinoColors.systemGrey.withOpacity(0.3),

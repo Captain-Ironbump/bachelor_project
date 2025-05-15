@@ -16,12 +16,12 @@ final class GenerateMarkdownFormLoading extends GenerateMarkdownFormState {
 }
 
 final class GenerateMarkdownFormLoaded extends GenerateMarkdownFormState {
-  const GenerateMarkdownFormLoaded({required this.markdownForm});
+  const GenerateMarkdownFormLoaded({required this.message});
 
-  final MarkdownFormEntity? markdownForm;
+  final String? message;
 
   @override
-  List<Object?> get props => [markdownForm!];
+  List<Object?> get props => [message!];
 }
 
 final class GenerateMarkdownFormError extends GenerateMarkdownFormState {

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:student_initializer/domain/entities/markdown_from/markdown_form_entity.dart';
@@ -6,10 +8,23 @@ part 'markdown_form_model.g.dart';
 
 @JsonSerializable()
 class MarkdownFormModel extends Equatable {
-  final String? markdownText;
+  @JsonKey(name: "reportId")
+  final int? reportId;
+  @JsonKey(name: "learnerId")
+  final int? learnerId;
+  @JsonKey(name: "eventId")
+  final int? eventId;
+  @JsonKey(name: "reportData")
+  final String? reportData;
+  @JsonKey(name: "createdDateTime")
+  final String? createdDateTime;
 
   const MarkdownFormModel({
-    this.markdownText,
+    this.reportId,
+    this.learnerId,
+    this.eventId,
+    this.reportData,
+    this.createdDateTime,
   });
 
   factory MarkdownFormModel.fromJson(Map<String, dynamic> json) =>
@@ -18,9 +33,19 @@ class MarkdownFormModel extends Equatable {
   Map<String, dynamic> toJson() => _$MarkdownFormModelToJson(this);
 
   @override
-  List<Object?> get props => [markdownText];
+  List<Object?> get props => [
+        reportId,
+        learnerId,
+        eventId,
+        reportData,
+        createdDateTime,
+      ];
 
-  toEntity() => MarkdownFormEntity(
-        markdownText: markdownText,
+  MarkdownFormEntity toEntity() => MarkdownFormEntity(
+        reportId: reportId,
+        learnerId: learnerId,
+        eventId: eventId,
+        createdDateTime: createdDateTime,
+        report: utf8.decode(base64.decode(reportData!)),
       );
 }
