@@ -1,4 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:student_initializer/core/components/indicators/base_indicator.dart';
+import 'package:student_initializer/presentation/cubits/markdown/get_markdown_by_id/get_markdown_by_id_cubit.dart';
+import 'package:markdown_widget/markdown_widget.dart';
 
 class ReportDetailPopupView extends StatelessWidget {
   final int reportId;
@@ -21,9 +26,7 @@ class ReportDetailPopupView extends StatelessWidget {
           SliverPersistentHeader(
             delegate: MyNav(
               reportId: reportId,
-              onPressedCallback: () {
-                
-              },
+              onPressedCallback: () {},
               onCloseCallback: () {
                 onCloseCallback(context);
               },
@@ -33,7 +36,57 @@ class ReportDetailPopupView extends StatelessWidget {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              // Your content goes here
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                    decoration: BoxDecoration(
+                      color: CupertinoColors.white,
+                      borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: CupertinoColors.systemGrey.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(10.0),
+                    child:
+                        BlocBuilder<GetMarkdownByIdCubit, GetMarkdownByIdState>(
+                      builder: (context, state) {
+                        if (state is GetMarkdownByIdLoading) {
+                          return const Center(
+                            child: BaseIndicator(),
+                          );
+                        }
+                        if (state is GetMarkdownByIdLoaded) {
+                          return Localizations(
+                            locale: const Locale('en', 'US'),
+                            delegates: const [
+                              DefaultMaterialLocalizations.delegate,
+                              DefaultWidgetsLocalizations.delegate,
+                              DefaultCupertinoLocalizations.delegate,
+                            ],
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxHeight:
+                                    MediaQuery.of(context).size.height * 0.8,
+                              ),
+                              child: MarkdownWidget(
+                                data: state.markdownForm!.report!,
+                              ),
+                            ),
+                          );
+                        }
+                        if (state is GetMarkdownByIdError) {
+                          return Center(
+                            child: Text(state.message!),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    )),
+              ),
             ]),
           ),
         ],
@@ -42,7 +95,6 @@ class ReportDetailPopupView extends StatelessWidget {
   }
 }
 
-
 typedef OnPressedCallback = void Function();
 
 class MyNav extends SliverPersistentHeaderDelegate {
@@ -50,7 +102,10 @@ class MyNav extends SliverPersistentHeaderDelegate {
   final OnPressedCallback onPressedCallback;
   final Function onCloseCallback;
 
-  const MyNav({required this.reportId, required this.onPressedCallback, required this.onCloseCallback});
+  const MyNav(
+      {required this.reportId,
+      required this.onPressedCallback,
+      required this.onCloseCallback});
 
   @override
   Widget build(

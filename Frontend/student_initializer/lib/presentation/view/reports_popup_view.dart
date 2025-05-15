@@ -72,6 +72,20 @@ class _ReportPopupViewState extends State<ReportsPopupView> {
                     );
                   } else if (state is GetMarkdownsByLearnerLoaded) {
                     // Dynamische Inhalte basierend auf dem Zustand
+
+                    if (state.markdownForms!.isEmpty) {
+                      return CupertinoFormSection.insetGrouped(
+                        header: const Text("Test"),
+                        children: const [
+                          CupertinoFormRow(
+                            child: Center(
+                              child: Text('No data available'),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
                     return CupertinoFormSection.insetGrouped(
                       children: List<Widget>.generate(
                         state.markdownForms!.length,
