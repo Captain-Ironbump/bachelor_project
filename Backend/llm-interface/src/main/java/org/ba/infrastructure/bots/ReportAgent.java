@@ -1,4 +1,4 @@
-package org.ba.service.bots.betterAgents;
+package org.ba.infrastructure.bots;
 
 import org.ba.service.tools.TimestampCalculator;
 

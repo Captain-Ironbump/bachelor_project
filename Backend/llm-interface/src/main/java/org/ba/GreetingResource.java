@@ -7,9 +7,11 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.ba.infrastructure.bots.OrchestratorAgent;
 import org.ba.infrastructure.restclient.dto.Event;
 import org.ba.infrastructure.restclient.dto.Learner;
 import org.ba.infrastructure.restclient.dto.Observation;
+import org.ba.infrastructure.restclient.dto.Report;
 //import org.ba.rag.Ingestor;
 import org.ba.requests.pojo.RequestStudentText;
 import org.ba.requests.pojo.Student;
@@ -18,19 +20,23 @@ import org.ba.service.bots.CompetenceLLMService;
 import org.ba.service.bots.CompetenceRaterAgent;
 import org.ba.service.bots.CompetenceSummaryAgent;
 import org.ba.service.bots.FormGeneratorAgent;
-import org.ba.service.bots.betterAgents.OrchestratorAgent;
 import org.ba.service.bots.test.TestAgent;
 import org.ba.service.restclient.EventService;
 import org.ba.service.restclient.LearnerService;
 import org.ba.service.restclient.ObservationService;
+import org.ba.service.restclient.ReportService;
 import org.ba.service.tools.TimestampCalculator;
+import org.ba.utils.ModelResponseTrimmer;
 import org.jboss.resteasy.reactive.PartType;
 import org.jboss.resteasy.reactive.ResponseHeader;
 import org.jboss.resteasy.reactive.ResponseStatus;
 import org.jboss.resteasy.reactive.RestForm;
 
 import dev.langchain4j.model.embedding.EmbeddingModel;
+import io.quarkus.arc.Arc;
+import io.quarkus.arc.ManagedContext;
 import io.quarkus.logging.Log;
+import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.Consumes;
@@ -95,6 +101,8 @@ public class GreetingResource {
     ObservationService observationService;
     @Inject
     EventService eventService;
+    @Inject
+    ReportService reportService;
 
     @POST
     @Path("/hello")
@@ -138,36 +146,49 @@ public class GreetingResource {
 
     @POST
     @Path("/testoo2")
-    public String testoo2() {
-        try {
-            CompletableFuture<Set<Observation>> observationsFuture = 
-                CompletableFuture.supplyAsync(() -> observationService.getObservationByEventAndLeanrner(1L, 1L));
+    public Response testoo2() {
+        CompletableFuture.runAsync(() -> {
+            ManagedContext requestContext = Arc.container().requestContext();
+            requestContext.activate();
+            try {
+                CompletableFuture<Set<Observation>> observationsFuture = 
+                    CompletableFuture.supplyAsync(() -> observationService.getObservationByEventAndLeanrner(1L, 1L));
 
-            CompletableFuture<Event> eventFuture = 
-                CompletableFuture.supplyAsync(() -> eventService.getEventById(1L));
+                CompletableFuture<Event> eventFuture = 
+                    CompletableFuture.supplyAsync(() -> eventService.getEventById(1L));
 
-            CompletableFuture<Learner> learnerFuture = 
-                CompletableFuture.supplyAsync(() -> learnerService.getLearnerById(1L));
-        
-            CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(observationsFuture, eventFuture, learnerFuture);
-            combinedFuture.join();
+                CompletableFuture<Learner> learnerFuture = 
+                    CompletableFuture.supplyAsync(() -> learnerService.getLearnerById(1L));
+            
+                CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(observationsFuture, eventFuture, learnerFuture);
+                combinedFuture.join();
 
-            Log.info(observationsFuture.get());
+                //Log.info(observationsFuture.get());
 
-            List<String> observations = observationsFuture.get()
-                .stream()
-                .map(obs -> new String(obs.getRawObservation(), StandardCharsets.UTF_8))
-                .collect(Collectors.toList());
-            Event event = eventFuture.get();
-            Learner learner = learnerFuture.get();
-            return orchestratorAgent.orchestrate(
-                String.format("%1$s %2$s", learner.getFirstName(), learner.getLastName()), 
-                event.getName(), 
-                observations
-            );
-        } catch (Exception e) {
-            return "Error: " + e.getMessage();
-        }
+                List<String> observations = observationsFuture.get()
+                    .stream()
+                    .map(obs -> new String(obs.getRawObservation(), StandardCharsets.UTF_8))
+                    .collect(Collectors.toList());
+                Event event = eventFuture.get();
+                Learner learner = learnerFuture.get();
+                String res = orchestratorAgent.orchestrate(
+                    String.format("%1$s %2$s", learner.getFirstName(), learner.getLastName()), 
+                    event.getName(), 
+                    observations
+                );
+                Log.info("Orchestration result: " + res);
+                res = ModelResponseTrimmer.trimThinking(res);
+                reportService.saveResponse(Report.builder()
+                        .reportData(res.getBytes())
+                        .eventId(event.getEventId())
+                        .learnerId(learner.getLearnerId())
+                        .build()
+                );
+            } catch (Exception e) {
+                Log.error("Error during orchestration: " + e.getMessage(), e);
+            }
+        });
+        return Response.accepted("Processing report generation. This can take a while.").build();
     }
 
     @GET
@@ -181,5 +202,16 @@ public class GreetingResource {
     @Path("/agentNow")
     public String agentNow() {
         return testAgent.getCurrentDateTime();
+    }
+
+    @POST
+    @Path("/testoo3")
+    public void testoo3() {
+        reportService.saveResponse(Report.builder()
+                .reportData("Hello World du schmock".getBytes())
+                .eventId(1L)
+                .learnerId(10L)
+                .build()
+        );
     }
 }

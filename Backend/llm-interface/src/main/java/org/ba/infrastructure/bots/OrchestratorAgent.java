@@ -1,4 +1,4 @@
-package org.ba.service.bots.betterAgents;
+package org.ba.infrastructure.bots;
 
 import java.util.List;
 
@@ -11,6 +11,7 @@ import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import io.quarkiverse.langchain4j.RegisterAiService;
 import io.quarkiverse.langchain4j.ToolBox;
+import jakarta.enterprise.context.control.ActivateRequestContext;
 
 @RegisterAiService(modelName = "llama")
 public interface OrchestratorAgent {
