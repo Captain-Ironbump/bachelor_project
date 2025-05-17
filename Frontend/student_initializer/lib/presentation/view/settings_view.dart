@@ -183,6 +183,20 @@ class SettingsView extends StatelessWidget {
                     ],
                   ),
                 ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(10.0),
+                child: CupertinoFormSection.insetGrouped(
+                  children: [
+                    CupertinoListTile(
+                      title: const Text('Tags'),
+                      trailing: const CupertinoListTileChevron(),
+                      onTap: () {
+                        context.push('/settings/tags');
+                      },
+                    )
+                  ],
+                ),
               )
             ]),
           )

@@ -345,39 +345,57 @@ class _ObservationDetailView extends StatelessWidget {
                     WidgetBuilder builder;
                     switch (settings.name) {
                       case 'reports':
-                        builder = (context) =>
-                            BlocProvider<GetMarkdownsByLearnerCubit>(
-                              create: (context) => container.read(
-                                  getMarkdownFormsByLearnerAndEventCubitProvider)
-                                ..getMarkdownsByLearnerId(
-                                    learnerId: 1,
-                                    eventId: eventId,
-                                    sortBy: 'createdDateTime',
-                                    sortOrder: 'DESC',
-                                    timespanInDays: 0),
+                        builder = (context) => MultiBlocProvider(
+                              providers: [
+                                BlocProvider<GetMarkdownsByLearnerCubit>(
+                                  create: (context) => container.read(
+                                      getMarkdownFormsByLearnerAndEventCubitProvider)
+                                    ..getMarkdownsByLearnerId(
+                                        learnerId: 1,
+                                        eventId: eventId,
+                                        sortBy: 'createdDateTime',
+                                        sortOrder: 'DESC',
+                                        timespanInDays: 0),
+                                ),
+                                BlocProvider<GenerateMarkdownFormCubit>(
+                                  create: (context) => container
+                                      .read(generateMarkdownFormCubitProvider),
+                                )
+                              ],
                               child: ReportsPopupView(
-                                learnerId: learnerId!,
-                                eventId: eventId!,
-                                onChangeRouteCallback: (context, reportId) {
-                                  _popupNavigatorKey.currentState?.pushNamed(
-                                      "report",
-                                      arguments: {'reportId': reportId});
-                                },
-                                onCloseCallback: (context) async {
-                                  await animationController.reverse();
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
-                                },
-                              ),
+                                  learnerId: learnerId!,
+                                  eventId: eventId!,
+                                  onChangeRouteCallback: (context, reportId) {
+                                    _popupNavigatorKey.currentState?.pushNamed(
+                                        "report",
+                                        arguments: {'reportId': reportId});
+                                  },
+                                  onCloseCallback: (context) async {
+                                    await animationController.reverse();
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                  },
+                                  onPressedCallback: (BuildContext context) {
+                                    context.read<GenerateMarkdownFormCubit>()
+                                        .generateMarkdownForm(
+                                      eventId: eventId,
+                                      learnerId: learnerId,
+                                      length: "short",
+                                    );
+                                  }),
                             );
                         // Animation von rechts nach links (reverse)
                         return PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) => builder(context),
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  builder(context),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
                             const begin = Offset(1.0, 0.0); // Start von rechts
                             const end = Offset.zero;
                             const curve = Curves.ease;
-                            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                            final tween = Tween(begin: begin, end: end)
+                                .chain(CurveTween(curve: curve));
                             return SlideTransition(
                               position: animation.drive(tween),
                               child: child,
@@ -392,63 +410,28 @@ class _ObservationDetailView extends StatelessWidget {
                             BlocProvider<GetMarkdownByIdCubit>(
                               create: (context) => container
                                   .read(getMarkdownByIdCubitProvider)
-                                ..getMarkdownById(
-                                    reportId: args['reportId']!),
+                                ..getMarkdownById(reportId: args['reportId']!),
                               child: ReportDetailPopupView(
                                 reportId: args['reportId']!,
                                 onCloseCallback: (context) async {
-                                  _popupNavigatorKey.currentState?.pushReplacement(
-                                    PageRouteBuilder(
-                                      pageBuilder: (context, animation, secondaryAnimation) =>
-                                          BlocProvider<GetMarkdownsByLearnerCubit>(
-                                            create: (context) => container.read(
-                                                getMarkdownFormsByLearnerAndEventCubitProvider)
-                                              ..getMarkdownsByLearnerId(
-                                                  learnerId: 1,
-                                                  eventId: eventId,
-                                                  sortBy: 'createdDateTime',
-                                                  sortOrder: 'DESC',
-                                                  timespanInDays: 0),
-                                            child: ReportsPopupView(
-                                              learnerId: learnerId!,
-                                              eventId: eventId!,
-                                              onChangeRouteCallback: (context, reportId) {
-                                                _popupNavigatorKey.currentState?.pushNamed(
-                                                    "report",
-                                                    arguments: {'reportId': reportId});
-                                              },
-                                              onCloseCallback: (context) async {
-                                                await animationController.reverse();
-                                                Navigator.of(context, rootNavigator: true)
-                                                    .pop();
-                                              },
-                                            ),
-                                          ),
-                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                        const begin = Offset(-1.0, 0.0); // Animation von links nach rechts
-                                        const end = Offset.zero;
-                                        const curve = Curves.ease;
-                                        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                        return SlideTransition(
-                                          position: animation.drive(tween),
-                                          child: child,
-                                        );
-                                      },
-                                      settings: settings,
-                                    ),
-                                  );
+                                  // Statt pushReplacement einfach pop, um zur alten ReportsPopupView zurückzukehren
+                                  Navigator.of(context).pop();
                                 },
                                 onChangeRouteCallback: (context) {},
                               ),
                             );
                         // Animation von rechts nach links (reverse)
                         return PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) => builder(context),
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  builder(context),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
                             const begin = Offset(1.0, 0.0); // Start von rechts
                             const end = Offset.zero;
                             const curve = Curves.ease;
-                            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                            final tween = Tween(begin: begin, end: end)
+                                .chain(CurveTween(curve: curve));
                             return SlideTransition(
                               position: animation.drive(tween),
                               child: child,
@@ -581,13 +564,23 @@ class _ObservationDetailView extends StatelessWidget {
       return null;
     });
 
-    final eventId = context.select<GetEventDetailsByIdCubit, dynamic>((cubit) {
-      final state = cubit.state;
-      if (state is GetEventDetailsByIdLoaded) {
-        return state.event!.eventId!;
-      }
-      return null;
-    });
+    bool hasEventCubit = true;
+    try {
+      BlocProvider.of<GetEventDetailsByIdCubit>(context, listen: false);
+    } catch (_) {
+      hasEventCubit = false;
+    }
+
+    int? eventId;
+    if (hasEventCubit) {
+      eventId = context.select<GetEventDetailsByIdCubit, dynamic>((cubit) {
+        final state = cubit.state;
+        if (state is GetEventDetailsByIdLoaded) {
+          return state.event!.eventId!;
+        }
+        return null;
+      });
+    }
 
     return AnimatedBuilder(
       animation: scaleAnimation,

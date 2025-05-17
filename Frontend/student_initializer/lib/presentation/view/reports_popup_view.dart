@@ -12,12 +12,14 @@ import 'package:student_initializer/presentation/cubits/observation/get_observat
 import 'package:student_initializer/presentation/cubits/observation/get_observations_with_tags/get_observations_with_tags_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/save_observation/save_observation_cubit.dart';
 import 'package:student_initializer/providers/observation_use_case_provider.dart';
+import 'package:student_initializer/presentation/cubits/markdown/generate_markdown_form/generate_markdown_form_cubit.dart';
 
-class ReportsPopupView extends StatefulWidget {
+class ReportsPopupView extends StatelessWidget {
   final int learnerId;
   final int eventId;
   final Function onChangeRouteCallback;
   final Function onCloseCallback;
+  final Function onPressedCallback;
 
   const ReportsPopupView({
     super.key,
@@ -25,55 +27,138 @@ class ReportsPopupView extends StatefulWidget {
     required this.eventId,
     required this.onChangeRouteCallback,
     required this.onCloseCallback,
+    required this.onPressedCallback,
   });
 
   @override
-  State<ReportsPopupView> createState() => _ReportPopupViewState();
-}
-
-class _ReportPopupViewState extends State<ReportsPopupView> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Container(
-      color: CupertinoColors.systemGrey6,
-      child: CustomScrollView(
-        slivers: <Widget>[
-          SliverPersistentHeader(
-            delegate: MyNav(
-              onPressedCallback: () {},
-              onCloseCallback: () {
-                widget.onCloseCallback(context);
-              },
+    return BlocListener<GenerateMarkdownFormCubit, GenerateMarkdownFormState>(
+      listenWhen: (previous, current) => previous != current,
+      listener: (context, state) {
+          print('BlocListener: $state');
+        if (state is GenerateMarkdownFormLoading) {
+          showCupertinoDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const CupertinoAlertDialog(
+              content: CupertinoActivityIndicator(),
             ),
-            pinned: true,
-            floating: false,
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              BlocBuilder<GetMarkdownsByLearnerCubit,
-                  GetMarkdownsByLearnerState>(
-                builder: (context, state) {
-                  if (state is GetMarkdownsByLearnerLoading) {
-                    // Ladeindikator anzeigen
-                    return CupertinoFormSection.insetGrouped(
-                      header: const Text("Test"),
-                      children: const [
-                        CupertinoFormRow(
-                          child: Center(
-                            child: BaseIndicator(),
+          );
+        } else if (state is GenerateMarkdownFormLoaded) {
+          Navigator.of(context, rootNavigator: true).pop();
+          showCupertinoDialog(
+            context: context,
+            builder: (context) => CupertinoAlertDialog(
+              title: const Text('Erfolg'),
+              content: Text(
+                  state.message ?? 'Markdown wurde erfolgreich generiert!'),
+              actions: [
+                CupertinoDialogAction(
+                  isDefaultAction: true,
+                  child: const Text('OK'),
+                  onPressed: () =>
+                      Navigator.of(context, rootNavigator: true).pop(),
+                ),
+              ],
+            ),
+          );
+        } else if (state is GenerateMarkdownFormError) {
+          Navigator.of(context, rootNavigator: true).pop();
+          showCupertinoDialog(
+            context: context,
+            builder: (context) => CupertinoAlertDialog(
+              title: const Text('Fehler'),
+              content: Text(state.message ?? 'Unbekannter Fehler'),
+              actions: [
+                CupertinoDialogAction(
+                  isDefaultAction: true,
+                  child: const Text('OK'),
+                  onPressed: () =>
+                      Navigator.of(context, rootNavigator: true).pop(),
+                ),
+              ],
+            ),
+          );
+        }
+      },
+      child: Container(
+        color: CupertinoColors.systemGrey6,
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverPersistentHeader(
+              delegate: MyNav(
+                onPressedCallback: () {
+                  onPressedCallback(context);
+                },
+                onCloseCallback: () {
+                  onCloseCallback(context);
+                },
+              ),
+              pinned: true,
+              floating: false,
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate([
+                BlocBuilder<GetMarkdownsByLearnerCubit,
+                    GetMarkdownsByLearnerState>(
+                  builder: (context, state) {
+                    if (state is GetMarkdownsByLearnerLoading) {
+                      // Ladeindikator anzeigen
+                      return CupertinoFormSection.insetGrouped(
+                        children: const [
+                          CupertinoFormRow(
+                            child: Center(
+                              child: BaseIndicator(),
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  } else if (state is GetMarkdownsByLearnerLoaded) {
-                    // Dynamische Inhalte basierend auf dem Zustand
+                        ],
+                      );
+                    } else if (state is GetMarkdownsByLearnerLoaded) {
+                      // Dynamische Inhalte basierend auf dem Zustand
 
-                    if (state.markdownForms!.isEmpty) {
+                      if (state.markdownForms!.isEmpty) {
+                        return CupertinoFormSection.insetGrouped(
+                          header: const Text("Test"),
+                          children: const [
+                            CupertinoFormRow(
+                              child: Center(
+                                child: Text('No data available'),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+
+                      return CupertinoFormSection.insetGrouped(
+                        children: List<Widget>.generate(
+                          state.markdownForms!.length,
+                          (index) {
+                            final date = DateTime.tryParse(
+                                state.markdownForms![index].createdDateTime ??
+                                    "");
+                            final formattedDate = date != null
+                                ? "${date.day.toString().padLeft(2, '0')} ${DateFormat('MMM').format(date)} ${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}"
+                                : "-";
+                            return CupertinoListTile(
+                              title: Text(
+                                "${state.markdownForms![index].reportId}",
+                              ),
+                              additionalInfo: Text(
+                                formattedDate,
+                              ),
+                              trailing: const CupertinoListTileChevron(),
+                              onTap: () {
+                                onChangeRouteCallback(
+                                  context,
+                                  state.markdownForms![index].reportId,
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    } else {
+                      // Standardanzeige, wenn keine Daten vorhanden sind
                       return CupertinoFormSection.insetGrouped(
                         header: const Text("Test"),
                         children: const [
@@ -85,51 +170,12 @@ class _ReportPopupViewState extends State<ReportsPopupView> {
                         ],
                       );
                     }
-
-                    return CupertinoFormSection.insetGrouped(
-                      children: List<Widget>.generate(
-                        state.markdownForms!.length,
-                        (index) {
-                          final date = DateTime.tryParse(state.markdownForms![index].createdDateTime ?? "");
-                          final formattedDate = date != null
-                              ? "${date.day.toString().padLeft(2, '0')} ${DateFormat('MMM').format(date)} ${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}"
-                              : "-";
-                          return CupertinoListTile(
-                            title: Text(
-                              "${state.markdownForms![index].reportId}",
-                            ),
-                            additionalInfo: Text(
-                              formattedDate,
-                            ),
-                            trailing: const CupertinoListTileChevron(),
-                            onTap: () {
-                              widget.onChangeRouteCallback(
-                                context,
-                                state.markdownForms![index].reportId,
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    );
-                  } else {
-                    // Standardanzeige, wenn keine Daten vorhanden sind
-                    return CupertinoFormSection.insetGrouped(
-                      header: const Text("Test"),
-                      children: const [
-                        CupertinoFormRow(
-                          child: Center(
-                            child: Text('No data available'),
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-                },
-              ),
-            ]),
-          ),
-        ],
+                  },
+                ),
+              ]),
+            ),
+          ],
+        ),
       ),
     );
   }

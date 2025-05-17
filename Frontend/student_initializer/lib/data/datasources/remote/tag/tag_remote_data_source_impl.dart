@@ -20,8 +20,19 @@ class TagRemoteDataSourceImpl implements TagRemoteDataSource {
   }
 
   @override
-  Future<void> saveTag({required TagDetailModel tagDetailModel}) {
-    // TODO: implement saveTag
-    throw UnimplementedError();
+  Future<void> saveTag({required TagDetailModel tagDetailModel}) async {
+    try {
+      final Uri uri = SimplifiedUri.uri('${PlattformUri.getUri()}/tags', null);
+      final response = await http.post(
+        uri,
+        body: json.encode(tagDetailModel.toJson()),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode != 201) {
+        throw Exception('Failed to save tag');
+      }
+    } catch (_) {
+      rethrow;
+    }
   }
 }

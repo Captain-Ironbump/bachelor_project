@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:student_initializer/util/get_cupertino_color.dart';
+import 'package:student_initializer/util/tag_color_mapper.dart';
 
 class TagWidget extends StatelessWidget {
   final String tagName;
@@ -16,7 +16,7 @@ class TagWidget extends StatelessWidget {
   });
 
   Color _getTextColor(String colorName) {
-    final color = CupertinoColorHelper.getCupertinoColor(colorName);
+    final color = TagColorMapper.fromDb(colorName.toUpperCase());
     if (color == null) {
       return CupertinoColors.black;
     }
@@ -30,7 +30,7 @@ class TagWidget extends StatelessWidget {
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: CupertinoColorHelper.getCupertinoColor(tagColor),
+        color: TagColorMapper.fromDb(tagColor),
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Text(

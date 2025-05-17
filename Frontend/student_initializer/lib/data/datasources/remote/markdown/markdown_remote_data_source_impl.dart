@@ -19,8 +19,7 @@ class MarkdownRemoteDataSourceImpl implements MarkdownRemoteDataSource {
           '${PlattformUri.getLlUri()}/reporttrigger/new/event/$eventId/learner/$learnerId', // change to correct URL when LLM interface is ready!! (class TriggerSomethingResource.java)
           queryParam);
       final response = await http.get(uri);
-      dynamic decodedJson = json.decode(response.body);
-      return decodedJson.toString();
+      return response.body.toString();
     } catch (_) {
       rethrow;
     }

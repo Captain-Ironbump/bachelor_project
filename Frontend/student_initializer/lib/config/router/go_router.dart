@@ -16,18 +16,22 @@ import 'package:student_initializer/presentation/cubits/observation/get_observat
 import 'package:student_initializer/presentation/cubits/observation/get_observations_with_tags/get_observations_with_tags_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/save_observation/save_observation_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/get_settings_int/get_settings_int_cubit.dart';
+import 'package:student_initializer/presentation/cubits/tag/get_tags/get_tags_cubit.dart';
+import 'package:student_initializer/presentation/cubits/tag/save_tag/save_tag_cubit.dart';
 import 'package:student_initializer/presentation/view/home_view.dart';
 import 'package:student_initializer/presentation/view/learners_view.dart';
 import 'package:student_initializer/presentation/view/observation_detailed_view.dart';
 import 'package:student_initializer/presentation/view/observation_list_view.dart';
 import 'package:student_initializer/presentation/view/observations_view.dart';
 import 'package:student_initializer/presentation/view/settings_view.dart';
+import 'package:student_initializer/presentation/view/tags_setting_edit_view.dart';
 import 'package:student_initializer/presentation/view/timespan_setting_edit_form_view.dart';
 import 'package:student_initializer/providers/event_use_case_provider.dart';
 import 'package:student_initializer/providers/learner_use_case_provider.dart';
 import 'package:student_initializer/providers/markdown_form_use_case_provider.dart';
 import 'package:student_initializer/providers/observation_use_case_provider.dart';
 import 'package:student_initializer/providers/settings_use_case_provider.dart';
+import 'package:student_initializer/providers/tag_use_case_provider.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -158,7 +162,8 @@ class GoRouterCustom {
                                             create: (context) => container.read(
                                                 getObservationsByLearnerIdProvider),
                                           ),
-                                          BlocProvider<GetObservationsWithTagsCubit>(
+                                          BlocProvider<
+                                              GetObservationsWithTagsCubit>(
                                             create: (context) => container.read(
                                                 getObservationsWithTagsProvider),
                                           ),
@@ -220,7 +225,7 @@ class GoRouterCustom {
                                         final observationId = state
                                             .pathParameters['observationId']!;
                                         final learnerId =
-                                          state.pathParameters['learnerId']!;
+                                            state.pathParameters['learnerId']!;
                                         final container =
                                             ProviderScope.containerOf(context);
                                         return MultiBlocProvider(
@@ -237,7 +242,8 @@ class GoRouterCustom {
                                               create: (context) => container.read(
                                                   getLearnerByIdCubitProvider)
                                                 ..getLearnerDetailsById(
-                                                    learnerId: int.tryParse(learnerId)!),
+                                                    learnerId: int.tryParse(
+                                                        learnerId)!),
                                             ),
                                           ],
                                           child: ObservationDetailedView(),
@@ -306,9 +312,9 @@ class GoRouterCustom {
                                         ..getSettingsValueByKey(
                                             key: "sortParameter"),
                                     ),
-                                    BlocProvider<GetObservationsCubit>(
+                                    BlocProvider<GetObservationsWithTagsCubit>(
                                       create: (context) => container.read(
-                                          getObservationsByLearnerIdProvider),
+                                          getObservationsWithTagsProvider),
                                     ),
                                     BlocProvider<GetLearnerByIdCubit>(
                                       create: (context) => container
@@ -400,6 +406,35 @@ class GoRouterCustom {
                                 ),
                               ],
                               child: TimespanSettingEditFormView(),
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: "tags",
+                          name: "Tags",
+                          builder: (context, state) {
+                            final container =
+                                ProviderScope.containerOf(context);
+                            return MultiBlocProvider(
+                              providers: [
+                                BlocProvider<GetTagsCubit>(
+                                  create: (context) =>
+                                      container.read(getTagsCubitProvider)
+                                        ..fetchAllTags(),
+                                ),
+                                BlocProvider<SaveTagCubit>(
+                                  create: (context) =>
+                                      ProviderScope.containerOf(context,
+                                              listen: false)
+                                          .read(saveTagCubitProvider),
+                                ),
+                              ],
+                              child: Builder(
+                                builder: (context) => TagsSettingEditView(
+                                  onTagSaved: (p0) =>
+                                      context.read<SaveTagCubit>()..saveTag(tagDetailEntity: p0!),
+                                ),
+                              ),
                             );
                           },
                         )
