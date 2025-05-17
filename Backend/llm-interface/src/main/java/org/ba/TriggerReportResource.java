@@ -198,13 +198,13 @@ public class TriggerReportResource {
             requestContext.activate();
             try {
                 CompletableFuture<Set<Observation>> observationsFuture = 
-                    CompletableFuture.supplyAsync(() -> observationService.getObservationByEventAndLeanrner(1L, 1L));
+                    CompletableFuture.supplyAsync(() -> observationService.getObservationByEventAndLeanrner(eventId, learnerId));
 
                 CompletableFuture<Event> eventFuture = 
-                    CompletableFuture.supplyAsync(() -> eventService.getEventById(1L));
+                    CompletableFuture.supplyAsync(() -> eventService.getEventById(eventId));
 
                 CompletableFuture<Learner> learnerFuture = 
-                    CompletableFuture.supplyAsync(() -> learnerService.getLearnerById(1L));
+                    CompletableFuture.supplyAsync(() -> learnerService.getLearnerById(learnerId));
             
                 CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(observationsFuture, eventFuture, learnerFuture);
                 combinedFuture.join();
