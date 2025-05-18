@@ -69,7 +69,7 @@ class _NewObservationPopupViewState extends State<NewObservationPopupView> {
               delegate: SliverChildListDelegate([
                 Container(
                   height: MediaQuery.of(context).size.height *
-                      0.4, // Dynamische Höhe
+                      0.5, // Dynamische Höhe
                   padding: const EdgeInsets.all(15.0),
                   child: NewObservationFrom(
                     callback: (value) => setState(() {

@@ -1,0 +1,2 @@
+/Users/lukas.linde/Documents/HTWG/Bachelor/Project/Frontend/student_initializer/android/app/.cxx/Debug/6p4b3m3t/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/lukas.linde/Documents/HTWG/Bachelor/Project/Frontend/student_initializer/android/app/.cxx/Debug/6p4b3m3t/armeabi-v7a/CMakeFiles/rebuild_cache.dir

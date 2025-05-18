@@ -84,10 +84,6 @@ class _NewObservationFormState extends State<NewObservationFrom> {
             onChanged: _handleOnChange,
             onTapOutside: (value) =>
                 {_focusNode.unfocus(), widget.callback(_controller.text)},
-            suffix: CupertinoButton(
-              child: const Icon(CupertinoIcons.clear),
-              onPressed: () => _controller.clear(),
-            ),
           ),
         ],
       ),
