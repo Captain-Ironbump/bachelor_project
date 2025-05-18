@@ -34,10 +34,11 @@ public interface ReportAgent {
 
         The student name is: {studentName}
         The course name is: {courseName}
+        The reportLength is: {reportLenght}
 
         Objective: Generate a markdown-formatted student feedback report with the following format:
         - Student name and course at the top
-        - Summary paragraph
+        - Summary paragraph, its length is defined by the reportLenght parameter
         - Only show competences, which are semantically from the same course as the provided course name.
         - For each competence:
             - List ALL of its indicators
@@ -49,7 +50,8 @@ public interface ReportAgent {
         - DONT include any rating if there is no observation for the indicator or it the observation is not clearly supporting the indicator.
         - ONLY return the markdown form, no other text or explanation like 'Here is the markdown form' or similar. This should help later for deserialization.
         - you have to include ALL the numbered Indicator in the Markdown form.
+        - make the summary in this length: {reportLenght}
         """)
-    @Tool(name = "report", value = "Creates a markdown form for the student feedback report based on studenName, courseName and the response of another agent.")
-    String report(String studentName, String courseName, String agentRespone);
+    @Tool(name = "report", value = "Creates a markdown form for the student feedback report based on reportLength, studenName, courseName and the response of another agent.")
+    String report(String reportLenght ,String studentName, String courseName, String agentRespone);
 }

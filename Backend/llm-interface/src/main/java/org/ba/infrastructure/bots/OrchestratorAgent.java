@@ -24,20 +24,22 @@ public interface OrchestratorAgent {
     @UserMessage("""
         The student name is: {studentName}
         The course name is: {courseName}
-        
+        The reportLength is: {reportLength}
+
         Here are the observations for the student:
         {observations}
 
         Objective: Perform a sercies of tasks to create a markdown form for the student feedback report.
         Task 1: Map the observastions to the competences of the given courseName using the method: 'mapCompetences' and the missing values of courseName and the list of observations.
-        Task 2: Create a markdown form for the student feedback report using the result of Task 1 using the method: 'report' and the missing values of studentName, courseName and the response of Task 1.
+        Task 2: Create a markdown form for the student feedback report using the result of Task 1 using the method: 'report' and the missing values of reportLength, studentName, courseName and the response of Task 1.
         Task 3: Add a timestamp at the end of the markdown form using the method: 'timestamp-now' from the TimestampCalculator tool.
 
         IMOPRTANT:
         - ONLY return the markdown form, no other text or explanation like 'Here is the markdown form' or similar. This should help later for deserialization.
         - Include ALL the numbered Indicator in the Markdown form.
         - USE my provided tools to do the tasks.
+        - make the summary in this length: {reportLength}
         """)
     @ToolBox({ObsMapperAgent.class, ReportAgent.class, TimestampCalculator.class})
-    String orchestrate(String studentName, String courseName, List<String> observations);
+    String orchestrate(String studentName, String courseName, List<String> observations, String reportLength);
 }

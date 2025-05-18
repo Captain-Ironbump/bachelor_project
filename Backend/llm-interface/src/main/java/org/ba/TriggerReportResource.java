@@ -30,6 +30,7 @@ import org.ba.service.restclient.EventService;
 import org.ba.service.restclient.LearnerService;
 import org.ba.service.restclient.ObservationService;
 import org.ba.service.restclient.ReportService;
+import org.ba.service.GenerateReportService;
 import org.ba.utils.ModelResponseTrimmer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -101,6 +102,9 @@ public class TriggerReportResource {
     ReportService reportService;
     @Inject
     OrchestratorAgent orchestratorAgent;
+
+    @Inject
+    GenerateReportService generateReportService;
 
 
     @GET
@@ -193,47 +197,14 @@ public class TriggerReportResource {
     @Path("/new/event/{eventId}/learner/{learnerId}")
     //@Produces(MediaType.APPLICATION_JSON)
     public Response triggerReport(@PathParam("eventId") Long eventId, @PathParam("learnerId") Long learnerId, @QueryParam("length") String responseLength) {
-        CompletableFuture.runAsync(() -> {
-            ManagedContext requestContext = Arc.container().requestContext();
-            requestContext.activate();
-            try {
-                CompletableFuture<Set<Observation>> observationsFuture = 
-                    CompletableFuture.supplyAsync(() -> observationService.getObservationByEventAndLeanrner(eventId, learnerId));
-
-                CompletableFuture<Event> eventFuture = 
-                    CompletableFuture.supplyAsync(() -> eventService.getEventById(eventId));
-
-                CompletableFuture<Learner> learnerFuture = 
-                    CompletableFuture.supplyAsync(() -> learnerService.getLearnerById(learnerId));
-            
-                CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(observationsFuture, eventFuture, learnerFuture);
-                combinedFuture.join();
-
-                //Log.info(observationsFuture.get());
-
-                List<String> observations = observationsFuture.get()
-                    .stream()
-                    .map(obs -> new String(obs.getRawObservation(), StandardCharsets.UTF_8))
-                    .collect(Collectors.toList());
-                Event event = eventFuture.get();
-                Learner learner = learnerFuture.get();
-                String res = orchestratorAgent.orchestrate(
-                    String.format("%1$s %2$s", learner.getFirstName(), learner.getLastName()), 
-                    event.getName(), 
-                    observations
-                );
-                Log.info("Orchestration result: " + res);
-                res = ModelResponseTrimmer.trimThinking(res);
-                reportService.saveResponse(Report.builder()
-                        .reportData(res.getBytes())
-                        .eventId(event.getEventId())
-                        .learnerId(learner.getLearnerId())
-                        .build()
-                );
-            } catch (Exception e) {
-                Log.error("Error during orchestration: " + e.getMessage(), e);
-            }
-        });
-        return Response.accepted("Processing report generation. This can take a while.").build();
+        try {
+            String reponse = generateReportService.generateReport(learnerId, eventId, responseLength);
+            return Response.accepted(reponse).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("Error generating report: " + e.getMessage())
+                           .build();
+        }
     }
 }

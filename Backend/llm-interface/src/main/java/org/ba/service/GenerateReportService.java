@@ -10,14 +10,18 @@ import org.ba.infrastructure.bots.OrchestratorAgent;
 import org.ba.infrastructure.restclient.dto.Event;
 import org.ba.infrastructure.restclient.dto.Learner;
 import org.ba.infrastructure.restclient.dto.Observation;
+import org.ba.infrastructure.restclient.dto.Report;
 import org.ba.service.restclient.EventService;
 import org.ba.service.restclient.LearnerService;
 import org.ba.service.restclient.ObservationService;
+import org.ba.service.restclient.ReportService;
 import org.ba.utils.ModelResponseTrimmer;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import io.quarkus.arc.Arc;
+import io.quarkus.arc.ManagedContext;
 
 @ApplicationScoped
 @Slf4j
@@ -34,40 +38,53 @@ public class GenerateReportService {
     @Inject
     ObservationService observationService;
 
-    //rest client service for posting the report
-    // validator for the report
+    @Inject
+    ReportService reportService;
 
-    public void generateReport(Long learnerId, Long eventId) {
-        try {
-            CompletableFuture<Set<Observation>> observationsFuture = 
-                CompletableFuture.supplyAsync(() -> observationService.getObservationByEventAndLeanrner(1L, 1L));
+    public String generateReport(Long learnerId, Long eventId, String reportLength) {
+        CompletableFuture.runAsync(() -> {
+            ManagedContext requestContext = Arc.container().requestContext();
+            requestContext.activate();
 
-            CompletableFuture<Event> eventFuture = 
-                CompletableFuture.supplyAsync(() -> eventService.getEventById(1L));
+            try {
+                CompletableFuture<Set<Observation>> observationsFuture = 
+                    CompletableFuture.supplyAsync(() -> observationService.getObservationByEventAndLeanrner(eventId, learnerId));
 
-            CompletableFuture<Learner> learnerFuture = 
-                CompletableFuture.supplyAsync(() -> learnerService.getLearnerById(1L));
-        
-            CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(observationsFuture, eventFuture, learnerFuture);
-            combinedFuture.join();
+                CompletableFuture<Event> eventFuture = 
+                    CompletableFuture.supplyAsync(() -> eventService.getEventById(eventId));
 
-            log.info(observationsFuture.get().toString());
-
-            List<String> observations = observationsFuture.get()
-                .stream()
-                .map(obs -> new String(obs.getRawObservation(), StandardCharsets.UTF_8))
-                .collect(Collectors.toList());
-            Event event = eventFuture.get();
-            Learner learner = learnerFuture.get();
-            String report = orchestratorAgent.orchestrate(
-                String.format("%1$s %2$s", learner.getFirstName(), learner.getLastName()), 
-                event.getName(), 
-                observations
-            );
-            report = ModelResponseTrimmer.trimThinking(report);
+                CompletableFuture<Learner> learnerFuture = 
+                    CompletableFuture.supplyAsync(() -> learnerService.getLearnerById(learnerId));
             
-        } catch (Exception e) {
-            throw new RuntimeException("Error generating report: " + e.getMessage(), e);
-        }
+                CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(observationsFuture, eventFuture, learnerFuture);
+                combinedFuture.join();
+
+                log.info(observationsFuture.get().toString());
+
+                List<String> observations = observationsFuture.get()
+                    .stream()
+                    .map(obs -> new String(obs.getRawObservation(), StandardCharsets.UTF_8))
+                    .collect(Collectors.toList());
+                Event event = eventFuture.get();
+                Learner learner = learnerFuture.get();
+                String report = orchestratorAgent.orchestrate(
+                    String.format("%1$s %2$s", learner.getFirstName(), learner.getLastName()), 
+                    event.getName(), 
+                    observations,
+                    reportLength
+                );
+                report = ModelResponseTrimmer.trimThinking(report);
+                log.info("Orchestration result: " + report);
+                reportService.saveResponse(Report.builder()
+                        .reportData(report.getBytes())
+                        .eventId(event.getEventId())
+                        .learnerId(learner.getLearnerId())
+                        .build()
+                );
+            } catch (Exception e) {
+                throw new RuntimeException("Error generating report: " + e.getMessage(), e);
+            }
+        });
+        return "Processing report generation. This can take a while.";
     }
 }

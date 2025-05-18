@@ -174,16 +174,11 @@ public class GreetingResource {
                 String res = orchestratorAgent.orchestrate(
                     String.format("%1$s %2$s", learner.getFirstName(), learner.getLastName()), 
                     event.getName(), 
-                    observations
+                    observations,
+                    "short"
                 );
                 Log.info("Orchestration result: " + res);
                 res = ModelResponseTrimmer.trimThinking(res);
-                reportService.saveResponse(Report.builder()
-                        .reportData(res.getBytes())
-                        .eventId(event.getEventId())
-                        .learnerId(learner.getLearnerId())
-                        .build()
-                );
             } catch (Exception e) {
                 Log.error("Error during orchestration: " + e.getMessage(), e);
             }
