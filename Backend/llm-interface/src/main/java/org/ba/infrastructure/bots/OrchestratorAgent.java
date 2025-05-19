@@ -38,6 +38,7 @@ public interface OrchestratorAgent {
         - ONLY return the markdown form, no other text or explanation like 'Here is the markdown form' or similar. This should help later for deserialization.
         - Include ALL the numbered Indicator in the Markdown form.
         - USE my provided tools to do the tasks.
+        - You have to use the method 'timestamp-now' (which is a provided tool) for task 3.
         - make the summary in this length: {reportLength}
         """)
     @ToolBox({ObsMapperAgent.class, ReportAgent.class, TimestampCalculator.class})
