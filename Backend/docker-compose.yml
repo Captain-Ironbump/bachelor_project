@@ -62,12 +62,12 @@ services:
     ports:
       - "8082:8082"
     environment:
-      - HOST_IP_ADDRESS=host.docker.internal
+      - HOST_IP_ADDRESS=${HOST_IP_ADDRESS:-host.docker.internal}
       - QUARKUS_PROFILE=docker
-      - OLLAMA_MODEL_ID=qwen3:14n
-      - OPENAI_API_CHATBOT_KEY=
-      - OPENAI_API_CHATBOT_BASE_URL=
-      - USE_OPENAI=false
+      - OLLAMA_MODEL_ID=${OLLAMA_MODEL_ID:qwen3:14n}
+      - OPENAI_API_CHATBOT_KEY=${OPENAI_API_CHATBOT_KEY}
+      - OPENAI_API_CHATBOT_BASE_URL=${OPENAI_API_CHATBOT_BASE_URL}
+      - USE_OPENAI=${USE_OPENAI:-false}
     depends_on:
       - embedding_store
       - learn-service

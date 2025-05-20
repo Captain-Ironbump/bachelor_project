@@ -39,3 +39,7 @@ Zusätzlich können folgende Flags gesetzt werden:
 ```
 Flag **-f** erlaubt es dem Benutzer den build step der Quarkus Applikationen zu überspringen. Dies ist hilfreich, wenn der **target** Ordner der Applikationen schon vorhanden ist.  
 Die flag **-s [settings.xml]** erlaubt es während dem build Step eine andere settings.xml für Maven zu benutzen.
+
+### Umgebungvariablen
+Das **docker-compose.yml** nimmt für gewisse Werte einen Standartwert an. Diese können mithilfe einer .env Datei, oder dem hinzufügen von Umgebungsvariablen im Terminal überschrieben werden.  
+Die [.env.example](./.env.example) Datei im Hauptordner zeigt ein kurzes Beipsiel der möglichen Umgebungsvariablen. 
