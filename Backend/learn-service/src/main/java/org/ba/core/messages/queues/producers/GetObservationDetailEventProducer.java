@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import org.ba.core.messages.queues.consumers.GetObservationDetailCommandConsumer;
+//import org.ba.core.messages.queues.consumers.GetObservationDetailCommandConsumer;
 import org.ba.core.messages.queues.shared.events.EventType;
 import org.ba.core.messages.queues.shared.events.GetObservationDetailEvent;
 import org.ba.entities.dto.ObservationDTO;
@@ -26,7 +26,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-
+/* 
 @ApplicationScoped
 public class GetObservationDetailEventProducer {
     private static final Logger log = LoggerFactory.getLogger(GetObservationDetailCommandConsumer.class);
@@ -83,3 +83,4 @@ public class GetObservationDetailEventProducer {
         }
     }
 }
+*/

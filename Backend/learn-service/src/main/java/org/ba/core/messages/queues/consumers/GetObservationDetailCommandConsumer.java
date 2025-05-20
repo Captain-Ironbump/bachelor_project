@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.ba.core.ObservationService;
 import org.ba.core.TagService;
-import org.ba.core.messages.queues.producers.GetObservationDetailEventProducer;
+//import org.ba.core.messages.queues.producers.GetObservationDetailEventProducer;
 import org.ba.core.messages.queues.shared.commands.CommandType;
 import org.ba.entities.dto.ObservationDTO;
 import org.ba.entities.dto.TagDTO;
@@ -31,7 +31,7 @@ import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-
+/* 
 @ApplicationScoped
 public class GetObservationDetailCommandConsumer {
     private static final Logger log = LoggerFactory.getLogger(GetObservationDetailCommandConsumer.class);
@@ -105,3 +105,4 @@ public class GetObservationDetailCommandConsumer {
         }
     }
 }
+*/
