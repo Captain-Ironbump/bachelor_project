@@ -40,6 +40,10 @@ Es sollten sichergestellt sein, das folgende Ports vor dem Deploy Step frei sein
 Wenn einer dieser Ports bereits belegt ist, kann es beim Starten der Container zu Fehlern kommen.
 
 Zudem sollte (falls die Emgebungsvariable `USE_OPENAI` auf `false` gestezt wurde) eine Lokale Ollama Instanz auf Port `11434` laufen.  
+Damit eine Ollama Instanz mit dem Docker Kontainern Kommunizieren kann, sollte beim starten der Intsanz folgender Befehl eingegeben werden:
+```bash
+OLLAMA_HOST=0.0.0.0 ollama server
+```
 Informationen zur Intallation von Ollama und dessen Modellen finden Sie [hier](https://ollama.com/)
 
 Im Hauptordner des Repository befindet sich das **build-and-deploy.sh** Shell-Skript.
