@@ -351,7 +351,7 @@ class _ObservationDetailView extends StatelessWidget {
                                   create: (context) => container.read(
                                       getMarkdownFormsByLearnerAndEventCubitProvider)
                                     ..getMarkdownsByLearnerId(
-                                        learnerId: 1,
+                                        learnerId: learnerId!,
                                         eventId: eventId,
                                         sortBy: 'createdDateTime',
                                         sortOrder: 'DESC',

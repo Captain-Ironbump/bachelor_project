@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ba_database
+    environment:
+      MYSQL_USER: 'mysql'
+      MYSQL_DATABASE: 'ba-database'
+      MYSQL_ROOT_PASSWORD: 'admin'
+      MYSQL_PASSWORD: 'admin'
+    ports:
+      - 3306:3306
+    volumes:
+      - ba_database_data:/var/lib/ba_database_data
+    networks:
+      - ba_backend
+
+  embedding_store:
+    image: pgvector/pgvector:pg17
+    container_name: embedding_store
+    ports:
+      - "11122:5432"
+    environment:
+      POSTGRES_DB: embeddings
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    networks:
+      - ba_backend
+
+  learn-service:
+    build:
+      context: ./learn-service
+      dockerfile: src/main/docker/Dockerfile.jvm
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 60s
+    container_name: learn-service
+    ports:
+      - "8081:8081"
+    environment:
+      - QUARKUS_PROFILE=docker
+    depends_on:
+      - mysql
+    networks:
+      - ba_backend
+
+  llm-interface:
+    build:
+      context: ./llm-interface
+      dockerfile: src/main/docker/Dockerfile.jvm
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 60s
+    container_name: llm-interface
+    ports:
+      - "8082:8082"
+    environment:
+      - HOST_IP_ADDRESS=host.docker.internal
+      - QUARKUS_PROFILE=docker
+      - OLLAMA_MODEL_ID=qwen3:14n
+      - OPENAI_API_CHATBOT_KEY=
+      - OPENAI_API_CHATBOT_BASE_URL=
+      - USE_OPENAI=false
+    depends_on:
+      - embedding_store
+      - learn-service
+    networks:
+      - ba_backend
+
+volumes:
+  ba_database_data:
+networks:
+  ba_backend:
+    driver: bridge
