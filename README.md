@@ -27,9 +27,20 @@ Zunächts, wenn nicht schon getan, soll das Repository über git clone runtergel
 git clone https://github.com/Captain-Ironbump/bachelor_project.git
 cd bachelor_project
 ```
-### Bauen und Deployen des **Backends** (Docker wird genötigt!)
-Im Hauptordner des Repository befindet sich die **build-and-deploy.sh** Shell-Skript Datei.
-Diese kann wie folgt eingesetzt werden:
+### Bauen und Deployen des Backends (Docker wird benötigt!)
+#### ⚠️ Hinweis!
+Es sollten sichergestellt sein, das folgende Ports vor dem Deploy Step frei sein:
+
+- `8081` – für den `learn-service`
+- `8082` – für das `llm-interface`
+- `3306` – für die PostgreSQL Datenbank
+- `11122` – für das Embedding Store
+- `11434` – für die Lokale Ollama Instanz
+
+Wenn einer dieser Ports bereits belegt ist, kann es beim Starten der Container zu Fehlern kommen.
+
+Im Hauptordner des Repository befindet sich das **build-and-deploy.sh** Shell-Skript.
+Dies kann wie folgt eingesetzt werden:
 ```bash
 ./build-and-deploy.sh
 ```
@@ -37,9 +48,10 @@ Zusätzlich können folgende Flags gesetzt werden:
 ```bash
 ./build-and-deploy.sh -f -s ~/.m2/some-settings.xml
 ```
-Flag **-f** erlaubt es dem Benutzer den build step der Quarkus Applikationen zu überspringen. Dies ist hilfreich, wenn der **target** Ordner der Applikationen schon vorhanden ist.  
+Flag **-f** erlaubt es dem Benutzer, den build step der Quarkus Applikationen zu überspringen. Dies ist hilfreich, wenn der **target** Ordner der Applikationen schon vorhanden ist.  
 Die flag **-s [settings.xml]** erlaubt es während dem build Step eine andere settings.xml für Maven zu benutzen.
 
-### Umgebungvariablen
+#### Umgebungvariablen (Backend)
 Das **docker-compose.yml** nimmt für gewisse Werte einen Standartwert an. Diese können mithilfe einer .env Datei, oder dem hinzufügen von Umgebungsvariablen im Terminal überschrieben werden.  
 Die [.env.example](./.env.example) Datei im Hauptordner zeigt ein kurzes Beipsiel der möglichen Umgebungsvariablen. 
+
