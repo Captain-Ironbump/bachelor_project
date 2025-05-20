@@ -55,3 +55,8 @@ Die flag **-s [settings.xml]** erlaubt es während dem build Step eine andere se
 Das **docker-compose.yml** nimmt für gewisse Werte einen Standartwert an. Diese können mithilfe einer .env Datei, oder dem hinzufügen von Umgebungsvariablen im Terminal überschrieben werden.  
 Die [.env.example](./.env.example) Datei im Hauptordner zeigt ein kurzes Beipsiel der möglichen Umgebungsvariablen. 
 
+### Bauen und Deployen des Frontends (Lokal über Android Studio/VSCode/command Line)
+#### ⚠️ Hinweis!
+Für das Bauen und Ausführen des Frontends sollte die Flutter sdk auf dem Rechner bereits installiert sein.  
+Mehr Information zum installieren von Flutter finden sie [hier](https://docs.flutter.dev/get-started/install?categories=mvo,ar-vr,rmdy,web,mobile&categories=mvo,creative,ar-vr,rmdy,mobile&categories=mvo,creative,ar-vr,rmdy,web,mobile)  
+Zudem ist es empfehlenswert, die Android SDK zu installieren (falls die App auf Android emuliert werden soll). Hierzu finden Sie ebenfalls genauere Informationen in der [Flutter Bedienungsanleitung](https://docs.flutter.dev/platform-integration/android/setup)
