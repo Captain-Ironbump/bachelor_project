@@ -60,3 +60,17 @@ Die [.env.example](./.env.example) Datei im Hauptordner zeigt ein kurzes Beipsie
 Für das Bauen und Ausführen des Frontends sollte die Flutter sdk auf dem Rechner bereits installiert sein.  
 Mehr Information zum installieren von Flutter finden sie [hier](https://docs.flutter.dev/get-started/install?categories=mvo,ar-vr,rmdy,web,mobile&categories=mvo,creative,ar-vr,rmdy,mobile&categories=mvo,creative,ar-vr,rmdy,web,mobile)  
 Zudem ist es empfehlenswert, die Android SDK zu installieren (falls die App auf Android emuliert werden soll). Hierzu finden Sie ebenfalls genauere Informationen in der [Flutter Bedienungsanleitung](https://docs.flutter.dev/platform-integration/android/setup)
+
+#### Bauen und Ausfuhren
+Damit das Frontend ausgeführt werden kann, muss zunächst ein Android-Simulator oder ein IOS-Simulator gestartet werden. Sollte jedoch als Fonternd ein Chrome-Browser benutzt werden, muss hierühr kein Simulator gestratet werden.  
+
+Im Hauptorder des Repositories befindet sich ein Ordner names `Frontend`.
+
+```bash
+cd ./Frontend/student_initializer
+```
+Dies ist der Hauptordner der Flutter Appliaktion. Ab hier kann nun die Flutter Applikation über die `RUN` Schaltfläche von Android Studio oder VSCode die Flutter Applikation gestartet werden.  
+Es besteht ebenfalls die Möglichkeit, über den folgenden Kommand die Flutter Applikation mit hilfe des Terminals zu starten:
+```bash
+flutter run
+```
