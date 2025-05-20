@@ -1,4 +1,4 @@
-package org.ba.infrastructure.bots;
+package org.ba.infrastructure.bots.ollama;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import dev.langchain4j.service.UserMessage;
 import io.quarkiverse.langchain4j.RegisterAiService;
 
 @RegisterAiService(modelName = "llama", retrievalAugmentor = Retriever.class)
-public interface ObsMapperAgent {
+public interface OllamaObsMapperAgent {
     @UserMessage("""
         /no_think
         You have a list of observations and a course name. Your task is to map the observations to the competences of the given course.

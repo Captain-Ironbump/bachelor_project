@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import org.ba.infrastructure.bots.OrchestratorAgent;
 import org.ba.infrastructure.restclient.dto.Event;
 import org.ba.infrastructure.restclient.dto.Learner;
 import org.ba.infrastructure.restclient.dto.Observation;
@@ -100,8 +99,6 @@ public class TriggerReportResource {
 
     @Inject
     ReportService reportService;
-    @Inject
-    OrchestratorAgent orchestratorAgent;
 
     @Inject
     GenerateReportService generateReportService;

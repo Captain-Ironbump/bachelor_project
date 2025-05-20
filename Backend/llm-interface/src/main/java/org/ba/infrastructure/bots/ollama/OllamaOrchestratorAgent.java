@@ -1,4 +1,4 @@
-package org.ba.infrastructure.bots;
+package org.ba.infrastructure.bots.ollama;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import io.quarkiverse.langchain4j.ToolBox;
 import jakarta.enterprise.context.control.ActivateRequestContext;
 
 @RegisterAiService(modelName = "llama")
-public interface OrchestratorAgent {
+public interface OllamaOrchestratorAgent {
 
     @SystemMessage("""
         /no_think
@@ -39,6 +39,6 @@ public interface OrchestratorAgent {
         - Include ALL the numbered Indicator in the Markdown form.
         - make the summary in this length: {reportLength}
         """)
-    @ToolBox({ObsMapperAgent.class, ReportAgent.class, TimestampCalculator.class})
+    @ToolBox({OllamaObsMapperAgent.class, OllamaReportAgent.class, TimestampCalculator.class})
     String orchestrate(String studentName, String courseName, List<String> observations, String reportLength);
 }

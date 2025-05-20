@@ -1,4 +1,4 @@
-package org.ba.infrastructure.bots;
+package org.ba.infrastructure.bots.openai;
 
 import org.ba.service.tools.TimestampCalculator;
 
@@ -7,10 +7,9 @@ import dev.langchain4j.service.UserMessage;
 import io.quarkiverse.langchain4j.RegisterAiService;
 import io.quarkiverse.langchain4j.ToolBox;
 
-@RegisterAiService(modelName = "llama")
-public interface ReportAgent {
+@RegisterAiService(modelName = "oai")
+public interface OpenAIReportAgent {
     @UserMessage("""
-        /no_think
         You are a teacher who wants to create a markdown form for a student feedback report.
 
         Using the provided message of another agent, create a markdown form for the student feedback report with the following template:
@@ -52,6 +51,6 @@ public interface ReportAgent {
         - you have to include ALL the numbered Indicator in the Markdown form.
         - make the summary in this length: {reportLenght}
         """)
-    @Tool(name = "report", value = "Creates a markdown form for the student feedback report based on reportLength, studenName, courseName and the response of another agent.")
-    String report(String reportLenght ,String studentName, String courseName, String agentRespone);
+    @Tool(name = "openAIreport", value = "Creates a markdown form for the student feedback report based on reportLength, studenName, courseName and the response of another agent.")
+    String openAIreport(String reportLenght ,String studentName, String courseName, String agentRespone);
 }

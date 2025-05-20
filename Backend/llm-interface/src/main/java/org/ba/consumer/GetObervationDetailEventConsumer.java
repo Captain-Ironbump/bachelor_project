@@ -32,7 +32,7 @@ import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-
+/* 
 @ApplicationScoped
 public class GetObervationDetailEventConsumer {
     private static final Logger log = LoggerFactory.getLogger(GetObervationDetailEventConsumer.class);
@@ -119,3 +119,4 @@ public class GetObervationDetailEventConsumer {
     } 
 }
 
+*/

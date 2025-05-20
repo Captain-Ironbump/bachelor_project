@@ -1,5 +1,8 @@
 package org.ba.configuration;
 
+import org.ba.infrastructure.bots.openai.OpenAIOrchestratorAgent;
+import org.eclipse.microprofile.config.inject.ConfigProperties;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -8,6 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Named;
+
 
 @ApplicationScoped
 public class AppConfiguration {
@@ -21,6 +25,4 @@ public class AppConfiguration {
         objectMapper.registerModule(new JavaTimeModule());
         return objectMapper;
     }
-
-    
 }

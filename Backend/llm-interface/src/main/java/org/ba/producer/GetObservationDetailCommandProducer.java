@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
-import org.ba.consumer.GetObervationDetailEventConsumer;
+//import org.ba.consumer.GetObervationDetailEventConsumer;
 import org.ba.models.shared.commands.CommandType;
 import org.ba.models.shared.commands.GetObservationDetailCommand;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-
+/* 
 @ApplicationScoped
 public class GetObservationDetailCommandProducer {
     private static final Logger log = LoggerFactory.getLogger(GetObservationDetailCommandProducer.class);
@@ -81,3 +81,4 @@ public class GetObservationDetailCommandProducer {
     }
 }
 
+*/

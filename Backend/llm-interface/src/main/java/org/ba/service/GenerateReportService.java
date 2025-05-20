@@ -6,7 +6,9 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.ba.infrastructure.bots.openai.OpenAIOrchestratorAgent;
 import org.ba.infrastructure.bots.OrchestratorAgent;
+import org.ba.infrastructure.bots.ollama.OllamaOrchestratorAgent;
 import org.ba.infrastructure.restclient.dto.Event;
 import org.ba.infrastructure.restclient.dto.Learner;
 import org.ba.infrastructure.restclient.dto.Observation;
@@ -16,6 +18,7 @@ import org.ba.service.restclient.LearnerService;
 import org.ba.service.restclient.ObservationService;
 import org.ba.service.restclient.ReportService;
 import org.ba.utils.ModelResponseTrimmer;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -26,8 +29,21 @@ import io.quarkus.arc.ManagedContext;
 @ApplicationScoped
 @Slf4j
 public class GenerateReportService {
-    @Inject
-    OrchestratorAgent orchestratorAgent;
+
+    private final OllamaOrchestratorAgent ollamaOrchestratorAgent;
+    private final OpenAIOrchestratorAgent openAIOrchestratorAgent;
+    private final boolean useOpenAI;
+    
+    @Inject 
+    public GenerateReportService(
+        OllamaOrchestratorAgent ollamaOrchestratorAgent,
+        OpenAIOrchestratorAgent openAIOrchestratorAgent,
+        @ConfigProperty(name = "use.openai", defaultValue = "false") boolean useOpenAI
+    ) {
+        this.ollamaOrchestratorAgent = ollamaOrchestratorAgent;
+        this.openAIOrchestratorAgent = openAIOrchestratorAgent;
+        this.useOpenAI = useOpenAI;
+    }
 
     @Inject
     LearnerService learnerService;
@@ -67,12 +83,23 @@ public class GenerateReportService {
                     .collect(Collectors.toList());
                 Event event = eventFuture.get();
                 Learner learner = learnerFuture.get();
-                String report = orchestratorAgent.orchestrate(
-                    String.format("%1$s %2$s", learner.getFirstName(), learner.getLastName()), 
-                    event.getName(), 
-                    observations,
-                    reportLength
-                );
+
+                String report = "";
+                if (useOpenAI) {
+                    report = openAIOrchestratorAgent.orchestrate(
+                        String.format("%1$s %2$s", learner.getFirstName(), learner.getLastName()), 
+                        event.getName(), 
+                        observations,
+                        reportLength
+                    );
+                } else {
+                    report = ollamaOrchestratorAgent.orchestrate(
+                        String.format("%1$s %2$s", learner.getFirstName(), learner.getLastName()), 
+                        event.getName(), 
+                        observations,
+                        reportLength
+                    );
+                }
                 report = ModelResponseTrimmer.trimThinking(report);
                 log.info("Orchestration result: " + report);
                 reportService.saveResponse(Report.builder()
