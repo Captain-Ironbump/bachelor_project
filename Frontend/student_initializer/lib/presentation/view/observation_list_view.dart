@@ -16,6 +16,7 @@ import 'package:student_initializer/presentation/cubits/learner/get_learner_by_i
 import 'package:student_initializer/presentation/cubits/markdown/generate_markdown_form/generate_markdown_form_cubit.dart';
 import 'package:student_initializer/presentation/cubits/markdown/get_markdown_by_id/get_markdown_by_id_cubit.dart';
 import 'package:student_initializer/presentation/cubits/markdown/get_markdowns_by_learner/get_markdowns_by_learner_cubit.dart';
+import 'package:student_initializer/presentation/cubits/markdown/update_markdown_quality/update_markdown_quality_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/get_observations_with_tags/get_observations_with_tags_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/save_observation/save_observation_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/get_settings_int/get_settings_int_cubit.dart';
@@ -360,7 +361,11 @@ class _ObservationDetailView extends StatelessWidget {
                                 BlocProvider<GenerateMarkdownFormCubit>(
                                   create: (context) => container
                                       .read(generateMarkdownFormCubitProvider),
-                                )
+                                ),
+                                BlocProvider<UpdateMarkdownQualityCubit>(
+                                  create: (context) => container
+                                      .read(updateMarkdownQualityCubitProvider),
+                                ),
                               ],
                               child: ReportsPopupView(
                                   learnerId: learnerId!,
@@ -376,12 +381,13 @@ class _ObservationDetailView extends StatelessWidget {
                                         .pop();
                                   },
                                   onPressedCallback: (BuildContext context) {
-                                    context.read<GenerateMarkdownFormCubit>()
+                                    context
+                                        .read<GenerateMarkdownFormCubit>()
                                         .generateMarkdownForm(
-                                      eventId: eventId,
-                                      learnerId: learnerId,
-                                      length: "short",
-                                    );
+                                          eventId: eventId,
+                                          learnerId: learnerId,
+                                          length: "short",
+                                        );
                                   }),
                             );
                         // Animation von rechts nach links (reverse)
@@ -406,18 +412,38 @@ class _ObservationDetailView extends StatelessWidget {
                       case 'report':
                         final args = settings.arguments as Map<String, dynamic>;
                         print(args);
-                        builder = (context) =>
-                            BlocProvider<GetMarkdownByIdCubit>(
-                              create: (context) => container
-                                  .read(getMarkdownByIdCubitProvider)
-                                ..getMarkdownById(reportId: args['reportId']!),
-                              child: ReportDetailPopupView(
-                                reportId: args['reportId']!,
-                                onCloseCallback: (context) async {
-                                  // Statt pushReplacement einfach pop, um zur alten ReportsPopupView zurückzukehren
-                                  Navigator.of(context).pop();
+                        builder = (context) => MultiBlocProvider(
+                              providers: [
+                                BlocProvider<GetMarkdownByIdCubit>(
+                                  create: (context) => container
+                                      .read(getMarkdownByIdCubitProvider)
+                                    ..getMarkdownById(
+                                        reportId: args['reportId']!),
+                                ),
+                                BlocProvider<UpdateMarkdownQualityCubit>(
+                                  create: (context) => container
+                                      .read(updateMarkdownQualityCubitProvider),
+                                ),
+                              ],
+                              child: Builder(
+                                builder: (context) {
+                                  return ReportDetailPopupView(
+                                    reportId: args['reportId']!,
+                                    onCloseCallback: (context) async {
+                                      // Statt pushReplacement einfach pop, um zur alten ReportsPopupView zurückzukehren
+                                      Navigator.of(context).pop();
+                                    },
+                                    onChangeRouteCallback: (context) {},
+                                    onUpdateReportCallback:
+                                        (reportId, quality) {
+                                      context
+                                          .read<UpdateMarkdownQualityCubit>()
+                                          .updateMarkdownQuality(
+                                              reportId: reportId,
+                                              quality: quality);
+                                    },
+                                  );
                                 },
-                                onChangeRouteCallback: (context) {},
                               ),
                             );
                         // Animation von rechts nach links (reverse)

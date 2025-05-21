@@ -13,6 +13,7 @@ MarkdownFormModel _$MarkdownFormModelFromJson(Map<String, dynamic> json) =>
       eventId: (json['eventId'] as num?)?.toInt(),
       reportData: json['reportData'] as String?,
       createdDateTime: json['createdDateTime'] as String?,
+      quality: json['quality'] as String?,
     );
 
 Map<String, dynamic> _$MarkdownFormModelToJson(MarkdownFormModel instance) =>
@@ -22,4 +23,5 @@ Map<String, dynamic> _$MarkdownFormModelToJson(MarkdownFormModel instance) =>
       'eventId': instance.eventId,
       'reportData': instance.reportData,
       'createdDateTime': instance.createdDateTime,
+      'quality': instance.quality,
     };

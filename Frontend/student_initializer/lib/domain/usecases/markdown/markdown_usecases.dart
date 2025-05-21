@@ -33,4 +33,10 @@ class MarkdownUsecases {
         sortOrder: sortOrder,
         timespanInDays: timespanInDays);
   }
+
+  Future<Either<NetworkException, MarkdownFormEntity>> updateMarkdownForm(
+      {required int reportId, required String quality}) async {
+    return _markdownRepository.updateMarkdownForm(
+        reportId: reportId, quality: quality);
+  }
 }

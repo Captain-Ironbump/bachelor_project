@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:student_initializer/core/components/indicators/base_indicator.dart';
+import 'package:student_initializer/presentation/_widgets/report_leading_information.dart';
 import 'package:student_initializer/presentation/cubits/learner/save_learner/save_learner_cubit.dart';
 import 'package:student_initializer/presentation/cubits/markdown/get_markdowns_by_learner/get_markdowns_by_learner_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/get_observation_by_id_with_tags/get_observation_by_id_with_tags_cubit.dart';
@@ -140,8 +141,8 @@ class ReportsPopupView extends StatelessWidget {
                                 ? "${date.day.toString().padLeft(2, '0')} ${DateFormat('MMM').format(date)} ${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}"
                                 : "-";
                             return CupertinoListTile(
-                              title: Text(
-                                "${state.markdownForms![index].reportId}",
+                              title: ReportLeadingInformation(
+                                markdownFormEntity: state.markdownForms![index],
                               ),
                               additionalInfo: Text(
                                 formattedDate,

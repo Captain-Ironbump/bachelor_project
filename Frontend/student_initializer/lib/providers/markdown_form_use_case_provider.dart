@@ -7,6 +7,7 @@ import 'package:student_initializer/domain/usecases/markdown/markdown_usecases.d
 import 'package:student_initializer/presentation/cubits/markdown/generate_markdown_form/generate_markdown_form_cubit.dart';
 import 'package:student_initializer/presentation/cubits/markdown/get_markdown_by_id/get_markdown_by_id_cubit.dart';
 import 'package:student_initializer/presentation/cubits/markdown/get_markdowns_by_learner/get_markdowns_by_learner_cubit.dart';
+import 'package:student_initializer/presentation/cubits/markdown/update_markdown_quality/update_markdown_quality_cubit.dart';
 
 final markdownUsecaseProvider = Provider<MarkdownUsecases>((ref) {
   final markdownRepository = ref.read(markdownRepositoryProvider);
@@ -36,4 +37,9 @@ final getMarkdownByIdCubitProvider =
 final getMarkdownFormsByLearnerAndEventCubitProvider =
     Provider.autoDispose<GetMarkdownsByLearnerCubit>((ref) {
   return GetMarkdownsByLearnerCubit(ref.read(markdownUsecaseProvider));
+});
+
+final updateMarkdownQualityCubitProvider =
+    Provider.autoDispose<UpdateMarkdownQualityCubit>((ref) {
+  return UpdateMarkdownQualityCubit(ref.read(markdownUsecaseProvider));
 });

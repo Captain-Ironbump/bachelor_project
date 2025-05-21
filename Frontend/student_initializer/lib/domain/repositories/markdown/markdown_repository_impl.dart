@@ -41,4 +41,15 @@ class MarkdownRepositoryImpl implements MarkdownRepository {
       return Left(NetworkException.fromHttpError(e));
     }
   }
+  
+  @override
+  Future<Either<NetworkException, MarkdownFormEntity>> updateMarkdownForm({required int reportId, required String quality}) async {
+    try {
+      final result = await _markdownRemoteDataSource.updateMarkdownForm(reportId: reportId, quality: quality);
+      return Right(result.toEntity());
+    } on Exception catch (e) {
+      return Left(NetworkException.fromHttpError(e));
+      
+    }
+  }
 }

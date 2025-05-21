@@ -14,4 +14,6 @@ abstract class MarkdownRepository {
           String? sortBy,
           String? sortOrder,
           int? timespanInDays});
+  Future<Either<NetworkException, MarkdownFormEntity>> updateMarkdownForm(
+      {required int reportId, required String quality});
 }

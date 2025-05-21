@@ -17,13 +17,54 @@ class ReportDetailPopupView extends StatelessWidget {
   final int reportId;
   final Function onCloseCallback;
   final Function onChangeRouteCallback;
+  final Function(int reportId, String quality) onUpdateReportCallback;
 
   const ReportDetailPopupView({
     super.key,
     required this.reportId,
     required this.onCloseCallback,
     required this.onChangeRouteCallback,
+    required this.onUpdateReportCallback,
   });
+
+  void _openUpdateDialog(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus &&
+              currentFocus.focusedChild != null) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          } else {
+            currentFocus.unfocus();
+          }
+        },
+        child: CupertinoActionSheet(
+          title: const Text("Update Report Quality"),
+          message: const Text("Select the new report quality:"),
+          actions: [
+            for (final quality in ['LOW', 'MEDIUM', 'HIGH'])
+              CupertinoActionSheetAction(
+                onPressed: () async {
+                  onUpdateReportCallback(reportId, quality);
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
+                child: Text(quality),
+              ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.of(context, rootNavigator: true).pop();
+            },
+            child: const Text("Cancel"),
+          ),
+        ),
+      ),
+    );
+  }
 
   void _openShareDialog(BuildContext context) async {
     // Ladeindikator anzeigen
@@ -51,7 +92,8 @@ class ReportDetailPopupView extends StatelessWidget {
     while (maxTries-- > 0) {
       final markdownState = context.read<GetMarkdownByIdCubit>().state;
       final learnerState = context.read<GetLearnerByIdCubit>().state;
-      if (markdownState is GetMarkdownByIdLoaded && learnerState is GetLearnerByIdLoaded) {
+      if (markdownState is GetMarkdownByIdLoaded &&
+          learnerState is GetLearnerByIdLoaded) {
         _markdownForm = markdownState.markdownForm;
         _learnerDetailEntity = learnerState.learner;
         break;
@@ -73,7 +115,8 @@ class ReportDetailPopupView extends StatelessWidget {
               CupertinoDialogAction(
                 isDefaultAction: true,
                 child: const Text('OK'),
-                onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+                onPressed: () =>
+                    Navigator.of(context, rootNavigator: true).pop(),
               ),
             ],
           ),
@@ -84,7 +127,8 @@ class ReportDetailPopupView extends StatelessWidget {
 
     final formattedDate = DateFormat('yyyy-MM-dd-HH-mm').format(DateTime.now());
     final params = ShareParams(files: [
-      XFile.fromData(utf8.encode(_markdownForm.report!), mimeType: 'text/markdown')
+      XFile.fromData(utf8.encode(_markdownForm.report!),
+          mimeType: 'text/markdown')
     ], fileNameOverrides: [
       'markdown_report_${_learnerDetailEntity.firstName}_${_learnerDetailEntity.lastName}_$formattedDate.md'
     ]);
@@ -110,6 +154,10 @@ class ReportDetailPopupView extends StatelessWidget {
               },
               onCloseCallback: () {
                 onCloseCallback(context);
+              },
+              onPressedUpdateCallback: () {
+                print('Update button pressed');
+                _openUpdateDialog(context);
               },
             ),
             pinned: true,
@@ -182,11 +230,13 @@ class MyNav extends SliverPersistentHeaderDelegate {
   final int reportId;
   final OnPressedCallback onPressedCallback;
   final Function onCloseCallback;
+  final Function onPressedUpdateCallback;
 
   const MyNav(
       {required this.reportId,
       required this.onPressedCallback,
-      required this.onCloseCallback});
+      required this.onCloseCallback,
+      required this.onPressedUpdateCallback});
 
   @override
   Widget build(
@@ -220,6 +270,17 @@ class MyNav extends SliverPersistentHeaderDelegate {
               ),
             ),
           ),
+          SizedBox(
+            width: 40,
+            child: CupertinoButton(
+              onPressed: () {
+                print("Update button pressed, using callback");
+                onPressedUpdateCallback();
+              },
+              child: const Icon(CupertinoIcons.at_circle_fill),
+            ),
+          ),
+          const SizedBox(width: 10),
           SizedBox(
             width: 40,
             child: CupertinoButton(

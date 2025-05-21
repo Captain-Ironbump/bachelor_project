@@ -5,4 +5,6 @@ abstract class MarkdownRemoteDataSource {
   Future<MarkdownFormModel> getMarkdownForm({required int reportId});
   Future<List<MarkdownFormModel>> getMarkdownFormsByLearnerAndEvent(
       {required int learnerId, int? eventId, String? sortBy, String? sortOrder, int? timespanInDays});
+  Future<MarkdownFormModel> updateMarkdownForm(
+      {required int reportId, required String quality});
 }

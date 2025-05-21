@@ -18,6 +18,8 @@ class MarkdownFormModel extends Equatable {
   final String? reportData;
   @JsonKey(name: "createdDateTime")
   final String? createdDateTime;
+  @JsonKey(name: "quality")
+  final String? quality;
 
   const MarkdownFormModel({
     this.reportId,
@@ -25,6 +27,7 @@ class MarkdownFormModel extends Equatable {
     this.eventId,
     this.reportData,
     this.createdDateTime,
+    this.quality,
   });
 
   factory MarkdownFormModel.fromJson(Map<String, dynamic> json) =>
@@ -39,6 +42,7 @@ class MarkdownFormModel extends Equatable {
         eventId,
         reportData,
         createdDateTime,
+        quality,
       ];
 
   MarkdownFormEntity toEntity() => MarkdownFormEntity(
@@ -47,5 +51,6 @@ class MarkdownFormModel extends Equatable {
         eventId: eventId,
         createdDateTime: createdDateTime,
         report: utf8.decode(base64.decode(reportData!)),
+        quality: quality,
       );
 }

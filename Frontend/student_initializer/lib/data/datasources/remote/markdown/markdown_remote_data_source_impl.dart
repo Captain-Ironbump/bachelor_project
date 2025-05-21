@@ -65,4 +65,22 @@ class MarkdownRemoteDataSourceImpl implements MarkdownRemoteDataSource {
       rethrow;
     }
   }
+  
+  @override
+  Future<MarkdownFormModel> updateMarkdownForm({required int reportId, required String quality}) async {
+    try {
+      final Uri uri = SimplifiedUri.uri('${PlattformUri.getUri()}/reports/$reportId', null);
+      final body = json.encode({"quality": quality});
+      final response = await http.patch(
+        uri,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: body,
+      );
+      return MarkdownFormModel.fromJson(json.decode(response.body));
+    } catch (_) {
+      rethrow;
+    }
+  }
 }

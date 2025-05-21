@@ -6,6 +6,7 @@ class MarkdownFormEntity extends Equatable {
   final int? eventId;
   final String? createdDateTime;
   final String? report;
+  final String? quality;
 
   const MarkdownFormEntity({
     this.reportId,
@@ -13,6 +14,7 @@ class MarkdownFormEntity extends Equatable {
     this.eventId,
     this.createdDateTime,
     this.report,
+    this.quality,
   });
 
   @override
@@ -22,5 +24,6 @@ class MarkdownFormEntity extends Equatable {
     eventId,
     createdDateTime,
     report,
+    quality,
   ];
 }
