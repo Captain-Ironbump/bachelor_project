@@ -48,8 +48,8 @@ class MarkdownRemoteDataSourceImpl implements MarkdownRemoteDataSource {
     try {
       var queryParams = {
         "eventId": eventId,
-        "sortBy": sortBy,
-        "sortOrder": sortOrder,
+        "sort": sortBy,
+        "order": sortOrder,
         "timespanInDays": timespanInDays
       };
       final Uri uri = SimplifiedUri.uri(

@@ -320,8 +320,10 @@ class _ObservationDetailView extends StatelessWidget {
     }
   }
 
-  void _showShareObservationDialog(
-      BuildContext context, int? learnerId, int? eventId) {
+  void _showReportsDialog(BuildContext context, int? learnerId, int? eventId) {
+    final sortOrder = context.read<SortOrderCubit>().state;
+    final sortParameter = context.read<SortParameterCubit>().state;
+
     animationController.forward();
     showCupertinoModalPopup(
       context: context,
@@ -333,7 +335,6 @@ class _ObservationDetailView extends StatelessWidget {
               create: (context) => container.read(getLearnerByIdCubitProvider)
                 ..getLearnerDetailsById(learnerId: learnerId!),
             ),
-            // Insert all settings cubits here
           ],
           child: CupertinoPopupSurface(
             isSurfacePainted: true,
@@ -354,8 +355,12 @@ class _ObservationDetailView extends StatelessWidget {
                                     ..getMarkdownsByLearnerId(
                                         learnerId: learnerId!,
                                         eventId: eventId,
-                                        sortBy: 'createdDateTime',
-                                        sortOrder: 'DESC',
+                                        sortBy: (sortParameter
+                                                as GetSettingsStringLoaded)
+                                            .value!,
+                                        sortOrder: (sortOrder
+                                                as GetSettingsStringLoaded)
+                                            .value!,
                                         timespanInDays: 0),
                                 ),
                                 BlocProvider<GenerateMarkdownFormCubit>(
@@ -547,7 +552,7 @@ class _ObservationDetailView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 2.0),
           onPressed: eventId! == -1
               ? null
-              : () => _showShareObservationDialog(context, learnerId, eventId!),
+              : () => _showReportsDialog(context, learnerId, eventId!),
           child: const Icon(CupertinoIcons.doc_text),
         ),
         CupertinoButton(
