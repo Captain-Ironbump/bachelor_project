@@ -13,6 +13,7 @@ import org.ba.entities.dto.ReportDTO;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import io.smallrye.common.constraint.NotNull;
@@ -20,6 +21,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
@@ -90,5 +92,32 @@ public class ReportResource {
     )
     public Response getReportsByLearnerAndEvent(@PathParam("learnerId") Long learnerId, @QueryParam("eventId") Long eventId, @QueryParam("sort") String sortField, @QueryParam("order") String sortOrder, @QueryParam("timespanInDays") int timespanInDays) {
         return Response.ok(service.findAllReportsByLearnerAndEvent(learnerId, eventId, sortField, sortOrder, timespanInDays)).build();
+    }
+
+    @PATCH
+    @Path("/{reportId}")
+    @APIResponse(
+        responseCode = "200",
+        description = "Update Report",
+        content = @Content(
+            mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(type = SchemaType.OBJECT, implementation = ReportDTO.class)
+        )
+    )
+    @APIResponse(
+        responseCode = "400",
+        description = "Invalid Report",
+        content = @Content(mediaType = MediaType.APPLICATION_JSON)
+    )
+    public Response updateReport(@PathParam("reportId") Long reportId, @RequestBody ReportDTO report) {
+        try {
+            log.info("Report updated with ID: {}", report.toString());
+            service.updateReport(reportId, report);
+            return Response.ok(report).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity(new ErrorResponse("Failed to update report", e.getMessage()))
+                .build();
+        }
     }
 }

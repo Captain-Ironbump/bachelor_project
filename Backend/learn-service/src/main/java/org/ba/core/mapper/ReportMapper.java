@@ -19,19 +19,23 @@ public interface ReportMapper {
 
     @Mapping(source = "learner", target = "learnerId", qualifiedByName = "mapLearnerToId")
     @Mapping(source = "event", target = "eventId", qualifiedByName = "mapEventToId")
+    @Mapping(source = "reportQuality", target = "quality")
     ReportDTO toDomain(ReportEntity entity);
 
     @InheritInverseConfiguration(name = "toDomain")
     @Mapping(source = "learnerId", target = "learner", qualifiedByName = "mapLearner")
     @Mapping(source = "eventId", target = "event", qualifiedByName = "mapEvent")
+    @Mapping(source = "quality", target = "reportQuality")
     ReportEntity toEntity(ReportDTO domain);
 
     @Mapping(source = "learnerId", target = "learner", qualifiedByName = "mapLearner")
     @Mapping(source = "eventId", target = "event", qualifiedByName = "mapEvent")
+    @Mapping(source = "quality", target = "reportQuality")
     void updateEntityFromDomain(ReportDTO domain, @MappingTarget ReportEntity entity);
 
     @Mapping(source = "learner", target = "learnerId", qualifiedByName = "mapLearnerToId")
     @Mapping(source = "event", target = "eventId", qualifiedByName = "mapEventToId")
+    @Mapping(source = "reportQuality", target = "quality")
     void updateDomainFromEntity(ReportEntity entity, @MappingTarget ReportDTO domain);
 
     @Named("mapLearner")

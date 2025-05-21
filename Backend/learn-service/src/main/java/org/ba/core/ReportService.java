@@ -38,4 +38,23 @@ public class ReportService {
         List<ReportEntity> reportEntities = reportRepository.findAllByLearnerAndEvent(learnerId, eventId, sortField, sortOrder, timespanInDays);
         return reportMapper.toDomainList(reportEntities);
     }
+
+    @Transactional
+    public void updateReport(Long reportId, ReportDTO report) {
+        if (report.getReportId() != null && !report.getReportId().equals(reportId)) {
+            report.setReportId(reportId);
+            throw new ReportPersistException("Report ID mismatch");
+        }
+        ReportEntity reportEntity = reportRepository.findById(reportId);
+        if (reportEntity == null) {
+            throw new ReportPersistException("Report not found");
+        }
+        if (report.getQuality() != null) {
+            reportEntity.setReportQuality(report.getQuality());
+        }
+        if (report.getReportData() != null) {
+            reportEntity.setReportData(report.getReportData());
+        }
+        reportMapper.updateDomainFromEntity(reportEntity, report);
+    }
 }
