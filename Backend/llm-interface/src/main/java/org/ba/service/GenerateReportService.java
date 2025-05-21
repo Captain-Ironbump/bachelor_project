@@ -7,7 +7,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.ba.infrastructure.bots.openai.OpenAIOrchestratorAgent;
-import org.ba.infrastructure.bots.OrchestratorAgent;
 import org.ba.infrastructure.bots.ollama.OllamaOrchestratorAgent;
 import org.ba.infrastructure.restclient.dto.Event;
 import org.ba.infrastructure.restclient.dto.Learner;

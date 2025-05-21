@@ -1,5 +1,23 @@
 #!/bin/bash
 
+
+# Load .env
+if [ -f .env ]; then
+  echo "🔄 Loading environment variables from .env"
+  set -o allexport
+  source .env
+  set +o allexport
+
+  echo "✅ Loaded environment variables:"
+  grep -v '^#' .env | grep '=' | while IFS='=' read -r key value; do
+    echo "$key=${!key}"
+  done
+else
+  echo "⚠️  No .env file found."
+fi
+
+
+
 SKIP_BUILD=false
 MAVEN_SETTINGS=""
 

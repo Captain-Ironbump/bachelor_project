@@ -1,6 +1,8 @@
 package org.ba.entities.db;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import lombok.Getter;
@@ -10,6 +12,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
+
+import org.ba.entities.ReportQuality;
+
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ForeignKey;
@@ -54,4 +59,12 @@ public class ReportEntity {
     @NotEmpty
     @Lob
     private byte[] reportData;
+
+    @Enumerated(EnumType.STRING)
+    @Column(
+        name = "report_quality",
+        nullable = true,
+        columnDefinition = "ENUM('HIGH', 'MEDIUM', 'LOW')"
+    )
+    private ReportQuality reportQuality;
 }

@@ -59,8 +59,10 @@ Flag **-f** erlaubt es dem Benutzer, den build step der Quarkus Applikationen zu
 Die flag **-s [settings.xml]** erlaubt es während dem build Step eine andere settings.xml für Maven zu benutzen.
 
 #### Umgebungvariablen (Backend)
-Das **docker-compose.yml** nimmt für gewisse Werte einen Standartwert an. Diese können mithilfe einer .env Datei, oder dem hinzufügen von Umgebungsvariablen im Terminal überschrieben werden.  
-Die [.env.example](./.env.example) Datei im Hauptordner zeigt ein kurzes Beipsiel der möglichen Umgebungsvariablen. 
+Das **docker-compose.yml** nimmt für einige Werte einen Standartwert an. Diese können mithilfe einer .env Datei, oder dem hinzufügen von Umgebungsvariablen im Terminal überschrieben werden.    
+Die [.env.example](./.env.example) Datei im Hauptordner zeigt ein kurzes Beipsiel der möglichen Umgebungsvariablen.  
+#### Wichtig!
+Die Variable `QUARKUS_LANGCHAIN4J_OLLAMA__LLAMA__CHAT_MODEL_MODEL_ID` muss entweder Exportiert, oder zu der `.env` Datei hinzugefügt werden, da diese im, Build Prozess genötigt wird.
 
 ### Bauen und Deployen des Frontends (Lokal über Android Studio/VSCode/command Line)
 #### ⚠️ Hinweis!
