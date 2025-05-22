@@ -70,7 +70,7 @@ class ReportLeadingInformation extends StatelessWidget {
               child: ClipPath(
                 clipper: _DiagonalLeftClipper(),
                 child: Container(
-                  width: 60,
+                  width: 75,
                   decoration: const BoxDecoration(
                     color: CupertinoColors.activeGreen,
                     borderRadius: BorderRadius.only(
