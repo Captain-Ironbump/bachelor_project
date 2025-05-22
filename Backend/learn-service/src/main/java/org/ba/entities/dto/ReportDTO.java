@@ -17,7 +17,7 @@ public class ReportDTO {
     private Long reportId;
     private Long learnerId;
     private Long eventId;
-    private byte[] reportData;
+    private String reportData;
     private String createdDateTime;
     private ReportQuality quality;
 }

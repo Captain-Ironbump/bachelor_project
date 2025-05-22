@@ -1,7 +1,6 @@
 package org.ba.entities.db;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
@@ -14,11 +13,12 @@ import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 
 import org.ba.entities.ReportQuality;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ForeignKey;
-import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.PrePersist;
@@ -55,16 +55,15 @@ public class ReportEntity {
     @JoinColumn(name = "event_id", foreignKey = @ForeignKey(name = "fk_report_event"), referencedColumnName = "event_id", nullable = false)
     private EventEntity event;
 
-    @Column(name = "report_data", columnDefinition = "BLOB")
+    @Column(name = "report_data", columnDefinition = "TEXT")
     @NotEmpty
-    @Lob
-    private byte[] reportData;
+    private String reportData;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated
     @Column(
         name = "report_quality",
-        nullable = true,
-        columnDefinition = "ENUM('HIGH', 'MEDIUM', 'LOW')"
+        nullable = true
     )
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     private ReportQuality reportQuality;
 }

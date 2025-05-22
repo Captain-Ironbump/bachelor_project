@@ -9,10 +9,19 @@ import org.ba.entities.db.ObservationEntity;
 import org.ba.utils.FieldValidator;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class ObservationRepository implements PanacheRepositoryBase<ObservationEntity, Long> {
+    public Object fetchRawObservationBytes(Long id) {
+        return getEntityManager()
+            .createNativeQuery("SELECT * FROM observation WHERE observation_id = :id")
+            .setParameter("id", id)
+            .getSingleResult(); // cast to byte[] if needed
+    }
+
+
     public List<ObservationEntity> findAllByLearnerId(Long learnerId, String sortField, String sortOrder, Long eventId, int timeSpamInDays) {
         String sortBy = "createdDateTime"; // Default field is createdDateTime
         String order = "ASC"; // Default order is ascending
@@ -107,6 +116,7 @@ public class ObservationRepository implements PanacheRepositoryBase<ObservationE
     }     
 
     public List<ObservationEntity> fetchObservationsWithTagsByLearnerAndEvent(Long learnerId, String sortField, String sortOrder, Long eventId, int timespanInDays) {
+        Log.info("In Here");
         String sortBy = "createdDateTime"; // Default field is createdDateTime
         String order = "ASC"; // Default order is ascending
 

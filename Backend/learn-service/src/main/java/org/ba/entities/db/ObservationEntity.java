@@ -54,10 +54,9 @@ public class ObservationEntity {
         }
     }
 
-    @Column(name = "raw_observation", columnDefinition = "BLOB")
+    @Column(name = "raw_observation", columnDefinition = "TEXT")
     @NotEmpty
-    @Lob
-    private byte[] rawObservation;
+    private String rawObservation;
 
     @ManyToOne
     @JoinColumn(name = "learner_id", referencedColumnName = "learner_id", nullable = false, foreignKey = @ForeignKey(name = "fk_learner_id"))

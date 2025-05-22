@@ -11,7 +11,7 @@ public class ObservationDTO {
     private Long observationId;
     private LocalDateTime createdDateTime;
     @NotEmpty
-    private byte[] rawObservation;
+    private String rawObservation;
     @NotNull
     private Long learnerId;
     @NotNull

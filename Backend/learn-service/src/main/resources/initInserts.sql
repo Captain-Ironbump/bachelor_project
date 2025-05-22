@@ -93,24 +93,31 @@ INSERT INTO learner_event (event_id, learner_id)
 INSERT INTO observation_tags (observation_id, tag)
   VALUES(
     1,
-    "java"
+    'java'
   );
 
 INSERT INTO observation_tags (observation_id, tag)
   VALUES(
     2,
-    "java"
+    'java'
   );
 
 INSERT INTO observation_tags (observation_id, tag)
   VALUES(
     1,
-    "python"
+    'python'
   );
 
 INSERT INTO observation_tags (observation_id, tag)
   VALUES(
     4,
-    "python"
+    'python'
   );
 
+INSERT INTO report (created_date, learner_id, event_id, report_data)
+  VALUES(
+    '2025-05-14 00:00:00.000000',
+    1,
+    1,
+    'Hier kommt mal was mega tolles rein, aber im Moment muss das hier langen.'
+  );
