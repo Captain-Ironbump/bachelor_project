@@ -71,7 +71,9 @@ Mehr Information zum installieren von Flutter finden sie [hier](https://docs.flu
 Zudem ist es empfehlenswert, die Android SDK zu installieren (falls die App auf Android emuliert werden soll). Hierzu finden Sie ebenfalls genauere Informationen in der [Flutter Bedienungsanleitung](https://docs.flutter.dev/platform-integration/android/setup)
 
 #### Bauen und Ausfuhren
-Damit das Frontend ausgeführt werden kann, muss zunächst ein Android-Simulator oder ein IOS-Simulator gestartet werden. Sollte jedoch als Fonternd ein Chrome-Browser benutzt werden, muss hierühr kein Simulator gestratet werden.  
+Damit das Frontend ausgeführt werden kann, muss zunächst ein Android-Simulator oder ein IOS-Simulator gestartet werden.  
+Sollte jedoch als Fonternd ein Chrome-Browser benutzt werden, muss hierühr kein Simulator gestratet werden.  
+Dabei sollte jedoch das Browser Design auf "Hell" eingestellt werden, da das App-Design nur fur diesen Modus vorgesehen ist.
 
 Im Hauptorder des Repositories befindet sich ein Ordner names `Frontend`.
 
