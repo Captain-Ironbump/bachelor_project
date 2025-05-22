@@ -13,7 +13,6 @@ class ObservationRemoteDataSourceImpl implements ObservationRemoteDataSource {
   @override
   Future<Map<String, ObservationCountDetailModel>> getCountMap(
       {int? timespanInDays, List<int>? learners, int? eventId}) async {
-    //TODO: BUG: Event filtering is not taken into account when fetching for timespan count
     try {
       final queryParams = {
         "timespanInDays": timespanInDays,
@@ -73,7 +72,7 @@ class ObservationRemoteDataSourceImpl implements ObservationRemoteDataSource {
         "observationDTO": {
           "learnerId": learnerId,
           "eventId": eventId,
-          "rawObservation": base64.encode(utf8.encode(observation)),
+          "rawObservation": observation,
         },
         "tags": selectedTags
             .map((tag) => {

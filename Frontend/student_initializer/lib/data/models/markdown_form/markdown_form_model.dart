@@ -50,7 +50,7 @@ class MarkdownFormModel extends Equatable {
         learnerId: learnerId,
         eventId: eventId,
         createdDateTime: createdDateTime,
-        report: utf8.decode(base64.decode(reportData!)),
+        report: reportData,
         quality: quality,
       );
 }

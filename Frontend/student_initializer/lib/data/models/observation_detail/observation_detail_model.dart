@@ -45,5 +45,5 @@ class ObservationDetailModel extends Equatable
       learnerId: learnerId,
       eventId: eventId,
       createdDate: createdDate,
-      observation: utf8.decode(base64.decode(rawObservation!)));
+      observation: rawObservation!);
 }
