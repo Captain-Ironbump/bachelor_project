@@ -1,16 +1,15 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8.0
+  postgres:
+    image: postgres:15
     container_name: ba_database
     environment:
-      MYSQL_USER: 'mysql'
-      MYSQL_DATABASE: 'ba-database'
-      MYSQL_ROOT_PASSWORD: 'admin'
-      MYSQL_PASSWORD: 'admin'
+      POSTGRES_USER: postgres
+      POSTGRES_DB: ba-database
+      POSTGRES_PASSWORD: admin
     ports:
-      - 3306:3306
+      - "5432:5432"
     volumes:
       - ba_database_data:/var/lib/ba_database_data
     networks:
@@ -44,7 +43,7 @@ services:
     environment:
       - QUARKUS_PROFILE=docker
     depends_on:
-      - mysql
+      - postgres
     networks:
       - ba_backend
 
