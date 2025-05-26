@@ -60,4 +60,11 @@ class ObservationUsecases {
     return _observationRepository.getObservationWithTagsById(
         observationId: observationId);
   }
+
+  Future<Either<NetworkException, void>> deleteObservationById({
+    required int observationId,
+  }) async {
+    return _observationRepository.deleteObservationById(
+        observationId: observationId);
+  }
 }

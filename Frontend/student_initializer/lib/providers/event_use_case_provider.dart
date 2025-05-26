@@ -4,8 +4,10 @@ import 'package:student_initializer/data/datasources/remote/event/event_remote_d
 import 'package:student_initializer/domain/repositories/event/event_repository.dart';
 import 'package:student_initializer/domain/repositories/event/event_repository_impl.dart';
 import 'package:student_initializer/domain/usecases/event/event_usecases.dart';
+import 'package:student_initializer/presentation/cubits/event/add_learners_to_event/add_learners_to_event_cubit.dart';
 import 'package:student_initializer/presentation/cubits/event/get_event_details_by_id/get_event_details_by_id_cubit.dart';
 import 'package:student_initializer/presentation/cubits/event/get_events/get_events_cubit.dart';
+import 'package:student_initializer/presentation/cubits/event/save_event/save_event_cubit.dart';
 
 final eventUsecasesProvider = Provider<EventUsecases>((ref) {
   final eventRepository = ref.read(eventRepositoryProvider);
@@ -29,4 +31,14 @@ final getEventsCubitProvider = Provider.autoDispose<GetEventsCubit>((ref) {
 final getEventDetailsByIdCubitProvider =
     Provider.autoDispose<GetEventDetailsByIdCubit>((ref) {
   return GetEventDetailsByIdCubit(ref.read(eventUsecasesProvider));
+});
+
+final saveEventCubitProvider =
+    Provider.autoDispose<SaveEventCubit>((ref) {
+  return SaveEventCubit(ref.read(eventUsecasesProvider));
+});
+
+final addLearnersToEventCubitProvider =
+    Provider.autoDispose<AddLearnersToEventCubit>((ref) {
+  return AddLearnersToEventCubit(ref.read(eventUsecasesProvider));
 });

@@ -38,4 +38,8 @@ abstract class ObservationRepository {
       getObservationWithTagsById({
     required int observationId,
   });
+
+  Future<Either<NetworkException, void>> deleteObservationById({
+    required int observationId,
+  });
 }

@@ -4,6 +4,7 @@ import 'package:student_initializer/data/datasources/remote/observation/observat
 import 'package:student_initializer/domain/repositories/observation/observation_repository.dart';
 import 'package:student_initializer/domain/repositories/observation/observation_repository_impl.dart';
 import 'package:student_initializer/domain/usecases/observation/observation_usecases.dart';
+import 'package:student_initializer/presentation/cubits/observation/delete_observation/delete_observation_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/get_observation_by_id/get_observation_by_id_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/get_observation_by_id_with_tags/get_observation_by_id_with_tags_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/get_observations/get_observations_cubit.dart';
@@ -61,4 +62,10 @@ final getObservationByIdWithTagsProvider =
     Provider.autoDispose<GetObservationByIdWithTagsCubit>((ref) {
   final observationUsecases = ref.read(observationUsecaseProvider);
   return GetObservationByIdWithTagsCubit(observationUsecases);
+});
+
+final deleteObservatiobCubitProvider =
+    Provider.autoDispose<DeleteObservationCubit>((ref) {
+  final observationUsecases = ref.read(observationUsecaseProvider);
+  return DeleteObservationCubit(observationUsecases);
 });

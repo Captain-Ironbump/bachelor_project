@@ -142,4 +142,19 @@ class ObservationRemoteDataSourceImpl implements ObservationRemoteDataSource {
       rethrow;
     }
   }
+  
+  @override
+  Future<void> deleteObservationById({required int observationId}) async {
+    try {
+      final Uri uri = SimplifiedUri.uri(
+          '${PlattformUri.getUri()}/observations/$observationId',
+          null);
+      final response = await http.delete(uri);
+      if (response.statusCode != 204) {
+        throw Exception('Failed to delete observation');
+      }
+    } catch (_) {
+      rethrow;
+    }
+  }
 }

@@ -30,10 +30,8 @@ class TagsSettingEditView extends StatelessWidget {
             FocusScopeNode currentFocus = FocusScope.of(context);
             if (!currentFocus.hasPrimaryFocus &&
                 currentFocus.focusedChild != null) {
-              // Nur Keyboard schließen, wenn offen
               FocusManager.instance.primaryFocus?.unfocus();
             } else {
-              // Wenn kein Keyboard offen, Popup schließen
               currentFocus.unfocus();
             }
           },
@@ -47,7 +45,7 @@ class TagsSettingEditView extends StatelessWidget {
                 return CupertinoPopupSurface(
                   isSurfacePainted: false,
                   child: CupertinoActionSheet(
-                    title: const Text("Tag hinzufügen"),
+                    title: const Text("Add Tag"),
                     message: Column(
                       children: [
                         CupertinoTextField(
@@ -94,14 +92,14 @@ class TagsSettingEditView extends StatelessWidget {
                           onTagSaved(tagDetailEntity);
                           Navigator.of(context).pop();
                         },
-                        child: const Text("Tag hinzufügen"),
+                        child: const Text("Save"),
                       ),
                     ],
                     cancelButton: CupertinoActionSheetAction(
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child: const Text("Abbrechen"),
+                      child: const Text("Cancel"),
                     ),
                   ),
                 );
@@ -131,8 +129,8 @@ class TagsSettingEditView extends StatelessWidget {
             showCupertinoDialog(
               context: context,
               builder: (context) => CupertinoAlertDialog(
-                title: const Text('Erfolg'),
-                content: const Text('Tag wurde erfolgreich gespeichert!'),
+                title: const Text('Success'),
+                content: const Text('Tag was successfully saved!'),
                 actions: [
                   CupertinoDialogAction(
                     isDefaultAction: true,
@@ -148,8 +146,8 @@ class TagsSettingEditView extends StatelessWidget {
             showCupertinoDialog(
               context: context,
               builder: (context) => CupertinoAlertDialog(
-                title: const Text('Fehler'),
-                content: Text(state.message ?? 'Unbekannter Fehler'),
+                title: const Text('Error'),
+                content: Text(state.message ?? 'Unknown error'),
                 actions: [
                   CupertinoDialogAction(
                     isDefaultAction: true,
@@ -190,12 +188,12 @@ class TagsSettingEditView extends StatelessWidget {
                   if (state.tags!.isEmpty) {
                     return CupertinoFormSection.insetGrouped(
                       children: [
-                        const Text("Keine Tags gefunden."),
+                        const Text("No tags available"),
                         CupertinoButton(
                           onPressed: () {
                             context.read<GetTagsCubit>().fetchAllTags();
                           },
-                          child: const Text("Erneut laden"),
+                          child: const Text("Reload Tags"),
                         ),
                       ],
                     );

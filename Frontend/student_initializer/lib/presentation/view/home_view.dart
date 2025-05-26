@@ -41,76 +41,85 @@ class _HomeViewState extends State<HomeView> {
           CupertinoSliverNavigationBar(
             largeTitle: Text(widget.title),
           ),
+          CupertinoSliverRefreshControl(
+            onRefresh: () async {
+              _tryTriggerEventFetch(context);
+              await Future.delayed(const Duration(milliseconds: 500));
+            },
+          ),
           SliverList(
             delegate: SliverChildListDelegate([
               Container(
-                  padding: const EdgeInsets.all(10.0),
-                  child: MultiBlocListener(
-                      listeners: [
-                        BlocListener<EventWithLearnerCountCubit,
-                            GetSettingsBoolState>(
-                          listenWhen: (previous, current) =>
-                              previous != current,
-                          listener: (context, state) {
-                            if (state is GetSettingsBoolLoaded) {
-                              _withLearnerCount = state.value!;
-                              _tryTriggerEventFetch(context);
-                            }
-                          },
-                        ),
-                        BlocListener<EventSortReasonCubit,
-                            GetSettingsStringState>(
-                          listenWhen: (previous, current) =>
-                              previous != current,
-                          listener: (context, state) {
-                            if (state is GetSettingsStringLoaded) {
-                              _eventSortReason = state.value!;
-                              _tryTriggerEventFetch(context);
-                            }
-                          },
-                        )
-                      ],
-                      child: BlocBuilder<GetEventsCubit, GetEventsState>(
-                        builder: (context, state) {
-                          if (state is GetEventsLoading) {
-                            return const BaseIndicator();
-                          } else if (state is GetEventsLoaded) {
-                            return EventForm(state: state.events!);
-                          } else if (state is GetEventsError) {
-                            return Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: RetryButton(
-                                retryAction: () {
-                                  final learnerCountCubitState = context
-                                      .read<EventWithLearnerCountCubit>()
-                                      .state;
-                                  final eventSortReasonCubitState = context
-                                      .read<EventSortReasonCubit>()
-                                      .state;
+                padding: const EdgeInsets.all(10.0),
+                child: MultiBlocListener(
+                  listeners: [
+                    BlocListener<EventWithLearnerCountCubit,
+                        GetSettingsBoolState>(
+                      listenWhen: (previous, current) =>
+                          previous != current,
+                      listener: (context, state) {
+                        if (state is GetSettingsBoolLoaded) {
+                          _withLearnerCount = state.value!;
+                          _tryTriggerEventFetch(context);
+                        }
+                      },
+                    ),
+                    BlocListener<EventSortReasonCubit,
+                        GetSettingsStringState>(
+                      listenWhen: (previous, current) =>
+                          previous != current,
+                      listener: (context, state) {
+                        if (state is GetSettingsStringLoaded) {
+                          _eventSortReason = state.value!;
+                          _tryTriggerEventFetch(context);
+                        }
+                      },
+                    )
+                  ],
+                  child: BlocBuilder<GetEventsCubit, GetEventsState>(
+                    builder: (context, state) {
+                      if (state is GetEventsLoading) {
+                        return const BaseIndicator();
+                      } else if (state is GetEventsLoaded) {
+                        return EventForm(state: state.events!);
+                      } else if (state is GetEventsError) {
+                        return Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: RetryButton(
+                            retryAction: () {
+                              final learnerCountCubitState = context
+                                  .read<EventWithLearnerCountCubit>()
+                                  .state;
+                              final eventSortReasonCubitState = context
+                                  .read<EventSortReasonCubit>()
+                                  .state;
 
-                                  final Map<String, dynamic> qParam = Map.of({
-                                    'withLearnerCount': (learnerCountCubitState
-                                            as GetSettingsBoolLoaded)
+                              final Map<String, dynamic> qParam = Map.of({
+                                'withLearnerCount': (learnerCountCubitState
+                                        as GetSettingsBoolLoaded)
+                                    .value!,
+                                'eventSortReason':
+                                    (eventSortReasonCubitState
+                                            as GetSettingsStringLoaded)
                                         .value!,
-                                    'eventSortReason':
-                                        (eventSortReasonCubitState
-                                                as GetSettingsStringLoaded)
-                                            .value!,
-                                  });
+                              });
 
-                                  context
-                                      .read<GetEventsCubit>()
-                                      .getAllEvents(queryParameter: qParam);
-                                },
-                                text: state.message,
-                              ),
-                            );
-                          }
-                          return const SizedBox.shrink(); // default fallback
-                        },
-                      ))),
+                              context
+                                  .read<GetEventsCubit>()
+                                  .getAllEvents(queryParameter: qParam);
+                            },
+                            text: state.message,
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 500),
             ]),
-          )
+          ),
         ],
       ),
     );

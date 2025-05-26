@@ -7,11 +7,13 @@ import 'package:student_initializer/presentation/_widgets/tag_widget.dart';
 class ObservatioDetailWidget extends StatelessWidget {
   final ObservationDetailEntity observationDetailEntity;
   final List<TagDetailEntity> tags;
+  final Function(int eventId) onDeleteCallback;
 
   const ObservatioDetailWidget({
     super.key,
     required this.observationDetailEntity,
     required this.tags,
+    required this.onDeleteCallback,
   });
 
   @override
@@ -61,6 +63,14 @@ class ObservatioDetailWidget extends StatelessWidget {
                     }).toList(),
                   ),
                 ),
+              ),
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                minSize: 24,
+                onPressed: () {
+                  onDeleteCallback(observationDetailEntity.observationId!);
+                },
+                child: const Icon(CupertinoIcons.delete, color: CupertinoColors.destructiveRed, size: 22),
               ),
             ],
           ),

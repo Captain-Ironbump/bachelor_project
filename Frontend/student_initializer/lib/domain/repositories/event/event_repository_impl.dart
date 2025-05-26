@@ -43,4 +43,14 @@ class EventRepositoryImpl implements EventRepository {
       return Left(NetworkException.fromHttpError(e));
     }
   }
+  
+  @override
+  Future<Either<NetworkException, void>> addLearnersToEvent({required int eventId, required List<int> learnerIds}) async {
+    try {
+      await _dataSource.addLearnerToEvent(eventId: eventId, learnerIds: learnerIds);
+      return const Right(null);
+    } on Exception catch (e) {
+      return Left(NetworkException.fromHttpError(e));
+    }
+  }
 }

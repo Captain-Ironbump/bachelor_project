@@ -28,4 +28,6 @@ abstract class ObservationRemoteDataSource {
   Future<ObservationDetailWithTagsModel> getObservationWithTagsById({
     required int observationId,
   });
+
+  Future<void> deleteObservationById({required int observationId});
 }

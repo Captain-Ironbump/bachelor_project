@@ -22,4 +22,14 @@ class EventUsecases {
       {required int? eventId}) async {
     return _eventRepository.fetchEventDetailsById(eventId: eventId);
   }
+
+  Future<Either<NetworkException, void>> addLearnersToEvent({
+    required int eventId,
+    required List<int> learnerIds,
+  }) async {
+    return _eventRepository.addLearnersToEvent(
+      eventId: eventId,
+      learnerIds: learnerIds,
+    );
+  }
 }

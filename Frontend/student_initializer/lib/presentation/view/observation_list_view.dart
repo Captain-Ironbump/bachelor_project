@@ -35,8 +35,10 @@ import 'package:student_initializer/util/share_generator/markdown_creator.dart';
 class ObservationListView extends StatefulWidget {
   final int? eventId;
   final OnTabRoutingCallback onTabRoutingCallback;
+  final Function(int?) onObservationDeleteCallback;
+
   const ObservationListView(
-      {super.key, required this.eventId, required this.onTabRoutingCallback});
+      {super.key, required this.eventId, required this.onTabRoutingCallback, required this.onObservationDeleteCallback});
 
   @override
   State<ObservationListView> createState() => _ObservationListViewState();
@@ -217,12 +219,10 @@ class _ObservationListViewState extends State<ObservationListView>
               }
 
               if (state is GenerateMarkdownFormError) {
-                // insert werror here
                 print("Oh no");
               }
 
               if (state is GenerateMarkdownFormLoaded) {
-                // show status here
                 print("Markdown generated");
               }
             },
@@ -234,6 +234,11 @@ class _ObservationListViewState extends State<ObservationListView>
         eventId: widget.eventId,
         onTabRoutingCallback: (int observationId) {
           widget.onTabRoutingCallback(observationId);
+        },
+        onObservationDeleteCallback: (eventId) {
+          widget.onObservationDeleteCallback(eventId);          
+          //_hasFetchedObservations = false;
+          //_checkAndFetchObservations();
         },
       ),
     );
@@ -249,76 +254,14 @@ class _ObservationDetailView extends StatelessWidget {
   final OnTabRoutingCallback onTabRoutingCallback;
   final GlobalKey<NavigatorState> _popupNavigatorKey =
       GlobalKey<NavigatorState>();
+  final Function(int?) onObservationDeleteCallback;
 
   _ObservationDetailView(
       {required this.animationController,
       required this.scaleAnimation,
       required this.eventId,
-      required this.onTabRoutingCallback});
-
-  void _showShareObservationDialogOld(BuildContext context) {
-    final learnerState = context.read<GetLearnerByIdCubit>().state;
-
-    late LearnerDetailEntity learner;
-    if (learnerState is GetLearnerByIdLoaded) {
-      learner = learnerState.learner!;
-    }
-    if (learnerState is GetLearnerByIdError) {
-      showCupertinoDialog(
-        context: context,
-        builder: (context) {
-          return const CupertinoAlertDialog(
-            title: Text("Error"),
-            actions: [
-              CupertinoDialogAction(
-                isDefaultAction: true,
-                child: Text("OK"),
-              )
-            ],
-          );
-        },
-      );
-    }
-    if (learnerState is GetLearnerByIdLoading) {
-      showCupertinoDialog(
-        context: context,
-        builder: (context) {
-          return const CupertinoAlertDialog(
-            title: Text("Still Loading"),
-            actions: [
-              CupertinoDialogAction(
-                isDefaultAction: true,
-                child: Text("OK"),
-              )
-            ],
-          );
-        },
-      );
-    }
-
-    final eventState = context.read<GetEventDetailsByIdCubit>().state;
-
-    late String eventName;
-    late dynamic eventId;
-    if (eventState is GetEventDetailsByIdLoaded) {
-      eventName = eventState.event!.name!;
-      eventId = eventState.event!.eventId!;
-    }
-    if (eventState is GetEventDetailsByIdError) {
-      print('No Event');
-      eventName = 'NON';
-    }
-    final observationsState =
-        context.read<GetObservationsWithTagsCubit>().state;
-
-    context.read<GenerateMarkdownFormCubit>().generateMarkdownForm(
-        eventId: eventId, learnerId: learner.learnerId!, length: "short");
-
-    late List<ObservationDetailWithTagsEntity> observations;
-    if (observationsState is GetObservationsWithTagsLoaded) {
-      observations = observationsState.observations!;
-    }
-  }
+      required this.onTabRoutingCallback,
+      required this.onObservationDeleteCallback});
 
   void _showReportsDialog(BuildContext context, int? learnerId, int? eventId) {
     final sortOrder = context.read<SortOrderCubit>().state;
@@ -395,14 +338,13 @@ class _ObservationDetailView extends StatelessWidget {
                                         );
                                   }),
                             );
-                        // Animation von rechts nach links (reverse)
                         return PageRouteBuilder(
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
                                   builder(context),
                           transitionsBuilder:
                               (context, animation, secondaryAnimation, child) {
-                            const begin = Offset(1.0, 0.0); // Start von rechts
+                            const begin = Offset(1.0, 0.0);
                             const end = Offset.zero;
                             const curve = Curves.ease;
                             final tween = Tween(begin: begin, end: end)
@@ -435,7 +377,6 @@ class _ObservationDetailView extends StatelessWidget {
                                   return ReportDetailPopupView(
                                     reportId: args['reportId']!,
                                     onCloseCallback: (context) async {
-                                      // Statt pushReplacement einfach pop, um zur alten ReportsPopupView zurückzukehren
                                       Navigator.of(context).pop();
                                     },
                                     onChangeRouteCallback: (context) {},
@@ -451,14 +392,14 @@ class _ObservationDetailView extends StatelessWidget {
                                 },
                               ),
                             );
-                        // Animation von rechts nach links (reverse)
+
                         return PageRouteBuilder(
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
                                   builder(context),
                           transitionsBuilder:
                               (context, animation, secondaryAnimation, child) {
-                            const begin = Offset(1.0, 0.0); // Start von rechts
+                            const begin = Offset(1.0, 0.0);
                             const end = Offset.zero;
                             const curve = Curves.ease;
                             final tween = Tween(begin: begin, end: end)
@@ -669,14 +610,16 @@ class _ObservationDetailView extends StatelessWidget {
                                               ?.observationId ??
                                           0),
                                       child: ObservatioDetailWidget(
-                                          observationDetailEntity: state
-                                                  .observations![index]
-                                                  .observationDetail ??
-                                              ObservationDetailEntity(),
-                                          tags:
-                                              state.observations![index].tags ??
-                                                  [] // Pass the tags to,
-                                          ),
+                                        observationDetailEntity: state
+                                                .observations![index]
+                                                .observationDetail ??
+                                            ObservationDetailEntity(),
+                                        tags: state.observations![index].tags ??
+                                            [], // Pass the tags to,
+                                        onDeleteCallback: (eventId) {
+                                          onObservationDeleteCallback(eventId);
+                                        },
+                                      ),
                                     ),
                                   );
                                 }

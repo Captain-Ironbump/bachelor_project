@@ -5,4 +5,6 @@ abstract class EventRemoteDataSource {
   Future<List<EventDetailModel>> fetchAllEvents(
       {Map<String, dynamic>? queryParameter});
   Future<EventDetailModel> fetchEventDetailsById({required int? eventId});
+  Future<void> addLearnerToEvent(
+      {required int eventId, required List<int> learnerIds});
 }

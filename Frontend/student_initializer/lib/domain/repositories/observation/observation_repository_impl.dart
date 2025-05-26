@@ -103,4 +103,14 @@ class ObservationRepositoryImpl implements ObservationRepository {
       
     }
   }
+  
+  @override
+  Future<Either<NetworkException, void>> deleteObservationById({required int observationId}) async {
+    try {
+      _observationRemoteDataSource.deleteObservationById(observationId: observationId);
+      return const Right(null);
+    } on Exception catch (e) {
+      return Left(NetworkException.fromHttpError(e));
+    }
+  }
 }

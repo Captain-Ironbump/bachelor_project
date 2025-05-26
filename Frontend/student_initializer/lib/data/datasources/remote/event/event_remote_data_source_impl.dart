@@ -31,7 +31,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
           headers: {
             "Content-Type": "application/json",
           },
-          body: body);
+          body: json.encode(body));
       if (response.statusCode != 201) {
         throw Exception();
       }
@@ -45,12 +45,32 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
       {required int? eventId}) async {
     try {
       if (eventId == null) {
-        return const EventDetailModel(eventId: null, name: 'NON', learnerCount: null);
+        return const EventDetailModel(
+            eventId: null, name: 'NON', learnerCount: null);
       }
       final Uri uri =
           SimplifiedUri.uri('${PlattformUri.getUri()}/events/$eventId', null);
       final response = await http.get(uri);
       return EventDetailModel.fromJson(json.decode(response.body));
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> addLearnerToEvent(
+      {required int eventId, required List<int> learnerIds}) async {
+    try {
+      final Uri uri = SimplifiedUri.uri(
+          '${PlattformUri.getUri()}/learners/event/$eventId', null);
+      final response = await http.post(uri,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: json.encode(learnerIds));
+      if (response.statusCode != 201) {
+        throw Exception('Failed to add learners to event');
+      }
     } catch (_) {
       rethrow;
     }

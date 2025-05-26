@@ -3,12 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:student_initializer/presentation/_widgets/scaffold_with_navbar.dart';
+import 'package:student_initializer/presentation/cubits/event/add_learners_to_event/add_learners_to_event_cubit.dart';
 import 'package:student_initializer/presentation/cubits/event/get_event_details_by_id/get_event_details_by_id_cubit.dart';
 import 'package:student_initializer/presentation/cubits/event/get_events/get_events_cubit.dart';
+import 'package:student_initializer/presentation/cubits/event/save_event/save_event_cubit.dart';
 import 'package:student_initializer/presentation/cubits/learner/get_learner_by_id/get_learner_by_id_cubit.dart';
 import 'package:student_initializer/presentation/cubits/learner/get_learners/get_learners_cubit.dart';
 import 'package:student_initializer/presentation/cubits/learner/get_learners_by_event_id/get_learners_by_event_id_cubit.dart';
+import 'package:student_initializer/presentation/cubits/learner/save_learner/save_learner_cubit.dart';
 import 'package:student_initializer/presentation/cubits/markdown/generate_markdown_form/generate_markdown_form_cubit.dart';
+import 'package:student_initializer/presentation/cubits/observation/delete_observation/delete_observation_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/get_observation_by_id/get_observation_by_id_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/get_observation_by_id_with_tags/get_observation_by_id_with_tags_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/get_observations/get_observations_cubit.dart';
@@ -16,9 +20,12 @@ import 'package:student_initializer/presentation/cubits/observation/get_observat
 import 'package:student_initializer/presentation/cubits/observation/get_observations_with_tags/get_observations_with_tags_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/save_observation/save_observation_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/get_settings_int/get_settings_int_cubit.dart';
+import 'package:student_initializer/presentation/cubits/settings/get_settings_string/get_settings_string_cubit.dart';
 import 'package:student_initializer/presentation/cubits/tag/get_tags/get_tags_cubit.dart';
 import 'package:student_initializer/presentation/cubits/tag/save_tag/save_tag_cubit.dart';
+import 'package:student_initializer/presentation/view/event_settings_edit_view.dart';
 import 'package:student_initializer/presentation/view/home_view.dart';
+import 'package:student_initializer/presentation/view/learner_settings_edit_view.dart';
 import 'package:student_initializer/presentation/view/learners_view.dart';
 import 'package:student_initializer/presentation/view/observation_detailed_view.dart';
 import 'package:student_initializer/presentation/view/observation_list_view.dart';
@@ -104,6 +111,11 @@ class GoRouterCustom {
                                         ..getLearnersByEventId(
                                             eventId: int.tryParse(eventId)!),
                                     ),
+                                    BlocProvider<GetLearnersCubit>(
+                                      create: (context) => container
+                                          .read(getLearnersCubitProvider)
+                                        ..getAllLearnerDetails(),
+                                    ),
                                     BlocProvider<GetSettingsIntCubit>(
                                       create: (context) => container
                                           .read(getSettingsIntCubitProvider)
@@ -119,18 +131,32 @@ class GoRouterCustom {
                                     BlocProvider<GetObservationsCountCubit>(
                                       create: (context) => container
                                           .read(getObservationsCountProvider),
-                                    )
+                                    ),
+                                    BlocProvider<AddLearnersToEventCubit>(
+                                      create: (context) => container.read(
+                                          addLearnersToEventCubitProvider),
+                                    ),
                                   ],
-                                  child: LearnersView(
-                                    eventId: int.tryParse(eventId)!,
-                                    onTapRoutingCallback: (int learnerId) {
-                                      context.pushNamed(
-                                          'EventLearnerObservations',
-                                          pathParameters: {
-                                            'learnerId': learnerId.toString(),
-                                            'eventId': eventId.toString(),
-                                          });
-                                    },
+                                  child: Builder(
+                                    builder: (context) => LearnersView(
+                                      eventId: int.tryParse(eventId)!,
+                                      onTapRoutingCallback: (int learnerId) {
+                                        context.pushNamed(
+                                            'EventLearnerObservations',
+                                            pathParameters: {
+                                              'learnerId': learnerId.toString(),
+                                              'eventId': eventId.toString(),
+                                            });
+                                      },
+                                      onAddLearnersToEventCallback:
+                                          (List<int> learnerIds) {
+                                        context
+                                            .read<AddLearnersToEventCubit>()
+                                            .addLearnersToEvent(
+                                                int.tryParse(eventId)!,
+                                                learnerIds);
+                                      },
+                                    ),
                                   ));
                             },
                             routes: [
@@ -197,14 +223,63 @@ class GoRouterCustom {
                                             create: (context) => container.read(
                                                 generateMarkdownFormCubitProvider),
                                           ),
+                                          BlocProvider<DeleteObservationCubit>(
+                                            create: (context) => container.read(
+                                                deleteObservatiobCubitProvider),
+                                          )
                                         ],
                                         child: Builder(
-                                          builder: (context) =>
-                                              ObservationListView(
-                                            eventId: int.tryParse(eventId),
-                                            onTabRoutingCallback:
-                                                (int observationId) {
-                                              context.pushNamed(
+                                          builder: (context) => BlocListener<
+                                              DeleteObservationCubit,
+                                              DeleteObservationState>(
+                                            listener: (context, state) async {
+                                              if (state
+                                                  is DeleteObservationSuccess) {
+                                                final timespanInDays = (context
+                                                            .read<
+                                                                GetSettingsIntCubit>()
+                                                            .state
+                                                        as GetSettingsIntLoaded)
+                                                    .value!;
+                                                final sortOrder = (context
+                                                            .read<SortOrderCubit>()
+                                                            .state
+                                                        as GetSettingsStringLoaded)
+                                                    .value!;
+                                                final sortParameter = (context
+                                                            .read<
+                                                                SortParameterCubit>()
+                                                            .state
+                                                        as GetSettingsStringLoaded)
+                                                    .value!;
+
+                                                await Future.delayed(
+                                                    const Duration(seconds: 1));
+
+                                                if (context.mounted) {
+                                                  context
+                                                      .read<
+                                                          GetObservationsWithTagsCubit>()
+                                                      .getObservationDetailsByLearnerId(
+                                                    learnerId: int.tryParse(
+                                                        learnerId)!,
+                                                    queryParams: {
+                                                      "eventId":
+                                                          int.tryParse(eventId),
+                                                      "order": sortOrder,
+                                                      "sort": sortParameter,
+                                                      "timespanInDays":
+                                                          timespanInDays,
+                                                    },
+                                                  );
+                                                }
+                                              }
+                                            },
+                                            child: ObservationListView(
+                                              eventId: int.tryParse(eventId),
+                                              onTabRoutingCallback:
+                                                  (int observationId) {
+                                                context.pushNamed(
                                                   'DetailedObservation',
                                                   pathParameters: {
                                                     'observationId':
@@ -212,8 +287,21 @@ class GoRouterCustom {
                                                             .toString(),
                                                     'eventId': eventId,
                                                     'learnerId': learnerId,
-                                                  });
-                                            },
+                                                  },
+                                                );
+                                              },
+                                              onObservationDeleteCallback:
+                                                  (p0) {
+                                                print(
+                                                    "Deleting observation: $p0");
+                                                context
+                                                    .read<
+                                                        DeleteObservationCubit>()
+                                                    .deleteObservation(
+                                                      observationId: p0!,
+                                                    );
+                                              },
+                                            ),
                                           ),
                                         ));
                                   },
@@ -340,6 +428,9 @@ class GoRouterCustom {
                                               observationId.toString()
                                         });
                                       },
+                                      onObservationDeleteCallback: (p0) {
+                                        print("Deleting observation: $p0");
+                                      },
                                     ),
                                   ));
                             })
@@ -432,12 +523,74 @@ class GoRouterCustom {
                               child: Builder(
                                 builder: (context) => TagsSettingEditView(
                                   onTagSaved: (p0) =>
-                                      context.read<SaveTagCubit>()..saveTag(tagDetailEntity: p0!),
+                                      context.read<SaveTagCubit>()
+                                        ..saveTag(tagDetailEntity: p0!),
                                 ),
                               ),
                             );
                           },
-                        )
+                        ),
+                        GoRoute(
+                          path: "events",
+                          name: "Events",
+                          builder: (context, state) {
+                            final container =
+                                ProviderScope.containerOf(context);
+                            return MultiBlocProvider(
+                              providers: [
+                                BlocProvider<GetEventsCubit>(
+                                  create: (context) =>
+                                      container.read(getEventsCubitProvider)
+                                        ..getAllEvents(),
+                                ),
+                                BlocProvider<SaveEventCubit>(
+                                  create: (context) =>
+                                      ProviderScope.containerOf(context,
+                                              listen: false)
+                                          .read(saveEventCubitProvider),
+                                ),
+                              ],
+                              child: Builder(
+                                builder: (context) => EventSettingsEditView(
+                                  onSaveEvent: (p0) =>
+                                      context.read<SaveEventCubit>()
+                                        ..saveEvent(name: p0!),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: "learners",
+                          name: "Learners",
+                          builder: (context, state) {
+                            final container =
+                                ProviderScope.containerOf(context);
+                            return MultiBlocProvider(
+                              providers: [
+                                BlocProvider<GetLearnersCubit>(
+                                  create: (context) =>
+                                      container.read(getLearnersCubitProvider)
+                                        ..getAllLearnerDetails(),
+                                ),
+                                BlocProvider<SaveLearnerCubit>(
+                                  create: (context) =>
+                                      ProviderScope.containerOf(context,
+                                              listen: false)
+                                          .read(saveLearnerCubitProvider),
+                                ),
+                              ],
+                              child: Builder(
+                                builder: (context) => LearnerSettingsEditView(
+                                  onSaveLearner: (p0, p1) =>
+                                      context.read<SaveLearnerCubit>()
+                                        ..saveLearnerDetail(
+                                            firstName: p0!, lastName: p1!),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ])
                 ])
           ],

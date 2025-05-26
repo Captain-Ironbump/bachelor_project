@@ -38,10 +38,10 @@ class LearnerRemoteDataSourceImpl implements LearnerRemoteDataSource {
       final response = await http
           .post(Uri.parse('${PlattformUri.getUri()}/learners'), headers: {
         "Content-Type": "application/json",
-      }, body: {
+      }, body: json.encode({
         "firstName": firstName,
         "lastName": lastName,
-      });
+      }));
       if (response.statusCode != 201) {
         throw Exception();
       }

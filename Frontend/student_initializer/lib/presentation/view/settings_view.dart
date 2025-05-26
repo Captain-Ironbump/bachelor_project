@@ -187,6 +187,7 @@ class SettingsView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10.0),
                 child: CupertinoFormSection.insetGrouped(
+                  header: const Text("Data Management"),
                   children: [
                     CupertinoListTile(
                       title: const Text('Tags'),
@@ -194,10 +195,24 @@ class SettingsView extends StatelessWidget {
                       onTap: () {
                         context.push('/settings/tags');
                       },
+                    ),
+                    CupertinoListTile(
+                      title: const Text('Events'),
+                      trailing: const CupertinoListTileChevron(),
+                      onTap: () {
+                        context.push('/settings/events');
+                      },
+                    ),
+                    CupertinoListTile(
+                      title: const Text('Learners'),
+                      trailing: const CupertinoListTileChevron(),
+                      onTap: () {
+                        context.push('/settings/learners');
+                      },
                     )
                   ],
                 ),
-              )
+              ),
             ]),
           )
         ],
