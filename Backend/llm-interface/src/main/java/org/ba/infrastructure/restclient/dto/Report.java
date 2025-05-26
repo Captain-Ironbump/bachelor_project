@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class Report {
     private Long reportId;
     private LocalDateTime createdDateTime;
-    private byte[] reportData;
+    private String reportData;
     private Long learnerId;
     private Long eventId;
 }

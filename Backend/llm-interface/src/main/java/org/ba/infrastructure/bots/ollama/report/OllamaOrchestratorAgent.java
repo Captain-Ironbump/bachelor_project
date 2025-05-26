@@ -34,6 +34,7 @@ public interface OllamaOrchestratorAgent {
         - ONLY return the markdown form, no other text or explanation like 'Here is the markdown form' or similar. This should help later for deserialization.
         - Include ALL the numbered Indicator in the Markdown form.
         - make the summary in this length: {reportLength}
+        - use the timestamp-now tool to add a timestamp at the end of the markdown form, it starts with 'created at ' and then the timestamp in the format ofPattern("dd. MMMM yyyy, HH:mm").
         """)
     @ToolBox({OllamaObsMapperAgent.class, OllamaReportAgent.class, TimestampCalculator.class})
     String orchestrate(String studentName, String courseName, List<String> observations, String reportLength);

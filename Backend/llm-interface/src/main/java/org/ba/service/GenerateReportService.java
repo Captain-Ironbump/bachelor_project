@@ -99,7 +99,7 @@ public class GenerateReportService {
                 report = ModelResponseTrimmer.trimThinking(report);
                 log.info("Orchestration result: " + report);
                 reportService.saveResponse(Report.builder()
-                        .reportData(report.getBytes())
+                        .reportData(report)
                         .eventId(event.getEventId())
                         .learnerId(learner.getLearnerId())
                         .build()
