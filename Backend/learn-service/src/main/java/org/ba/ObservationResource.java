@@ -18,6 +18,7 @@ import io.smallrye.common.constraint.NotNull;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -112,5 +113,31 @@ public class ObservationResource {
     )
     public Response getObservation(@RestPath Long observationId) {
         return Response.ok(service.getObservationById(observationId)).build();
+    }
+
+    @DELETE
+    @Path("/{observationId}")
+    @APIResponse(
+        responseCode = "204",
+        description = "Observation deleted successfully"
+    )
+    @APIResponse(
+        responseCode = "404",
+        description = "Observation not found"
+    )
+    public Response deleteObservation(@RestPath Long observationId) {
+        try {
+            boolean deleted = this.service.deleteObservation(observationId);
+            if (deleted) {
+                return Response.noContent().build();
+            }
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity(new ErrorResponse("Observation not found", "No observation found with ID: " + observationId))
+                .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity(new ErrorResponse("Observation not found", e.getMessage()))
+                .build();
+        }
     }
 }

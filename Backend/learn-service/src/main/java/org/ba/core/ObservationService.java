@@ -117,4 +117,19 @@ public class ObservationService {
         }
         return countMap;
     }
+
+    @Transactional
+    public boolean deleteObservation(Long observationId) {
+        ObservationEntity entity = repository.findById(observationId);
+        if (entity != null) {
+            boolean deleted = repository.deleteById(entity.getObservationId());
+            if (deleted) {
+                return true;
+            } else {
+                throw new IllegalStateException("Failed to delete observation with ID " + observationId);
+            }
+        } else {
+            throw new IllegalArgumentException("Observation with ID " + observationId + " does not exist.");
+        }
+    }
 }

@@ -14,6 +14,7 @@ import org.ba.exceptions.EventNotFoundException;
 import org.ba.exceptions.LearnerNotFoundException;
 import org.ba.repositories.EventRepository;
 import org.ba.repositories.LearnerRepository;
+import org.yaml.snakeyaml.events.Event;
 import org.ba.core.mapper.EventMapper;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -58,6 +59,35 @@ public class LearnerEventService {
         }
         if (!event.getLearners().contains(learner)) {
             event.getLearners().add(learner);
+        }
+    }
+
+    @Transactional
+    public void addLearnersToEvent(List<Long> learners, Long eventId) {
+        EventEntity event = this.eventRepository.findById(eventId);
+        if (event == null) {
+            throw new EventNotFoundException("Event not found for ID: " + eventId);
+        }
+        Set<LearnerEntity> newLearnerEntities = new HashSet<>();
+        for (Long learnerId : learners) {
+            LearnerEntity learner = this.learnerRepository.findById(learnerId);
+            if (learner == null) {
+                throw new LearnerNotFoundException("Learner not found for ID: " + learnerId);
+            }
+            if (learner.getEvents() == null) {
+                learner.setEvents(new HashSet<>());
+            }
+            newLearnerEntities.add(learner);
+        }
+        Set<LearnerEntity> oldLearners = event.getLearners() != null ? new HashSet<>(event.getLearners()) : new HashSet<>();
+        for (LearnerEntity oldLearner : oldLearners) {
+            if (!newLearnerEntities.contains(oldLearner)) {
+                oldLearner.getEvents().remove(event);
+            }
+        }
+        event.setLearners(newLearnerEntities);
+        for (LearnerEntity learner : newLearnerEntities) {
+            learner.getEvents().add(event);
         }
     }
 
