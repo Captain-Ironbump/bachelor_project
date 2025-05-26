@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import org.ba.infrastructure.bots.ollama.OllamaOrchestratorAgent;
+import org.ba.infrastructure.bots.ollama.report.OllamaOrchestratorAgent;
 import org.ba.infrastructure.restclient.dto.Event;
 import org.ba.infrastructure.restclient.dto.Learner;
 import org.ba.infrastructure.restclient.dto.Observation;
@@ -165,9 +165,8 @@ public class GreetingResource {
 
                 //Log.info(observationsFuture.get());
 
-                List<String> observations = observationsFuture.get()
-                    .stream()
-                    .map(obs -> new String(obs.getRawObservation(), StandardCharsets.UTF_8))
+                List<String> observations = observationsFuture.get().stream()
+                    .map(obs -> obs.getRawObservation())
                     .collect(Collectors.toList());
                 Event event = eventFuture.get();
                 Learner learner = learnerFuture.get();
@@ -184,29 +183,5 @@ public class GreetingResource {
             }
         });
         return Response.accepted("Processing report generation. This can take a while.").build();
-    }
-
-    @GET
-    @Path("/now")
-    public String now() {
-        TimestampCalculator timestampCalculator = new TimestampCalculator();
-        return timestampCalculator.getTimestampOfNow();
-    }
-
-    @GET
-    @Path("/agentNow")
-    public String agentNow() {
-        return testAgent.getCurrentDateTime();
-    }
-
-    @POST
-    @Path("/testoo3")
-    public void testoo3() {
-        reportService.saveResponse(Report.builder()
-                .reportData("Hello World du schmock".getBytes())
-                .eventId(1L)
-                .learnerId(10L)
-                .build()
-        );
     }
 }

@@ -1,4 +1,4 @@
-package org.ba.infrastructure.bots.openai;
+package org.ba.infrastructure.bots.openai.report;
 
 import org.ba.service.tools.TimestampCalculator;
 

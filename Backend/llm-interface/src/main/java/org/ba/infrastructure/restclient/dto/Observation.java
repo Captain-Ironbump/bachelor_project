@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class Observation {
     private Long observationId;
     private LocalDateTime createdDateTime;
-    private byte[] rawObservation;
+    private String rawObservation;
     private Long learnerId;
     private Long eventId;
 }

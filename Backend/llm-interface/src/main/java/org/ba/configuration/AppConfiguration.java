@@ -1,6 +1,6 @@
 package org.ba.configuration;
 
-import org.ba.infrastructure.bots.openai.OpenAIOrchestratorAgent;
+import org.ba.infrastructure.bots.openai.report.OpenAIOrchestratorAgent;
 import org.eclipse.microprofile.config.inject.ConfigProperties;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;

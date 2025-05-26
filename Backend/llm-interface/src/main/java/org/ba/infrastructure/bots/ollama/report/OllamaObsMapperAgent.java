@@ -1,4 +1,4 @@
-package org.ba.infrastructure.bots.ollama;
+package org.ba.infrastructure.bots.ollama.report;
 
 import java.util.List;
 

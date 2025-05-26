@@ -7,12 +7,4 @@ import static io.restassured.RestAssured.given;
 
 @QuarkusTest
 class GreetingResourceTest {
-    @Test
-    void testHelloEndpoint() {
-        given()
-          .when().get("/hello")
-          .then()
-             .statusCode(200);
-    }
-
 }

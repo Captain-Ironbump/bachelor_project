@@ -1,11 +1,8 @@
-package org.ba.infrastructure.bots.ollama;
-
-import org.ba.service.tools.TimestampCalculator;
+package org.ba.infrastructure.bots.ollama.report;
 
 import dev.langchain4j.agent.tool.Tool;
 import dev.langchain4j.service.UserMessage;
 import io.quarkiverse.langchain4j.RegisterAiService;
-import io.quarkiverse.langchain4j.ToolBox;
 
 @RegisterAiService(modelName = "llama")
 public interface OllamaReportAgent {

@@ -6,8 +6,8 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import org.ba.infrastructure.bots.openai.OpenAIOrchestratorAgent;
-import org.ba.infrastructure.bots.ollama.OllamaOrchestratorAgent;
+import org.ba.infrastructure.bots.ollama.report.OllamaOrchestratorAgent;
+import org.ba.infrastructure.bots.openai.report.OpenAIOrchestratorAgent;
 import org.ba.infrastructure.restclient.dto.Event;
 import org.ba.infrastructure.restclient.dto.Learner;
 import org.ba.infrastructure.restclient.dto.Observation;
@@ -74,11 +74,8 @@ public class GenerateReportService {
                 CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(observationsFuture, eventFuture, learnerFuture);
                 combinedFuture.join();
 
-                log.info(observationsFuture.get().toString());
-
-                List<String> observations = observationsFuture.get()
-                    .stream()
-                    .map(obs -> new String(obs.getRawObservation(), StandardCharsets.UTF_8))
+                List<String> observations = observationsFuture.get().stream()
+                    .map(obs -> obs.getRawObservation())
                     .collect(Collectors.toList());
                 Event event = eventFuture.get();
                 Learner learner = learnerFuture.get();

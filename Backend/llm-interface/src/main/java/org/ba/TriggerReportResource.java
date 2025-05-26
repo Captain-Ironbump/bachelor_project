@@ -123,10 +123,9 @@ public class TriggerReportResource {
 
             Log.info(observationsFuture.get());
 
-            List<String> observations = observationsFuture.get()
-                .stream()
-                .map(obs -> new String(obs.getRawObservation(), StandardCharsets.UTF_8))
-                .collect(Collectors.toList());
+            List<String> observations = observationsFuture.get().stream()
+                    .map(obs -> obs.getRawObservation())
+                    .collect(Collectors.toList());
             Event event = eventFuture.get();
             Learner learner = learnerFuture.get();
 
@@ -164,10 +163,9 @@ public class TriggerReportResource {
             Log.info("Bin da 2");
             Log.info(observationsFuture.get());
 
-            List<String> observations = observationsFuture.get()
-                .stream()
-                .map(obs -> new String(obs.getRawObservation(), StandardCharsets.UTF_8))
-                .collect(Collectors.toList());
+            List<String> observations = observationsFuture.get().stream()
+                    .map(obs -> obs.getRawObservation())
+                    .collect(Collectors.toList());
             Event event = eventFuture.get();
             Learner learner = learnerFuture.get();
 
