@@ -453,6 +453,7 @@ class _ObservationDetailView extends StatelessWidget {
               height: MediaQuery.of(context).size.height * 0.95,
               child: NewObservationPopupView(
                 learnerId: learnerId!,
+                eventId: eventId!,
               ),
             ),
           ),

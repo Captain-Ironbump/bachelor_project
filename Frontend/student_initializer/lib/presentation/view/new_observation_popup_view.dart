@@ -10,8 +10,9 @@ import 'package:student_initializer/presentation/_widgets/tag_widget.dart';
 
 class NewObservationPopupView extends StatefulWidget {
   final int learnerId;
+  final int eventId;
 
-  const NewObservationPopupView({super.key, required this.learnerId});
+  const NewObservationPopupView({super.key, required this.learnerId, required this.eventId});
 
   @override
   State<NewObservationPopupView> createState() =>
@@ -23,7 +24,6 @@ class _NewObservationPopupViewState extends State<NewObservationPopupView> {
   List<TagDetailEntity> selectedTags =
       []; // Add this to the state to track selected tags
 
-  @override
   void initState() {
     super.initState();
     observation = "";
@@ -33,7 +33,7 @@ class _NewObservationPopupViewState extends State<NewObservationPopupView> {
     context.read<SaveObservationCubit>().saveObservation(
           observationDetailEntity: ObservationDetailEntity(
             learnerId: widget.learnerId,
-            eventId: 1,
+            eventId: widget.eventId,
             observation: observation,
           ),
           selectedTags: selectedTags, // Pass the list of selected tags
