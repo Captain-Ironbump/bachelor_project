@@ -18,10 +18,10 @@ public class TagConceptResource {
 
     @GET
     @Path("/competence/learners/{learnerId}")
-    public Response generateReportWithTagConcept(@PathParam("learnerId") Long learnerId, @QueryParam("eventId") Long eventId) {
+    public Response generateReportWithTagConcept(@PathParam("learnerId") Long learnerId, @QueryParam("eventId") Long eventId, @QueryParam("reportLength") String reportLength) {
         try {
-            String report = tagConceptService.tagConcept(learnerId, eventId);
-            return Response.ok().entity(report).build();
+            String response = tagConceptService.tagConcept(learnerId, eventId, reportLength);
+            return Response.accepted().entity(response).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error generating report with tag concept: " + e.getMessage())
@@ -31,10 +31,10 @@ public class TagConceptResource {
 
     @GET
     @Path("/general/learners/{learnerId}")
-    public Response generateReportWithGeneralTagConcept(@PathParam("learnerId") Long learnerId, @QueryParam("eventId") Long eventId) {
+    public Response generateReportWithGeneralTagConcept(@PathParam("learnerId") Long learnerId, @QueryParam("eventId") Long eventId, @QueryParam("reportLength") String reportLength) {
         try {
-            String report = tagConceptService.generalTagConcept(learnerId, eventId);
-            return Response.ok().entity(report).build();
+            String response = tagConceptService.generalTagConcept(learnerId, eventId, reportLength);
+            return Response.accepted().entity(response).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error generating report with tag concept: " + e.getMessage())

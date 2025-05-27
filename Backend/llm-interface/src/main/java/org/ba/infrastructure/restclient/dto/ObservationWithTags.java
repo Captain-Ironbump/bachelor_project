@@ -2,16 +2,39 @@ package org.ba.infrastructure.restclient.dto;
 
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
 public class ObservationWithTags {
-    Observation observationDTO;
-    List<Tag> tags;
+    private Observation observationDTO;
+    private List<Tag> tags;
+
+    public ObservationWithTags() {
+    }
+
+    public ObservationWithTags(Observation observationDTO, List<Tag> tags) {
+        this.observationDTO = observationDTO;
+        this.tags = tags;
+    }
+
+    public Observation getObservationDTO() {
+        return observationDTO;
+    }
+
+    public void setObservationDTO(Observation observationDTO) {
+        this.observationDTO = observationDTO;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
+    @Override
+    public String toString() {
+        return "ObservationWithTags(" +
+                "observationDTO=" + observationDTO +
+                ", tags=" + tags +
+                ')';
+    }
 }
