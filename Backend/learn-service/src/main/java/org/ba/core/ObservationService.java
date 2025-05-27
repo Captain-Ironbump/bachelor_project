@@ -54,24 +54,9 @@ public class ObservationService {
             );
     }
 
-    public Map<Long, ObservationsDataDTO> getCountMapPerLearnerId(Integer eventId, Integer timespanInDays, List<Integer> learners) {
-        StringBuilder query = new StringBuilder("SELECT o.learner.learnerId, COUNT(o) FROM Observation o WHERE 1=1");
-        Map<String, Object> params = new HashMap<>();
-    
-        if (eventId != null) {
-            System.out.println("adding eventId");
-            query.append(" AND o.event.eventId = :eventId");
-            params.put("eventId", eventId);
-        }
-
-        if (learners != null && !learners.isEmpty()) {
-            query.append(" AND o.learner.learnerId IN :ids");
-            params.put("ids", learners);
-        }
-    
-        query.append(" GROUP BY o.learner.learnerId");
-    
-        List<Object[]> totalCountList = repository.getCountMapByLearnerId(query.toString(), params);
+    public Map<Long, ObservationsDataDTO> getCountMapPerLearnerId(Long eventId, Integer timespanInDays, List<Long> learners) {
+        
+        List<Object[]> totalCountList = repository.getCountMapByLearnerId(eventId, timespanInDays, learners);
         Map<Long, ObservationsDataDTO> countMap = new HashMap<>();
         for (Object[] row : totalCountList) {
             Long learnerId = (Long) row[0];
@@ -87,24 +72,7 @@ public class ObservationService {
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime start = now.minusDays(timespanInDays);
     
-            StringBuilder timespanQuery = new StringBuilder("SELECT o.learner.learnerId, COUNT(o) FROM Observation o WHERE 1=1");
-            Map<String, Object> timespanParams = new HashMap<>(params);
-    
-            timespanQuery.append(" AND o.createdDateTime BETWEEN :start AND :end");
-            timespanParams.put("start", start);
-            timespanParams.put("end", now);
-    
-            if (learners != null && !learners.isEmpty()) {
-                timespanQuery.append(" AND o.learner.learnerId IN :ids");
-            }
-
-            if (eventId != null) {
-                timespanQuery.append(" AND o.event.eventId = :eventId");
-            }
-    
-            timespanQuery.append(" GROUP BY o.learner.learnerId");
-    
-            List<Object[]> timespanResult = repository.getEntriesCountPerLearnerIdWithTimespanQueries(timespanQuery.toString(), timespanParams);
+            List<Object[]> timespanResult = repository.getEntriesCountPerLearnerIdWithTimespanQueries(eventId, start, now, learners);
     
             for (Object[] row : timespanResult) {
                 Long learnerId = (Long) row[0];

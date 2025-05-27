@@ -20,6 +20,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
@@ -45,8 +46,8 @@ public class LearnerEventResource {
             schema = @Schema(type = SchemaType.ARRAY, implementation = LearnerDTO.class)
         )
     )
-    public Response getAllLearnersByEventId(@RestPath Long eventId) {
-        return Response.ok().entity(this.service.getLearnersByEventId(eventId)).build();
+    public Response getAllLearnersByEventId(@RestPath Long eventId, @QueryParam("timespanInDays") Integer timespanInDays, @QueryParam("sort") String sortField, @QueryParam("order") String sortOrder) {
+        return Response.ok().entity(this.service.getLearnersByEventId(eventId, timespanInDays, sortField, sortOrder)).build();
     }
 
     @POST

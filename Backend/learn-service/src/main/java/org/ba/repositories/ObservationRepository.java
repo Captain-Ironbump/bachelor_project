@@ -62,8 +62,25 @@ public class ObservationRepository implements PanacheRepositoryBase<ObservationE
         return getEntityManager().createNamedQuery("Observation.countByLearnerId", Object[].class).getResultList();
     }
 
-    public List<Object[]> getCountMapByLearnerId(String query, Map<String, Object> params) {
-        var queryBuilder = getEntityManager().createQuery(query, Object[].class);
+    public List<Object[]> getCountMapByLearnerId(Long eventId, Integer timespanInDays, List<Long> learners) {
+        StringBuilder query = new StringBuilder("SELECT o.learner.learnerId, COUNT(o) FROM Observation o WHERE 1=1");
+        Map<String, Object> params = new HashMap<>();
+    
+        if (eventId != null) {
+            System.out.println("adding eventId");
+            query.append(" AND o.event.eventId = :eventId");
+            params.put("eventId", eventId);
+        }
+
+        if (learners != null && !learners.isEmpty()) {
+            query.append(" AND o.learner.learnerId IN :ids");
+            params.put("ids", learners);
+        }
+    
+        query.append(" GROUP BY o.learner.learnerId");
+
+        
+        var queryBuilder = getEntityManager().createQuery(query.toString(), Object[].class);
     
         // Set the 'ids' parameter only if it's provided
         if (params.containsKey("ids") && params.get("ids") != null) {
@@ -77,25 +94,45 @@ public class ObservationRepository implements PanacheRepositoryBase<ObservationE
         return queryBuilder.getResultList();
     }
     
-    public List<Object[]> getEntriesCountPerLearnerIdWithTimespanQueries(String query, Map<String, Object> params) {
-        var queryBuilder = getEntityManager().createQuery(query, Object[].class);
-    
-        // Set 'ids' parameter only if it's provided
-        if (params.containsKey("ids") && params.get("ids") != null) {
-            queryBuilder.setParameter("ids", params.get("ids"));
+    public List<Object[]> getEntriesCountPerLearnerIdWithTimespanQueries(Long eventId, LocalDateTime start, LocalDateTime end, List<Long> learners) {
+        StringBuilder timespanQuery = new StringBuilder("SELECT o.learner.learnerId, COUNT(o) FROM Observation o WHERE 1=1");
+        Map<String, Object> timespanParams = new HashMap<>();
+        
+        timespanQuery.append(" AND o.createdDateTime BETWEEN :start AND :end");
+        timespanParams.put("start", start);
+        timespanParams.put("end", end);
+
+        if (learners != null && !learners.isEmpty()) {
+            timespanQuery.append(" AND o.learner.learnerId IN :ids");
+            timespanParams.put("ids", learners);
         }
 
-        if (params.containsKey("eventId") && params.get("eventId") != null) {
-            queryBuilder.setParameter("eventId", params.get("eventId"));
+        if (eventId != null) {
+            timespanQuery.append(" AND o.event.eventId = :eventId");
+            timespanParams.put("eventId", eventId);
+        }
+
+        timespanQuery.append(" GROUP BY o.learner.learnerId");
+        
+        
+        var queryBuilder = getEntityManager().createQuery(timespanQuery.toString(), Object[].class);
+    
+        // Set 'ids' parameter only if it's provided
+        if (timespanParams.containsKey("ids") && timespanParams.get("ids") != null) {
+            queryBuilder.setParameter("ids", timespanParams.get("ids"));
+        }
+
+        if (timespanParams.containsKey("eventId") && timespanParams.get("eventId") != null) {
+            queryBuilder.setParameter("eventId", timespanParams.get("eventId"));
         }
     
         // Set 'start' and 'end' parameters for the timespan query
-        if (params.containsKey("start") && params.get("start") != null) {
-            queryBuilder.setParameter("start", params.get("start"));
+        if (timespanParams.containsKey("start") && timespanParams.get("start") != null) {
+            queryBuilder.setParameter("start", timespanParams.get("start"));
         }
     
-        if (params.containsKey("end") && params.get("end") != null) {
-            queryBuilder.setParameter("end", params.get("end"));
+        if (timespanParams.containsKey("end") && timespanParams.get("end") != null) {
+            queryBuilder.setParameter("end", timespanParams.get("end"));
         }
     
         return queryBuilder.getResultList();

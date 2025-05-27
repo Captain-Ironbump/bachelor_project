@@ -96,7 +96,7 @@ public class ObservationResource {
             schema = @Schema(type = SchemaType.OBJECT, implementation = Map.class)
         )
     )
-    public Response getCountMap(@QueryParam("eventId") Integer eventId, @QueryParam("timeSpanInDays") Integer timeSpamInDays, @QueryParam("learners") List<Integer> learners) {
+    public Response getCountMap(@QueryParam("eventId") Long eventId, @QueryParam("timeSpanInDays") Integer timeSpamInDays, @QueryParam("learners") List<Long> learners) {
         
         return Response.ok(service.getCountMapPerLearnerId(eventId, timeSpamInDays, learners)).build();
     }

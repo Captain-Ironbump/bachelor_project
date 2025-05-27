@@ -1,20 +1,25 @@
 package org.ba.core;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ba.core.mapper.LearnerMapper;
+import org.ba.core.mapper.ObservationMapper;
 import org.ba.entities.db.EventEntity;
 import org.ba.entities.db.LearnerEntity;
 import org.ba.entities.dto.EventDTO;
 import org.ba.entities.dto.LearnerDTO;
+import org.ba.entities.dto.ObservationsDataDTO;
 import org.ba.exceptions.EventNotFoundException;
 import org.ba.exceptions.LearnerNotFoundException;
 import org.ba.repositories.EventRepository;
 import org.ba.repositories.LearnerRepository;
-import org.yaml.snakeyaml.events.Event;
+import org.ba.repositories.ObservationRepository;
 import org.ba.core.mapper.EventMapper;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -32,6 +37,10 @@ public class LearnerEventService {
     EventRepository eventRepository;
     @Inject
     EventMapper eventMapper;
+    @Inject
+    ObservationRepository observationRepository;
+    @Inject
+    ObservationMapper observationMapper;
 
     @Transactional
     public void addLearnerToEvent(Long learnerId, Long eventId) {
@@ -91,12 +100,90 @@ public class LearnerEventService {
         }
     }
 
-    public List<LearnerDTO> getLearnersByEventId(Long eventId) {
+    public List<LearnerDTO> getLearnersByEventId(Long eventId, Integer timespanInDays, String sortField, String sortOrder) {
+        String usedSortOrder = "ASC";
+        String usedSortField = "lastname";
+
+        if (sortOrder != null && !sortOrder.isEmpty()) {
+            usedSortOrder = sortOrder.equalsIgnoreCase("DESC") ? "DESC" : "ASC";
+        } 
+
+        if (sortField != null && !sortField.isEmpty()) {
+            usedSortField = sortField;
+        }
+
         Set<LearnerEntity> learners = this.eventRepository.findByIdWithLearners(eventId)
             .orElseThrow(() -> new EntityNotFoundException("Event not found"))
             .getLearners();
         System.out.println(learners);
-        return this.learnerMapper.toDomainList(new ArrayList<>(learners));
+        
+        List<LearnerDTO> learnerDTOs = new ArrayList<>();
+
+        final String finalUsedSortOrder = usedSortOrder;
+
+        switch (usedSortField.toLowerCase()) {
+            case "lastname":
+                learnerDTOs = this.learnerMapper.toDomainList(learners.stream()
+                    .sorted((l1, l2) -> {
+                        if (finalUsedSortOrder.equals("ASC")) {
+                            return l1.getLastName().compareToIgnoreCase(l2.getLastName());
+                        } else {
+                            return l2.getLastName().compareToIgnoreCase(l1.getLastName());
+                        }
+                    }).toList());
+                break;
+        
+            case "obs-count":
+                var countMap = getObservationCountMapByLearnerAndEventAndTimespan(eventId, timespanInDays, learners);
+                learnerDTOs = this.learnerMapper.toDomainList(learners.stream()
+                    .sorted((l1, l2) -> {
+                        Long count1 = countMap.getOrDefault(l1.getLearnerId(), new ObservationsDataDTO(0L, null)).getCount();
+                        Long count2 = countMap.getOrDefault(l2.getLearnerId(), new ObservationsDataDTO(0L, null)).getCount();
+                        if (finalUsedSortOrder.equals("ASC")) {
+                            return count1.compareTo(count2);
+                        } else {
+                            return count2.compareTo(count1);
+                        }
+                    }).toList());
+                break;
+            default:
+                break;
+        }
+
+        return learnerDTOs;
+    }
+
+    private Map<Long, ObservationsDataDTO> getObservationCountMapByLearnerAndEventAndTimespan(Long eventId, Integer timespanInDays, Set<LearnerEntity> learners) {
+        List<Long> learnerIds = learners.stream().map(LearnerEntity::getLearnerId).toList();
+        
+        List<Object[]> totalCountList = this.observationRepository.getCountMapByLearnerId(eventId, timespanInDays, learnerIds);
+        Map<Long, ObservationsDataDTO> countMap = new HashMap<>();
+        for (Object[] row : totalCountList) {
+            Long learnerId = (Long) row[0];
+            Long count = (Long) row[1];
+            countMap.put(learnerId, new ObservationsDataDTO(count, null));
+        }
+
+        if (timespanInDays != null && timespanInDays > 0) {
+            for (ObservationsDataDTO entryValue : countMap.values()) {
+                entryValue.setCountWithTimespan(0L);
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime start = now.minusDays(timespanInDays);
+
+            List<Object[]> timespanResult = this.observationRepository.getEntriesCountPerLearnerIdWithTimespanQueries(eventId, now, start, learnerIds);
+
+            for (Object[] row : timespanResult) {
+                Long learnerId = (Long) row[0];
+                Long countWithTimespan = (Long) row[1];
+                ObservationsDataDTO observationsDataDTO = countMap.get(learnerId);
+                if (observationsDataDTO != null) {
+                    observationsDataDTO.setCountWithTimespan(countWithTimespan);
+                }
+            }
+        }
+        return countMap;
     }
 
     public List<EventDTO> getEventsByLearnerId(Long learnerId) {
