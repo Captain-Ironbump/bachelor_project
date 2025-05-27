@@ -22,4 +22,12 @@ Future<void> initializeDefaults() async {
   if (!prefs.containsKey('eventSortReason')) {
     await prefs.setString('eventSortReason', 'alpabeticASC');
   }
+
+  if (!prefs.containsKey('learnerSortBy')) {
+    await prefs.setString('learnerSortBy', 'lastname');
+  }
+
+  if (!prefs.containsKey('learnerSortOrder')) {
+    await prefs.setString('learnerSortOrder', 'ASC');
+  }
 }

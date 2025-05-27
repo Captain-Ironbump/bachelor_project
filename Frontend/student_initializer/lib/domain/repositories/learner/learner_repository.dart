@@ -17,5 +17,5 @@ abstract class LearnerRepository {
       {required LearnerDetailEntity? learnerDetailEntity});
 
   Future<Either<NetworkException, List<LearnerDetailEntity>>>
-      getLearnersByEventId({required int eventId});
+      getLearnersByEventId({required int eventId, int? timespanInDays, String? sortBy, String? sortOrder});
 }

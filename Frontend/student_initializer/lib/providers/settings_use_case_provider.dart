@@ -77,3 +77,21 @@ final getSettingsBoolWithLearnerCountCubitProvider =
     Provider.autoDispose<EventWithLearnerCountCubit>((ref) {
   return EventWithLearnerCountCubit(ref.read(settingsUsecasesProvider));
 });
+
+class LearnerSortByCubit extends GetSettingsStringCubit {
+  LearnerSortByCubit(super.settingsUsecases);
+}
+
+final getSettingsStringLearnerSortByCubitProvider =
+    Provider.autoDispose<LearnerSortByCubit>((ref) {
+  return LearnerSortByCubit(ref.read(settingsUsecasesProvider));
+});
+
+class LearnerSortOrderCubit extends GetSettingsStringCubit {
+  LearnerSortOrderCubit(super.settingsUsecases);
+}
+
+final getSettingsStringLearnerSortOrderCubitProvider =
+    Provider.autoDispose<LearnerSortOrderCubit>((ref) {
+  return LearnerSortOrderCubit(ref.read(settingsUsecasesProvider));
+});

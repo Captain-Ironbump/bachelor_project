@@ -8,6 +8,8 @@ import 'package:student_initializer/presentation/cubits/learner/get_learners/get
 import 'package:student_initializer/presentation/cubits/learner/get_learners_by_event_id/get_learners_by_event_id_cubit.dart';
 import 'package:student_initializer/presentation/cubits/observation/get_observations_count/get_observations_count_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/get_settings_int/get_settings_int_cubit.dart';
+import 'package:student_initializer/presentation/cubits/settings/get_settings_string/get_settings_string_cubit.dart';
+import 'package:student_initializer/providers/settings_use_case_provider.dart';
 
 typedef OnTapRoutingCallback = void Function(int learnerId);
 
@@ -32,13 +34,38 @@ class _LearnersViewState extends State<LearnersView> {
   bool triggered = false;
   List<int>? allLearners;
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final _eventId = widget.eventId ?? -1;
+    final _timespanInDaysState = context.watch<GetSettingsIntCubit>().state;
+    final _sortByState = context.watch<LearnerSortByCubit>().state;
+    final _sortOrderState = context.watch<LearnerSortOrderCubit>().state;
+
+    if (_timespanInDaysState is GetSettingsIntLoaded &&
+        _sortByState is GetSettingsStringLoaded &&
+        _sortOrderState is GetSettingsStringLoaded &&
+        !triggered) {
+      triggered = true;
+      final _timespanInDays = _timespanInDaysState.value!;
+      final _sortBy = _sortByState.value!;
+      final _sortOrder = _sortOrderState.value!;
+      context.read<GetLearnersByEventIdCubit>().getLearnersByEventId(
+        eventId: _eventId,
+        timespanInDays: _timespanInDays,
+        sortBy: _sortBy,
+        sortOrder: _sortOrder,
+      );
+    }
+  }
+
   void _route(int learnerId) {
     widget.onTapRoutingCallback(learnerId);
   }
 
   void tryTriggerObservationCount(BuildContext context) {
     if (learners != null && timespanInDays != null && !triggered) {
-      triggered = true;
+      //triggered = true;
       print(widget.eventId);
       final _eventId = widget.eventId ?? -1;
       print(_eventId);
@@ -57,17 +84,42 @@ class _LearnersViewState extends State<LearnersView> {
       timespanInDays = null;
     });
 
-    final _eventId = widget.eventId ?? -1;
+    final int _eventId = widget.eventId ?? -1;
 
     context
         .read<GetEventDetailsByIdCubit>()
         .getEventDetailsById(eventId: _eventId);
-    context
-        .read<GetLearnersByEventIdCubit>()
-        .getLearnersByEventId(eventId: _eventId);
     context.read<GetSettingsIntCubit>().getSettingsValueByKey(
           key: "timespanInDays",
         );
+
+    context.read<LearnerSortByCubit>().getSettingsValueByKey(
+          key: "learnerSortBy",
+        );
+    context.read<LearnerSortOrderCubit>().getSettingsValueByKey(
+          key: "learnerSortOrder",
+        );
+
+    final _sortByState = context.read<LearnerSortByCubit>().state;
+    final _sortOrderState = context.read<LearnerSortOrderCubit>().state;
+
+    var _sortBy = "";
+    var _sortOrder = "";
+
+    if (_sortByState is GetSettingsStringLoaded) {
+      _sortBy = _sortByState.value!;
+      print("SortBy: $_sortBy");
+    }
+
+    if (_sortOrderState is GetSettingsStringLoaded) {
+      _sortOrder = _sortOrderState.value!;
+    }
+
+    context.read<GetLearnersByEventIdCubit>().getLearnersByEventId(
+        eventId: _eventId,
+        timespanInDays: timespanInDays,
+        sortBy: _sortBy,
+        sortOrder: _sortOrder);
   }
 
   @override
@@ -83,7 +135,13 @@ class _LearnersViewState extends State<LearnersView> {
                       .map((learner) => learner.learnerId!)
                       .toList();
                 });
-                tryTriggerObservationCount(context);
+                if (learners != null && timespanInDays != null) {
+                  context.read<GetObservationsCountCubit>().getObservationCountWithQueries(
+                    timespanInDays: timespanInDays!,
+                    learners: learners!,
+                    eventId: widget.eventId ?? -1,
+                  );
+                }
               }
             },
           ),
@@ -207,10 +265,11 @@ class _LearnersView extends StatelessWidget {
                             (BuildContext context, int index) {
                               final learner = allLearners[index];
                               return CupertinoListTile(
-                                title:
-                                    Text('${learner.firstName!} ${learner.lastName!}'),
+                                title: Text(
+                                    '${learner.firstName!} ${learner.lastName!}'),
                                 trailing: CupertinoSwitch(
-                                  value: selectedMap[learner.learnerId!] ?? false,
+                                  value:
+                                      selectedMap[learner.learnerId!] ?? false,
                                   onChanged: (bool value) {
                                     setState(() {
                                       selectedMap[learner.learnerId!] = value;

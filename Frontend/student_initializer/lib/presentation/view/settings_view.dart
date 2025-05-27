@@ -132,7 +132,8 @@ class SettingsView extends StatelessWidget {
                         title: const Text("With Learner Count"),
                         trailing: const CupertinoListTileChevron(),
                         onTap: () async {
-                          final cubit = context.read<EventWithLearnerCountCubit>();
+                          final cubit =
+                              context.read<EventWithLearnerCountCubit>();
                           final result =
                               await context.push('/settings/learnercount');
                           if (result != null && result is bool && result) {
@@ -141,8 +142,8 @@ class SettingsView extends StatelessWidget {
                             );
                           }
                         },
-                        additionalInfo:
-                            BlocBuilder<EventWithLearnerCountCubit, GetSettingsBoolState>(
+                        additionalInfo: BlocBuilder<EventWithLearnerCountCubit,
+                            GetSettingsBoolState>(
                           builder: (context, state) {
                             if (state is GetSettingsBoolLoaded) {
                               return Text('${state.value!}');
@@ -182,6 +183,66 @@ class SettingsView extends StatelessWidget {
                       )
                     ],
                   ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(10.0),
+                child: CupertinoFormSection.insetGrouped(
+                  header: const Text("Learner Sorting Config"),
+                  children: [
+                    CupertinoListTile(
+                      title: const Text("Sort By"),
+                      trailing: const CupertinoListTileChevron(),
+                      onTap: () async {
+                        final cubit = context.read<LearnerSortByCubit>();
+                        final result = 
+                            await context.push('/settings/learnerSortBy');
+                        if (result != null && result is bool && result) {
+                          cubit.getSettingsValueByKey(
+                            key: "learnerSortBy",
+                          );
+                        }
+                      },
+                      additionalInfo: BlocBuilder<LearnerSortByCubit,
+                          GetSettingsStringState>(
+                        builder: (context, state) {
+                          if (state is GetSettingsStringLoaded) {
+                            return Text(state.value!);
+                          }
+                          if (state is GetSettingsStringLoading) {
+                            return const BaseIndicator();
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ),
+                    CupertinoListTile(
+                      title: const Text("Sort Order"),
+                      trailing: const CupertinoListTileChevron(),
+                      onTap: () async {
+                        final cubit = context.read<LearnerSortOrderCubit>();
+                        final result =
+                            await context.push('/settings/learnerSortOrder');
+                        if (result != null && result is bool && result) {
+                          cubit.getSettingsValueByKey(
+                            key: "learnerSortOrder",
+                          );
+                        }
+                      },
+                      additionalInfo: BlocBuilder<LearnerSortOrderCubit,
+                          GetSettingsStringState>(
+                        builder: (context, state) {
+                          if (state is GetSettingsStringLoaded) {
+                            return Text(state.value!);
+                          }
+                          if (state is GetSettingsStringLoading) {
+                            return const BaseIndicator();
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    )
+                  ],
                 ),
               ),
               Container(

@@ -52,10 +52,17 @@ class LearnerRemoteDataSourceImpl implements LearnerRemoteDataSource {
 
   @override
   Future<List<LearnerDetailModel>> getLearnersByEventId(
-      {required int eventId}) async {
+      {required int eventId, int? timespanInDays, String? sortBy, String? sortOrder}) async {
     try {
+      final queryParams = {
+        "timespanInDays": timespanInDays,
+        "sort": sortBy,
+        "order": sortOrder,
+      }..removeWhere((key, value) => value == null);
+      
+
       final Uri uri = SimplifiedUri.uri(
-          '${PlattformUri.getUri()}/learners/event/$eventId', null);
+          '${PlattformUri.getUri()}/learners/event/$eventId', queryParams);
       final response = await http.get(uri);
       final List<dynamic> items = json.decode(response.body);
       return items.map((item) => LearnerDetailModel.fromJson(item)).toList();

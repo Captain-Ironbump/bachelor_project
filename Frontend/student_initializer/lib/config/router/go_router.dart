@@ -21,11 +21,14 @@ import 'package:student_initializer/presentation/cubits/observation/get_observat
 import 'package:student_initializer/presentation/cubits/observation/save_observation/save_observation_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/get_settings_int/get_settings_int_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/get_settings_string/get_settings_string_cubit.dart';
+import 'package:student_initializer/presentation/cubits/settings/save_settings_string/save_settings_string_cubit.dart';
 import 'package:student_initializer/presentation/cubits/tag/get_tags/get_tags_cubit.dart';
 import 'package:student_initializer/presentation/cubits/tag/save_tag/save_tag_cubit.dart';
 import 'package:student_initializer/presentation/view/event_settings_edit_view.dart';
 import 'package:student_initializer/presentation/view/home_view.dart';
 import 'package:student_initializer/presentation/view/learner_settings_edit_view.dart';
+import 'package:student_initializer/presentation/view/learner_sort_by_edit_view.dart';
+import 'package:student_initializer/presentation/view/learner_sort_order_edit_view.dart';
 import 'package:student_initializer/presentation/view/learners_view.dart';
 import 'package:student_initializer/presentation/view/observation_detailed_view.dart';
 import 'package:student_initializer/presentation/view/observation_list_view.dart';
@@ -107,9 +110,7 @@ class GoRouterCustom {
                                     ),
                                     BlocProvider<GetLearnersByEventIdCubit>(
                                       create: (context) => container.read(
-                                          getLearnersByEventIdCubitProvider)
-                                        ..getLearnersByEventId(
-                                            eventId: int.tryParse(eventId)!),
+                                          getLearnersByEventIdCubitProvider),
                                     ),
                                     BlocProvider<GetLearnersCubit>(
                                       create: (context) => container
@@ -136,6 +137,18 @@ class GoRouterCustom {
                                       create: (context) => container.read(
                                           addLearnersToEventCubitProvider),
                                     ),
+                                    BlocProvider<LearnerSortByCubit>(
+                                      create: (context) => container.read(
+                                          getSettingsStringLearnerSortByCubitProvider)
+                                        ..getSettingsValueByKey(
+                                            key: "learnerSortBy"),
+                                    ),
+                                    BlocProvider<LearnerSortOrderCubit>(
+                                      create: (context) => container.read(
+                                          getSettingsStringLearnerSortOrderCubitProvider)
+                                        ..getSettingsValueByKey(
+                                            key: "learnerSortOrder"),
+                                    )
                                   ],
                                   child: Builder(
                                     builder: (context) => LearnersView(
@@ -473,6 +486,16 @@ class GoRouterCustom {
                             create: (context) => container.read(
                                 getSettingsStringSortParameterCubitProvider)
                               ..getSettingsValueByKey(key: "sortParameter"),
+                          ),
+                          BlocProvider(
+                            create: (context) => container.read(
+                                getSettingsStringLearnerSortByCubitProvider)
+                              ..getSettingsValueByKey(key: "learnerSortBy"),
+                          ),
+                          BlocProvider(
+                            create: (context) => container.read(
+                                getSettingsStringLearnerSortOrderCubitProvider)
+                              ..getSettingsValueByKey(key: "learnerSortOrder"),
                           )
                         ], child: const SettingsView(title: "Settings"));
                       },
@@ -591,6 +614,70 @@ class GoRouterCustom {
                             );
                           },
                         ),
+                        GoRoute(
+                          path: "learnerSortBy",
+                          name: "LearnerSortBy",
+                          builder: (context, state) {
+                            final container =
+                                ProviderScope.containerOf(context);
+                            return MultiBlocProvider(
+                              providers: [
+                                BlocProvider<LearnerSortByCubit>(
+                                  create: (context) => container.read(
+                                      getSettingsStringLearnerSortByCubitProvider)
+                                    ..getSettingsValueByKey(
+                                        key: "learnerSortBy"),
+                                ),
+                                BlocProvider<SaveSettingsStringCubit>(
+                                  create: (context) => container
+                                      .read(saveSettingsStringCubitProvider),
+                                )
+                              ],
+                              child: Builder(
+                                builder: (context) => LearnerSortByEditView(
+                                  onSave: (p0) => context
+                                      .read<SaveSettingsStringCubit>()
+                                      .saveSettingsKeyValueStringPair(
+                                        key: "learnerSortBy",
+                                        value: p0,
+                                      ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: "learnerSortOrder",
+                          name: "LearnerSortOrder",
+                          builder: (context, state) {
+                            final container =
+                                ProviderScope.containerOf(context);
+                            return MultiBlocProvider(
+                              providers: [
+                                BlocProvider<LearnerSortOrderCubit>(
+                                  create: (context) => container.read(
+                                      getSettingsStringLearnerSortOrderCubitProvider)
+                                    ..getSettingsValueByKey(
+                                        key: "learnerSortOrder"),
+                                ),
+                                BlocProvider<SaveSettingsStringCubit>(
+                                  create: (context) => container
+                                      .read(saveSettingsStringCubitProvider),
+                                )
+                              ],
+                              child: Builder(
+                                builder: (context) => LearnerSortOrderEditView(
+                                  onSave: (p0) => context
+                                      .read<SaveSettingsStringCubit>()
+                                      .saveSettingsKeyValueStringPair(
+                                        key: "learnerSortOrder",
+                                        value: p0,
+                                      ),
+                                ),
+                              ),
+                            );
+                          },
+                        )
                       ])
                 ])
           ],

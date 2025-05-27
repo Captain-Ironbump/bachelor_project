@@ -9,13 +9,24 @@ class GetLearnersByEventIdCubit extends Cubit<GetLearnersByEventIdState> {
   GetLearnersByEventIdCubit(this._learnerUsecases)
       : super(const GetLearnersByEventIdInitial());
 
-  Future<void> getLearnersByEventId({required int eventId}) async {
+  Future<void> getLearnersByEventId(
+      {required int eventId,
+      int? timespanInDays,
+      String? sortBy,
+      String? sortOrder}) async {
     try {
       emit(const GetLearnersByEventIdLoading());
-      final result =
-          await _learnerUsecases.getLearnersByEventId(eventId: eventId);
-      result.fold((error) => emit(GetLearnersByEventIdError(message: error.message)),
-          (success) => emit(GetLearnersByEventIdLoaded(learners: success)));
+      final result = await _learnerUsecases.getLearnersByEventId(
+          eventId: eventId,
+          timespanInDays: timespanInDays,
+          sortBy: sortBy,
+          sortOrder: sortOrder);
+      result.fold(
+          (error) => emit(GetLearnersByEventIdError(message: error.message)),
+          (success) {
+        print("✅ Emitting GetLearnersByEventIdLoaded with $success items");
+        emit(GetLearnersByEventIdLoaded(learners: success));
+      });
     } catch (_) {
       rethrow;
     }

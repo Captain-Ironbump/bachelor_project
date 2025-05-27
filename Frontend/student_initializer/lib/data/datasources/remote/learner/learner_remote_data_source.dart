@@ -8,5 +8,5 @@ abstract class LearnerRemoteDataSource {
   Future<void> saveLearnerDetails(
       {required String firstName, required String lastName});
 
-  Future<List<LearnerDetailModel>> getLearnersByEventId({required int eventId});
+  Future<List<LearnerDetailModel>> getLearnersByEventId({required int eventId, int? timespanInDays, String? sortBy, String? sortOrder});
 }

@@ -29,7 +29,8 @@ class LearnerUsecases {
   }
 
   Future<Either<NetworkException, List<LearnerDetailEntity>>>
-      getLearnersByEventId({required int eventId}) async {
-    return _learnerRepository.getLearnersByEventId(eventId: eventId);
+      getLearnersByEventId({required int eventId, int? timespanInDays, String? sortBy, String? sortOrder}) async {
+    return _learnerRepository.getLearnersByEventId(eventId: eventId, 
+        timespanInDays: timespanInDays, sortBy: sortBy, sortOrder: sortOrder);
   }
 }
