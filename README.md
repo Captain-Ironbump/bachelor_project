@@ -49,7 +49,7 @@ ollama run llama3.2
 Der erste Befehl startet den Ollama-Server und macht ihn auf allen Netzwerk-Interfaces erreichbar. Dies ist notwendig, damit die Docker Container im Lokalen Netzwerk mit den KI-Modellen von ollama zugreifen können.  
 Der zweite Befehl startet die LLM mit dem Model `llama3.2`. Hierfür kann ein beliebiges Model angegeben werden. (**Wichtig! Modelle können mehr als 10GB groß sein, weshalb der erste Download eines LLM-Model-Images entsprechend lange dauern kann.**)
 
-Informationen zur Installation von Ollama und dessen Modellen finden Sie [hier](https://ollama.com/)
+Informationen zur Installation von Ollama und dessen Modellen finden Sie [hier](https://ollama.com/).  
 Im `Backend` Ordner des Repository befindet sich das **build-and-deploy.sh** Shell-Skript.
 ```bash
 cd $PROJECT_ROOT/Backend/
@@ -77,13 +77,13 @@ Die Variable `QUARKUS_LANGCHAIN4J_OLLAMA__LLAMA__CHAT_MODEL_MODEL_ID` muss entwe
 #### ⚠️ Hinweis!
 
 Für das Bauen und Ausführen des Frontends sollte die Flutter SDK auf dem Rechner bereits installiert sein.  
-Mehr Information zum installieren von Flutter finden sie [hier](https://docs.flutter.dev/get-started/install?categories=mvo,ar-vr,rmdy,web,mobile&categories=mvo,creative,ar-vr,rmdy,mobile&categories=mvo,creative,ar-vr,rmdy,web,mobile)  
-Zudem ist es empfehlenswert, die Android SDK zu installieren (falls die App auf Android emuliert werden soll). Hierzu finden Sie ebenfalls genauere Informationen in der [Flutter Bedienungsanleitung](https://docs.flutter.dev/platform-integration/android/setup)
+Mehr Information zum installieren von Flutter finden sie [hier](https://docs.flutter.dev/get-started/install?categories=mvo,ar-vr,rmdy,web,mobile&categories=mvo,creative,ar-vr,rmdy,mobile&categories=mvo,creative,ar-vr,rmdy,web,mobile).  
+Zudem ist es empfehlenswert, die Android SDK zu installieren (falls die App auf Android emuliert werden soll). Hierzu finden Sie ebenfalls genauere Informationen in der [Flutter Bedienungsanleitung](https://docs.flutter.dev/platform-integration/android/setup).  
 
 #### Bauen und Ausfuhren
 
 Damit das Frontend ausgeführt werden kann, muss zunächst ein Android-Simulator oder ein IOS-Simulator gestartet werden.  
-Sollte jedoch als Frontend ein Chrome-Browser benutzt werden, muss hier fur kein Simulator gestartet werden.  
+Sollte jedoch als Frontend ein Chrome-Browser benutzt werden, muss hier für kein Simulator gestartet werden.  
 Dabei sollte jedoch das Browser Design auf "Hell" eingestellt werden, da das App-Design nur fur diesen Modus vorgesehen ist.
 
 Im Hauptorder des Repositories befindet sich ein Ordner names `Frontend`.
