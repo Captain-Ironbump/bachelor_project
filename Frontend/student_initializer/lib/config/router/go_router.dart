@@ -33,6 +33,7 @@ import 'package:student_initializer/presentation/view/learners_view.dart';
 import 'package:student_initializer/presentation/view/observation_detailed_view.dart';
 import 'package:student_initializer/presentation/view/observation_list_view.dart';
 import 'package:student_initializer/presentation/view/observations_view.dart';
+import 'package:student_initializer/presentation/view/report_gen_uri_settings_eddit_view.dart';
 import 'package:student_initializer/presentation/view/settings_view.dart';
 import 'package:student_initializer/presentation/view/tags_setting_edit_view.dart';
 import 'package:student_initializer/presentation/view/timespan_setting_edit_form_view.dart';
@@ -235,6 +236,13 @@ class GoRouterCustom {
                                               GenerateMarkdownFormCubit>(
                                             create: (context) => container.read(
                                                 generateMarkdownFormCubitProvider),
+                                          ),
+                                          BlocProvider<
+                                              MarkdownUsedEndpointCubit>(
+                                            create: (context) => container.read(
+                                                getSettingsStringMarkdownUsedEndpointCubitProvider)
+                                              ..getSettingsValueByKey(
+                                                  key: "markdownUsedEndpoint"),
                                           ),
                                           BlocProvider<DeleteObservationCubit>(
                                             create: (context) => container.read(
@@ -496,7 +504,13 @@ class GoRouterCustom {
                             create: (context) => container.read(
                                 getSettingsStringLearnerSortOrderCubitProvider)
                               ..getSettingsValueByKey(key: "learnerSortOrder"),
-                          )
+                          ),
+                          BlocProvider(
+                            create: (context) => container.read(
+                                getSettingsStringMarkdownUsedEndpointCubitProvider)
+                              ..getSettingsValueByKey(
+                                  key: "markdownUsedEndpoint"),
+                          ),
                         ], child: const SettingsView(title: "Settings"));
                       },
                       routes: [
@@ -676,6 +690,39 @@ class GoRouterCustom {
                                 ),
                               ),
                             );
+                          },
+                        ),
+                        GoRoute(
+                          path: "markdownEndpoint",
+                          name: "MarkdownEndpoint",
+                          builder: (context, state) {
+                            final container =
+                                ProviderScope.containerOf(context);
+                            return MultiBlocProvider(
+                                providers: [
+                                  BlocProvider<MarkdownUsedEndpointCubit>(
+                                    create: (context) => container.read(
+                                        getSettingsStringMarkdownUsedEndpointCubitProvider)
+                                      ..getSettingsValueByKey(
+                                        key: "markdownUsedEndpoint",
+                                      ),
+                                  ),
+                                  BlocProvider<SaveSettingsStringCubit>(
+                                    create: (context) => container
+                                        .read(saveSettingsStringCubitProvider),
+                                  ),
+                                ],
+                                child: Builder(
+                                  builder: (context) =>
+                                      ReportGenUriSettingsEdditView(
+                                    onSave: (p0) => context
+                                        .read<SaveSettingsStringCubit>()
+                                        .saveSettingsKeyValueStringPair(
+                                          key: "markdownUsedEndpoint",
+                                          value: p0,
+                                        ),
+                                  ),
+                                ));
                           },
                         )
                       ])

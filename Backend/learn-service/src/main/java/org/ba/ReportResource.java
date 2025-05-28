@@ -27,7 +27,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import java.net.URI;
 
-@Path("/reports")
+@Path("/api/reports")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "reports", description = "Reports API")

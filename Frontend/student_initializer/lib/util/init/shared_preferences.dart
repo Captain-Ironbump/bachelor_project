@@ -30,4 +30,8 @@ Future<void> initializeDefaults() async {
   if (!prefs.containsKey('learnerSortOrder')) {
     await prefs.setString('learnerSortOrder', 'ASC');
   }
+
+  if (!prefs.containsKey('markdownUsedEndpoint')) {
+    await prefs.setString('markdownUsedEndpoint', 'Standard');
+  }
 }

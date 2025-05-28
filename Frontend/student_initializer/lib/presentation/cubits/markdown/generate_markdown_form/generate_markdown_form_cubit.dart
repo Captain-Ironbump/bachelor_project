@@ -10,11 +10,11 @@ class GenerateMarkdownFormCubit extends Cubit<GenerateMarkdownFormState> {
       : super(const GenerateMarkdownFormInitial());
 
   Future<void> generateMarkdownForm(
-      {required int eventId, required int learnerId, String? length}) async {
+      {required int eventId, required int learnerId, String? length, required String endpoint}) async {
     try {
       emit(const GenerateMarkdownFormLoading());
       final result = await _markdownUsecases.generateMarkdownForm(
-          eventId: eventId, learnerId: learnerId, length: length);
+          eventId: eventId, learnerId: learnerId, length: length, endpoint: endpoint);
       result.fold((error) => emit(GenerateMarkdownFormError(error.message)),
           (success) {
         print("✅ Emitting GenerateMarkdownFormLoaded with $success");

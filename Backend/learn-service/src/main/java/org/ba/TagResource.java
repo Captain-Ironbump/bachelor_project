@@ -24,7 +24,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import lombok.AllArgsConstructor;
 
-@Path("/tags")
+@Path("/api/tags")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "tag", description = "Tag with color")

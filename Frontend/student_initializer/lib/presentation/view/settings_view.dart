@@ -274,6 +274,41 @@ class SettingsView extends StatelessWidget {
                   ],
                 ),
               ),
+              Container(
+                padding: const EdgeInsets.all(10.0),
+                child: CupertinoFormSection.insetGrouped(
+                  header: const Text("Markdown Generation"),
+                  children: [
+                    CupertinoListTile(
+                      title: const Text('Endpoint'),
+                      trailing: const CupertinoListTileChevron(),
+                      onTap: () async {
+                        final cubit = context.read<MarkdownUsedEndpointCubit>();
+                        final result =
+                            await context.push('/settings/markdownEndpoint');
+                        if (result != null && result is bool && result) {
+                          cubit.getSettingsValueByKey(
+                            key: "markdownUsedEndpoint",
+                          );
+                        }
+                      },
+                      additionalInfo:
+                          BlocBuilder<MarkdownUsedEndpointCubit,
+                              GetSettingsStringState>(
+                        builder: (context, state) {
+                          if (state is GetSettingsStringLoaded) {
+                            return Text(state.value!);
+                          }
+                          if (state is GetSettingsStringLoading) {
+                            return const BaseIndicator();
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              )
             ]),
           )
         ],

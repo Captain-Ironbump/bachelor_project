@@ -11,10 +11,10 @@ class MarkdownRepositoryImpl implements MarkdownRepository {
 
   @override
   Future<Either<NetworkException, String>> generateMarkdownForm(
-      {required int eventId, required int learnerId, String? length}) async {
+      {required int eventId, required int learnerId, String? length, required String endpoint}) async {
     try {
       final result = await _markdownRemoteDataSource.generateMarkdownForm(
-          eventId: eventId, learnerId: learnerId, length: length);
+          eventId: eventId, learnerId: learnerId, length: length, endpoint: endpoint);
       return Right(result);
     } on Exception catch (e) {
       return Left(NetworkException.fromHttpError(e));

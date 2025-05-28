@@ -10,7 +10,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 
-@Path("/tag-concept")
+@Path("/api/tag-concept")
 public class TagConceptResource {
 
     @Inject
@@ -18,7 +18,7 @@ public class TagConceptResource {
 
     @GET
     @Path("/competence/learners/{learnerId}")
-    public Response generateReportWithTagConcept(@PathParam("learnerId") Long learnerId, @QueryParam("eventId") Long eventId, @QueryParam("reportLength") String reportLength) {
+    public Response generateReportWithTagConcept(@PathParam("learnerId") Long learnerId, @QueryParam("eventId") Long eventId, @QueryParam("length") String reportLength) {
         try {
             String response = tagConceptService.tagConcept(learnerId, eventId, reportLength);
             return Response.accepted().entity(response).build();
@@ -31,7 +31,7 @@ public class TagConceptResource {
 
     @GET
     @Path("/general/learners/{learnerId}")
-    public Response generateReportWithGeneralTagConcept(@PathParam("learnerId") Long learnerId, @QueryParam("eventId") Long eventId, @QueryParam("reportLength") String reportLength) {
+    public Response generateReportWithGeneralTagConcept(@PathParam("learnerId") Long learnerId, @QueryParam("eventId") Long eventId, @QueryParam("length") String reportLength) {
         try {
             String response = tagConceptService.generalTagConcept(learnerId, eventId, reportLength);
             return Response.accepted().entity(response).build();

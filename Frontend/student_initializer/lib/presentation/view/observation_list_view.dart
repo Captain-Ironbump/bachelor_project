@@ -38,7 +38,10 @@ class ObservationListView extends StatefulWidget {
   final Function(int?) onObservationDeleteCallback;
 
   const ObservationListView(
-      {super.key, required this.eventId, required this.onTabRoutingCallback, required this.onObservationDeleteCallback});
+      {super.key,
+      required this.eventId,
+      required this.onTabRoutingCallback,
+      required this.onObservationDeleteCallback});
 
   @override
   State<ObservationListView> createState() => _ObservationListViewState();
@@ -56,6 +59,7 @@ class _ObservationListViewState extends State<ObservationListView>
   int? _timespanInDays;
   bool _hasFetchedObservations = false;
   String? _markdown;
+  String? _markdownEndpoint;
 
   @override
   void initState() {
@@ -177,6 +181,13 @@ class _ObservationListViewState extends State<ObservationListView>
             }
           },
         ),
+        BlocListener<MarkdownUsedEndpointCubit, GetSettingsStringState>(
+          listener: (context, state) {
+            if (state is GetSettingsStringLoaded) {
+              _markdownEndpoint = state.value;
+            }
+          },
+        ),
         if (hasEventCubit)
           BlocListener<GetEventDetailsByIdCubit, GetEventDetailsByIdState>(
             listener: (context, state) {
@@ -232,11 +243,12 @@ class _ObservationListViewState extends State<ObservationListView>
         animationController: _animationController,
         scaleAnimation: _scaleAnimation,
         eventId: widget.eventId,
+        markdownEndpoint: _markdownEndpoint,
         onTabRoutingCallback: (int observationId) {
           widget.onTabRoutingCallback(observationId);
         },
         onObservationDeleteCallback: (eventId) {
-          widget.onObservationDeleteCallback(eventId);          
+          widget.onObservationDeleteCallback(eventId);
           //_hasFetchedObservations = false;
           //_checkAndFetchObservations();
         },
@@ -249,6 +261,7 @@ typedef OnTabRoutingCallback = void Function(int observationId);
 
 class _ObservationDetailView extends StatelessWidget {
   final int? eventId;
+  final String? markdownEndpoint;
   final AnimationController animationController;
   final Animation<double> scaleAnimation;
   final OnTabRoutingCallback onTabRoutingCallback;
@@ -261,7 +274,8 @@ class _ObservationDetailView extends StatelessWidget {
       required this.scaleAnimation,
       required this.eventId,
       required this.onTabRoutingCallback,
-      required this.onObservationDeleteCallback});
+      required this.onObservationDeleteCallback,
+      required this.markdownEndpoint});
 
   void _showReportsDialog(BuildContext context, int? learnerId, int? eventId) {
     final sortOrder = context.read<SortOrderCubit>().state;
@@ -335,6 +349,7 @@ class _ObservationDetailView extends StatelessWidget {
                                           eventId: eventId,
                                           learnerId: learnerId,
                                           length: "short",
+                                          endpoint: markdownEndpoint!,
                                         );
                                   }),
                             );

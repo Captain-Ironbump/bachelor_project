@@ -95,3 +95,12 @@ final getSettingsStringLearnerSortOrderCubitProvider =
     Provider.autoDispose<LearnerSortOrderCubit>((ref) {
   return LearnerSortOrderCubit(ref.read(settingsUsecasesProvider));
 });
+
+class MarkdownUsedEndpointCubit extends GetSettingsStringCubit {
+  MarkdownUsedEndpointCubit(super.settingsUsecases);
+}
+
+final getSettingsStringMarkdownUsedEndpointCubitProvider =
+    Provider.autoDispose<MarkdownUsedEndpointCubit>((ref) {
+  return MarkdownUsedEndpointCubit(ref.read(settingsUsecasesProvider));
+});

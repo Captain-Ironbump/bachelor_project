@@ -35,7 +35,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.ws.rs.QueryParam;
 
-@Path("/observations/tags")
+@Path("/api/observations/tags")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "observation_tags")

@@ -4,7 +4,7 @@ import 'package:student_initializer/util/exceptions/network_excpetion.dart';
 
 abstract class MarkdownRepository {
   Future<Either<NetworkException, String>> generateMarkdownForm(
-      {required int eventId, required int learnerId, String? length});
+      {required int eventId, required int learnerId, String? length, required String endpoint});
   Future<Either<NetworkException, MarkdownFormEntity>> getMarkdownForm(
       {required int reportId});
   Future<Either<NetworkException, List<MarkdownFormEntity>>>

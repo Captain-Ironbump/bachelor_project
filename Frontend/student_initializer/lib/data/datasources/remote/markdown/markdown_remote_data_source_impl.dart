@@ -9,15 +9,33 @@ import 'package:http/http.dart' as http;
 class MarkdownRemoteDataSourceImpl implements MarkdownRemoteDataSource {
   @override
   Future<String> generateMarkdownForm(
-      {required int eventId, required int learnerId, String? length}) async {
+      {required int eventId,
+      required int learnerId,
+      String? length,
+      required String endpoint}) async {
     try {
       var queryParam = {};
       if (length != null) {
         queryParam = Map.of({"length": length});
       }
-      final Uri uri = SimplifiedUri.uri(
-          '${PlattformUri.getLlUri()}/reporttrigger/new/event/$eventId/learner/$learnerId', // change to correct URL when LLM interface is ready!! (class TriggerSomethingResource.java)
+
+      Uri uri = SimplifiedUri.uri(
+          '${PlattformUri.getLlUri()}/reporttrigger/new/event/$eventId/learner/$learnerId',
           queryParam);
+
+      if (endpoint.toLowerCase().contains("competence")) {
+        queryParam.addEntries([MapEntry("eventId", eventId)]);
+        uri = SimplifiedUri.uri(
+            '${PlattformUri.getLlUri()}/tag-concept/competence/learners/$learnerId',
+            queryParam);
+      }
+      if (endpoint.toLowerCase().contains("general")) {
+        queryParam.addEntries([MapEntry("eventId", eventId)]);
+        uri = SimplifiedUri.uri(
+            '${PlattformUri.getLlUri()}/tag-concept/general/learners/$learnerId',
+            queryParam);
+      }
+
       final response = await http.get(uri);
       return response.body.toString();
     } catch (_) {
@@ -28,8 +46,8 @@ class MarkdownRemoteDataSourceImpl implements MarkdownRemoteDataSource {
   @override
   Future<MarkdownFormModel> getMarkdownForm({required int reportId}) async {
     try {
-      final Uri uri = SimplifiedUri.uri(
-          '${PlattformUri.getUri()}/reports/$reportId', null);
+      final Uri uri =
+          SimplifiedUri.uri('${PlattformUri.getUri()}/reports/$reportId', null);
       final response = await http.get(uri);
       dynamic decodedJson = json.decode(response.body);
       return MarkdownFormModel.fromJson(decodedJson);
@@ -53,9 +71,8 @@ class MarkdownRemoteDataSourceImpl implements MarkdownRemoteDataSource {
         "timespanInDays": timespanInDays
       };
       final Uri uri = SimplifiedUri.uri(
-          '${PlattformUri.getUri()}/reports/learner/$learnerId',
-          queryParams);
-      
+          '${PlattformUri.getUri()}/reports/learner/$learnerId', queryParams);
+
       final response = await http.get(uri);
       List<dynamic> decodedJson = json.decode(response.body);
       return decodedJson
@@ -65,11 +82,13 @@ class MarkdownRemoteDataSourceImpl implements MarkdownRemoteDataSource {
       rethrow;
     }
   }
-  
+
   @override
-  Future<MarkdownFormModel> updateMarkdownForm({required int reportId, required String quality}) async {
+  Future<MarkdownFormModel> updateMarkdownForm(
+      {required int reportId, required String quality}) async {
     try {
-      final Uri uri = SimplifiedUri.uri('${PlattformUri.getUri()}/reports/$reportId', null);
+      final Uri uri =
+          SimplifiedUri.uri('${PlattformUri.getUri()}/reports/$reportId', null);
       final body = json.encode({"quality": quality});
       final response = await http.patch(
         uri,

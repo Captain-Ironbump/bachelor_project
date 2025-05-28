@@ -90,3 +90,49 @@ Es besteht ebenfalls die Möglichkeit, über den folgenden Befehl die Flutter Ap
 ```bash
 flutter run
 ```
+
+## Kompetenzen definieren
+Kompetenzen werden in `.txt` Dateien innerhalb des `rag` Ordners im `llm-interface/src/main/resources` Ordner des Backends definiert. Diese werden in ein Embedding Store als Vektoren gespeichert um die Prompts der LLM mit dem Retrieval-Augmented Generation (RAG) mit diesen Zusatzinformationen dyanamisch zu bestücken.
+Die Kompetenzen werden unterhalb ihres Kurses nummieriert aufgelistet. Dazu werden, ebenfalls nummeriert, die Indikatoren der Kompetenz angegeben.  
+Die Struktur sieht somit wie folgt aus:
+```txt
+Course: [Kursname]
+Competence 1: [Kompetenz des Kurses]
+Indicators:
+1.1 [Beschreibung des Indikator 1]
+...
+1.N [Beschreibung des Indikator N]
+```  
+Die Datei [01-competence.txt](./Backend/llm-interface/src/main/resources/rag/01-competence.txt) kann als Referenz verwendet und/oder Erweitert werden.
+
+## Backend Endpoints
+
+### Learn-Service (Port 8081)
+
+| Methode | Pfad                                               | Beschreibung                                         | Parameter / Query-Parameter                                                                                 |
+|---------|----------------------------------------------------|------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| GET     | /api/events                                        | Gibt alle Events zurück                              | Query: `withLearnerCount` (Boolean), `eventSortReason` (String)                                             |
+| POST    | /api/events                                        | Erstellt ein neues Event                             | Body: `EventDTO`                                                                                            |
+| GET     | /api/events/{eventId}                              | Gibt ein Event nach ID zurück                        | Pfad: `eventId` (Long)                                                                                      |
+| POST    | /api/learners                                      | Erstellt einen neuen Lerner                          | Body: `LearnerDTO`                                                                                          |
+| GET     | /api/learners/{learnerId}                          | Gibt einen Lerner nach ID zurück                     | Pfad: `learnerId` (Long)                                                                                    |
+| GET     | /api/learners                                      | Gibt alle Lerner zurück                              | -                                                                                                           |
+| POST    | /api/tags                                          | Erstellt einen neuen Tag                             | Body: `TagDTO`                                                                                              |
+| GET     | /api/tags                                          | Gibt alle Tags zurück                                | -                                                                                                           |
+| POST    | /api/observations                                  | Erstellt eine neue Observation                       | Body: `ObservationDTO`                                                                                      |
+| GET     | /api/observations/learnerId/{learnerId}            | Gibt alle Observations eines Lerners zurück           | Pfad: `learnerId` (Long), Query: `sort` (String), `order` (String), `eventId` (Long), `timespanInDays` (int)|
+| GET     | /api/observations/count-map                        | Gibt für jeden Lerner die Anzahl der Observations    | Query: `eventId` (Long), `timeSpanInDays` (Integer), `learners` (List<Long>)                                |
+| GET     | /api/observations/observationId/{observationId}    | Gibt eine Observation nach ID zurück                 | Pfad: `observationId` (Long)                                                                                |
+| DELETE  | /api/observations/{observationId}                  | Löscht eine Observation nach ID                      | Pfad: `observationId` (Long)                                                                                |
+| POST    | /api/observations/tags                             | Erstellt eine Observation mit Tags                   | Body: `ObservationWithTagsDTO`                                                                              |
+| PATCH   | /api/observations/tags/{observationId}             | Patcht eine Observation mit Tags                     | Pfad: `observationId` (Long), Body: `ObservationWithTagsDTO`                                                |
+| GET     | /api/observations/tags/learner/{learnerId}         | Gibt Observations mit Tags eines Lerners zurück      | Pfad: `learnerId` (Long), Query: `eventId` (Long), `sort` (String), `order` (String), `timespanInDays` (int)|
+| GET     | /api/observations/tags/observation/{observationId} | Gibt eine Observation mit Tags nach ID zurück        | Pfad: `observationId` (Long)                                                                                |
+
+### llm-interface (Port 8082)
+
+| Methode | Pfad                                                        | Beschreibung                                                        | Parameter / Query-Parameter                                  |
+|---------|-------------------------------------------------------------|---------------------------------------------------------------------|--------------------------------------------------------------|
+| GET     | /api/reporttrigger/new/event/{eventId}/learner/{learnerId}  | Startet die asynchrone Report-Generierung | Pfad: `eventId` (Long), `learnerId` (Long), Query: `length` (String) |
+| GET     | /api/tag-concept/competence/learners/{learnerId}            | Startet die asynchrone Report-Generierung mit Tag-Concept `competence tags` für einen Lerner   | Pfad: `learnerId` (Long), Query: `eventId` (Long), `length` (String) |
+| GET     | /api/tag-concept/general/learners/{learnerId}               | Startet die asynchrone Report-Generierung mit Tag-Concept `general tags` für einen Lerner | Pfad: `learnerId` (Long), Query: `eventId` (Long), `length` (String) |
