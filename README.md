@@ -15,8 +15,8 @@ Ziel ist es, Lehrkräften eine einfache, effiziente und objektive Möglichkeit z
 
 - Programmiersprachen: Java, Dart, SQL
 - Backend: QuarkusIo, Langchain4j,
-- KI-Modul: Ollama (im Beispiel 'qwen3:14b'), OpenAI
-- Frontend: Flutter (Android/IOS/Browser)
+- KI-Modul: Ollama (im Beispiel `qwen3:14b`), OpenAI
+- Frontend: Flutter (Android/IOS/Chrome)
 - Datenbank: PostgreSQL
 
 ## 📦 Installation
@@ -44,9 +44,16 @@ Damit eine Ollama Instanz mit dem Docker Containern Kommunizieren kann, sollte b
 
 ```bash
 OLLAMA_HOST=0.0.0.0 ollama server
+ollama run llama3.2
 ```
+Der erste Befehl startet den Ollama-Server und macht ihn auf allen Netzwerk-Interfaces erreichbar. Dies ist notwendig, damit die Docker Container im Lokalen Netzwerk mit den KI-Modellen von ollama zugreifen können.  
+Der zweite Befehl startet die LLM mit dem Model `llama3.2`. Hierfür kann ein beliebiges Model angegeben werden. (**Wichtig! Modelle können mehr als 10GB groß sein, weshalb der erste Download eines LLM-Model-Images entsprechend lange dauern kann.**)
+
 Informationen zur Installation von Ollama und dessen Modellen finden Sie [hier](https://ollama.com/)
-Im Hauptordner des Repository befindet sich das **build-and-deploy.sh** Shell-Skript.
+Im `Backend` Ordner des Repository befindet sich das **build-and-deploy.sh** Shell-Skript.
+```bash
+cd $PROJECT_ROOT/Backend/
+```
 Dies kann wie folgt eingesetzt werden:
 ```bash
 ./build-and-deploy.sh
@@ -61,10 +68,10 @@ Flag **-f** erlaubt es dem Benutzer, den build step der Quarkus Applikationen zu
 Die flag **-s [settings.xml]** erlaubt es während dem build Step eine andere settings.xml für Maven zu benutzen.
 
 #### Umgebungsvariablen (Backend)
-Das **docker-compose.yml** nimmt für einige Werte einen Standardwert an. Diese können bzw. sollten mithilfe einer .env Datei, oder dem hinzufügen von Umgebungsvariablen im Terminal überschrieben werden.    
+Das **docker-compose.yml** nimmt für einige Werte einen Standardwert an. Diese können bzw. sollten mithilfe einer .env Datei, oder dem hinzufügen von Umgebungsvariablen im Terminal überschrieben werden.  
 Die [.env.example](./.env.example) Datei im Hauptordner zeigt ein kurzes Beispiel der möglichen Umgebungsvariablen.  
-#### Wichtig!
-Die Variable `QUARKUS_LANGCHAIN4J_OLLAMA__LLAMA__CHAT_MODEL_MODEL_ID` muss entweder Exportiert, oder zu der `.env` Datei hinzugefügt werden, da diese im, Build Prozess genötigt wird.
+#### ❗️ Wichtig!
+Die Variable `QUARKUS_LANGCHAIN4J_OLLAMA__LLAMA__CHAT_MODEL_MODEL_ID` muss entweder als Umgebungsvariable exportiert oder in die `.env`-Datei eingetragen werden. Sie wird im Build-Prozess benötigt – unabhängig davon, ob Ollama oder ein anderer Anbieter verwendet wird bzw. ob eine Ollama-Instanz gestartet wurde oder nicht.
 
 ### Bauen und Deployen des Frontends (Lokal über Android Studio/VSCode/command Line)
 #### ⚠️ Hinweis!
@@ -81,7 +88,7 @@ Dabei sollte jedoch das Browser Design auf "Hell" eingestellt werden, da das App
 
 Im Hauptorder des Repositories befindet sich ein Ordner names `Frontend`.
 ```bash
-cd ./Frontend/student_initializer
+cd $PROJECT_ROOT/Frontend/student_initializer/
 ```
 
 Dies ist der Hauptordner der Flutter Apliaktion. Ab hier kann nun die Flutter Applikation über die `RUN` Schaltfläche von Android Studio oder VSCode die Flutter Applikation gestartet werden.  
@@ -91,8 +98,8 @@ Es besteht ebenfalls die Möglichkeit, über den folgenden Befehl die Flutter Ap
 flutter run
 ```
 
-## Kompetenzen definieren
-Kompetenzen werden in `.txt` Dateien innerhalb des `rag` Ordners im `llm-interface/src/main/resources` Ordner des Backends definiert. Diese werden in ein Embedding Store als Vektoren gespeichert um die Prompts der LLM mit dem Retrieval-Augmented Generation (RAG) mit diesen Zusatzinformationen dyanamisch zu bestücken.
+## 🏆 Kompetenzen definieren
+Kompetenzen werden in `.txt` Dateien innerhalb des `rag` Ordners im `llm-interface/src/main/resources` Ordner des `Backends` definiert. Diese werden in ein Embedding Store als Vektoren gespeichert um die Prompts der LLM mit dem Retrieval-Augmented Generation (RAG) mit diesen Zusatzinformationen dyanamisch zu bestücken.
 Die Kompetenzen werden unterhalb ihres Kurses nummieriert aufgelistet. Dazu werden, ebenfalls nummeriert, die Indikatoren der Kompetenz angegeben.  
 Die Struktur sieht somit wie folgt aus:
 ```txt
@@ -105,7 +112,7 @@ Indicators:
 ```  
 Die Datei [01-competence.txt](./Backend/llm-interface/src/main/resources/rag/01-competence.txt) kann als Referenz verwendet und/oder Erweitert werden.
 
-## Backend Endpoints
+## 🔗 Backend Endpoints
 
 ### Learn-Service (Port 8081)
 
