@@ -7,6 +7,8 @@ import 'package:student_initializer/presentation/_widgets/timespan_setting_form.
 import 'package:student_initializer/presentation/cubits/settings/get_settings_bool/get_settings_bool_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/get_settings_int/get_settings_int_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/get_settings_string/get_settings_string_cubit.dart';
+import 'package:student_initializer/presentation/cubits/settings/save_settings_bool/save_settings_bool_cubit.dart';
+import 'package:student_initializer/presentation/cubits/settings/save_settings_int/save_settings_int_cubit.dart';
 import 'package:student_initializer/providers/settings_use_case_provider.dart';
 
 class SettingsView extends StatelessWidget {
@@ -130,28 +132,21 @@ class SettingsView extends StatelessWidget {
                     children: [
                       CupertinoListTile(
                         title: const Text("With Learner Count"),
-                        trailing: const CupertinoListTileChevron(),
-                        onTap: () async {
-                          final cubit =
-                              context.read<EventWithLearnerCountCubit>();
-                          final result =
-                              await context.push('/settings/learnercount');
-                          if (result != null && result is bool && result) {
-                            cubit.getSettingsValueByKey(
-                              key: "withLearnerCount",
-                            );
-                          }
-                        },
-                        additionalInfo: BlocBuilder<EventWithLearnerCountCubit,
-                            GetSettingsBoolState>(
+                        trailing: BlocBuilder<EventWithLearnerCountCubit, GetSettingsBoolState>(
                           builder: (context, state) {
-                            if (state is GetSettingsBoolLoaded) {
-                              return Text('${state.value!}');
-                            }
-                            if (state is GetSettingsBoolLoading) {
-                              return const BaseIndicator();
-                            }
-                            return const SizedBox.shrink();
+                            final value = (state is GetSettingsBoolLoaded) ? state.value! : false;
+                            return CupertinoSwitch(
+                              value: value,
+                              onChanged: (newValue) async {
+                                context.read<SaveSettingsBoolCubit>().saveSettingsKeyValueBoolPair(
+                                  key: "withLearnerCount",
+                                  value: newValue,
+                                );
+                                context.read<EventWithLearnerCountCubit>().getSettingsValueByKey(
+                                  key: "withLearnerCount",
+                                );
+                              },
+                            );
                           },
                         ),
                       ),
@@ -161,7 +156,7 @@ class SettingsView extends StatelessWidget {
                         onTap: () async {
                           final cubit = context.read<EventSortReasonCubit>();
                           final result =
-                              await context.push('/settings/sortreason');
+                              await context.push('/settings/eventSortReason');
                           if (result != null && result is bool && result) {
                             cubit.getSettingsValueByKey(
                               key: "eventSortReason",

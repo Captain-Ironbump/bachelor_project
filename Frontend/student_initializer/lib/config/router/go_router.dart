@@ -25,6 +25,7 @@ import 'package:student_initializer/presentation/cubits/settings/save_settings_s
 import 'package:student_initializer/presentation/cubits/tag/get_tags/get_tags_cubit.dart';
 import 'package:student_initializer/presentation/cubits/tag/save_tag/save_tag_cubit.dart';
 import 'package:student_initializer/presentation/view/event_settings_edit_view.dart';
+import 'package:student_initializer/presentation/view/event_sort_reason_edit_view.dart';
 import 'package:student_initializer/presentation/view/home_view.dart';
 import 'package:student_initializer/presentation/view/learner_settings_edit_view.dart';
 import 'package:student_initializer/presentation/view/learner_sort_by_edit_view.dart';
@@ -35,6 +36,8 @@ import 'package:student_initializer/presentation/view/observation_list_view.dart
 import 'package:student_initializer/presentation/view/observations_view.dart';
 import 'package:student_initializer/presentation/view/report_gen_uri_settings_eddit_view.dart';
 import 'package:student_initializer/presentation/view/settings_view.dart';
+import 'package:student_initializer/presentation/view/sort_order_edit_view.dart';
+import 'package:student_initializer/presentation/view/sort_parameter_edit_view.dart';
 import 'package:student_initializer/presentation/view/tags_setting_edit_view.dart';
 import 'package:student_initializer/presentation/view/timespan_setting_edit_form_view.dart';
 import 'package:student_initializer/providers/event_use_case_provider.dart';
@@ -511,6 +514,10 @@ class GoRouterCustom {
                               ..getSettingsValueByKey(
                                   key: "markdownUsedEndpoint"),
                           ),
+                          BlocProvider(
+                            create: (context) =>
+                                container.read(saveSettingsBoolCubitProvider),
+                          ),
                         ], child: const SettingsView(title: "Settings"));
                       },
                       routes: [
@@ -723,6 +730,103 @@ class GoRouterCustom {
                                         ),
                                   ),
                                 ));
+                          },
+                        ),
+                        GoRoute(
+                          path: "sortOrder",
+                          name: "SortOrder",
+                          builder: (context, state) {
+                            final container =
+                                ProviderScope.containerOf(context);
+                            return MultiBlocProvider(
+                              providers: [
+                                BlocProvider<SortOrderCubit>(
+                                  create: (context) => container.read(
+                                      getSettingsStringSortOrderCubitProvider)
+                                    ..getSettingsValueByKey(key: "sortOrder"),
+                                ),
+                                BlocProvider<SaveSettingsStringCubit>(
+                                  create: (context) => container
+                                      .read(saveSettingsStringCubitProvider),
+                                )
+                              ],
+                              child: Builder(
+                                builder: (context) =>
+                                    SortOrderEditView(onSave: (p0) {
+                                  context
+                                      .read<SaveSettingsStringCubit>()
+                                      .saveSettingsKeyValueStringPair(
+                                        key: "sortOrder",
+                                        value: p0,
+                                      );
+                                }),
+                              ),
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: "sortParameter",
+                          name: "SortParameter",
+                          builder: (context, state) {
+                            final container =
+                                ProviderScope.containerOf(context);
+                            return MultiBlocProvider(
+                              providers: [
+                                BlocProvider<SortParameterCubit>(
+                                  create: (context) => container.read(
+                                      getSettingsStringSortParameterCubitProvider)
+                                    ..getSettingsValueByKey(key: "sortParameter"),
+                                ),
+                                BlocProvider<SaveSettingsStringCubit>(
+                                  create: (context) => container
+                                      .read(saveSettingsStringCubitProvider),
+                                )
+                              ],
+                              child: Builder(
+                                builder: (context) =>
+                                    SortParameterEditView(onSave: (p0) {
+                                  context
+                                      .read<SaveSettingsStringCubit>()
+                                      .saveSettingsKeyValueStringPair(
+                                        key: "sortParameter",
+                                        value: p0,
+                                      );
+                                }),
+                              ),
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: "eventSortReason",
+                          name: "EventSortReason",
+                          builder: (context, state) {
+                            final container =
+                                ProviderScope.containerOf(context);
+                            return MultiBlocProvider(
+                              providers: [
+                                BlocProvider<EventSortReasonCubit>(
+                                  create: (context) => container.read(
+                                      getEventSettingsStringSortReasonCubitProvider)
+                                    ..getSettingsValueByKey(
+                                        key: "eventSortReason"),
+                                ),
+                                BlocProvider<SaveSettingsStringCubit>(
+                                  create: (context) => container
+                                      .read(saveSettingsStringCubitProvider),
+                                )
+                              ],
+                              child: Builder(
+                                builder: (context) =>
+                                    EventSortReasonEditView(onSave: (p0) {
+                                  context
+                                      .read<SaveSettingsStringCubit>()
+                                      .saveSettingsKeyValueStringPair(
+                                        key: "eventSortReason",
+                                        value: p0,
+                                      );
+                                }),
+                              ),
+                            );
                           },
                         )
                       ])

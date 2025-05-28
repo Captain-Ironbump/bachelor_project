@@ -7,6 +7,7 @@ import 'package:student_initializer/domain/usecases/settings/settings_usecases.d
 import 'package:student_initializer/presentation/cubits/settings/get_settings_bool/get_settings_bool_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/get_settings_int/get_settings_int_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/get_settings_string/get_settings_string_cubit.dart';
+import 'package:student_initializer/presentation/cubits/settings/save_settings_bool/save_settings_bool_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/save_settings_int/save_settings_int_cubit.dart';
 import 'package:student_initializer/presentation/cubits/settings/save_settings_string/save_settings_string_cubit.dart';
 
@@ -40,6 +41,12 @@ final saveSettingsStringCubitProvider =
     Provider.autoDispose<SaveSettingsStringCubit>((ref) {
   final settingsUsecases = ref.read(settingsUsecasesProvider);
   return SaveSettingsStringCubit(settingsUsecases);
+});
+
+final saveSettingsBoolCubitProvider = 
+    Provider.autoDispose<SaveSettingsBoolCubit>((ref) {
+  final settingsUsecases = ref.read(settingsUsecasesProvider);
+  return SaveSettingsBoolCubit(settingsUsecases);
 });
 
 class SortOrderCubit extends GetSettingsStringCubit {

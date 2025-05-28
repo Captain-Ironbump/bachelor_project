@@ -30,10 +30,10 @@ public class EventRepository implements PanacheRepositoryBase<EventEntity, Long>
     
         String orderByClause = "";
         switch (eventSortReason) {
-            case "alpabeticASC":
+            case "alphabeticASC":
                 orderByClause = " ORDER BY e.name ASC";
                 break;
-            case "alpabeticDESC":
+            case "alphabeticDESC":
                 orderByClause = " ORDER BY e.name DESC";
                 break;
             case "urgency":
