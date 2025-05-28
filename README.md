@@ -82,9 +82,9 @@ Zudem ist es empfehlenswert, die Android SDK zu installieren (falls die App auf 
 
 #### Bauen und Ausfuhren
 
-Damit das Frontend ausgeführt werden kann, muss zunächst ein Android-Simulator oder ein IOS-Simulator gestartet werden.  
-Sollte jedoch als Frontend ein Chrome-Browser benutzt werden, muss hier für kein Simulator gestartet werden.  
-Dabei sollte jedoch das Browser Design auf "Hell" eingestellt werden, da das App-Design nur fur diesen Modus vorgesehen ist.
+Damit das Frontend ausgeführt werden kann, muss zunächst ein Android-Simulator oder ein IOS-Simulator gestartet werden.  
+Sollte jedoch als Frontend ein Chrome-Browser benutzt werden, muss hier für kein Simulator gestartet werden.  
+Dabei sollte jedoch das Browser Design auf "Hell" eingestellt werden, da das App-Design nur fur diesen Modus vorgesehen ist.  
 
 Im Hauptorder des Repositories befindet sich ein Ordner names `Frontend`.
 ```bash
