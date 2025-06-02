@@ -39,15 +39,18 @@ Es sollten sichergestellt sein, das folgende Ports vor dem Deploy Step frei sein
 - `11434` – für die Lokale Ollama Instanz
 
 Wenn einer dieser Ports bereits belegt ist, kann es beim Starten der Container zu Fehlern kommen.
-Zudem sollte (falls die Umgebungsvariable `USE_OPENAI` auf `false` gesetzt wurde) eine Lokale Ollama Instanz auf Port `11434` laufen.  
-Damit eine Ollama Instanz mit dem Docker Containern Kommunizieren kann, sollte beim starten der Instanz folgender Befehl eingegeben werden:
+Zudem sollte (falls die Umgebungsvariable `USE_OPENAI` auf `false` gesetzt wurde) eine Lokale Ollama Instanz auf Port `11434` laufen.  
+
+Eine Ollama-Instanz kann je nach Betriebssystem einfach gestartet werden. Für [macOS](https://ollama.com/download/mac) und [Windows](https://ollama.com/download/windows) muss lediglich der entsprechende Installations-Client heruntergeladen und gestartet werden. Anschließend sind die Anweisungen des Installers zu befolgen.
+Für [Linux](https://ollama.com/download/linux) ist eine manuelle Installation erforderlich.  
+
+Zum Start eines Modells kann folgender Befehl verwendet werden:
 
 ```bash
-OLLAMA_HOST=0.0.0.0 ollama serve
 ollama run llama3.2
 ```
-Der erste Befehl startet den Ollama-Server und macht ihn auf allen Netzwerk-Interfaces erreichbar. Dies ist notwendig, damit die Docker Container im Lokalen Netzwerk mit den KI-Modellen von ollama zugreifen können.  
-Der zweite Befehl startet die LLM mit dem Model `llama3.2`. Hierfür kann ein beliebiges Model angegeben werden. (**Wichtig! Modelle können mehr als 10GB groß sein, weshalb der erste Download eines LLM-Model-Images entsprechend lange dauern kann.**)
+Dieser Befehl lädt beim ersten Ausführen automatisch das entsprechende Modell (in diesem Fall `llama3.2`) herunter und startet es.  
+(**Wichtig! Modelle können mehr als 10GB groß sein, weshalb der erste Download eines LLM-Model-Images entsprechend lange dauern kann.**)
 
 Informationen zur Installation von Ollama und dessen Modellen finden Sie [hier](https://ollama.com/).  
 Im `Backend` Ordner des Repository befindet sich das **build-and-run.sh** Shell-Skript.
@@ -87,6 +90,7 @@ Die Variable `QUARKUS_LANGCHAIN4J_OLLAMA__LLAMA__CHAT_MODEL_MODEL_ID` muss entwe
 Die Variable `OPENAI_API_CHATBOT_BASE_URL` bezieht sich auf die OpenAI API, über die Abfragen an das Sprachmodell gesendet werden.
 Damit die Sprachmodelle von OpenAI benutzt werden können, muss vorerst ein API Key generiert werden, dieser wird anschließend in der Ubgebungsvariable `OPENAI_API_CHATBOT_KEY` gesetzt.  
 Der API Key kann [hier](https://platform.openai.com/api-keys) generiert werden.  
+Die Variable `HOST_IP_ADDRESS` benutzt als Standardwert `host.docker.internal`, dies funktioniert jedoch nur auf MacOS und Windows, füe Linux Geräte sollte hier der Wert angepasst werden. 
 
 ### Bauen und Deployen des Frontends (Lokal über Android Studio/VSCode/command Line)
 #### ⚠️ Hinweis!
