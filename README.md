@@ -43,25 +43,25 @@ Zudem sollte (falls die Umgebungsvariable `USE_OPENAI` auf `false` gesetzt wurde
 Damit eine Ollama Instanz mit dem Docker Containern Kommunizieren kann, sollte beim starten der Instanz folgender Befehl eingegeben werden:
 
 ```bash
-OLLAMA_HOST=0.0.0.0 ollama server
+OLLAMA_HOST=0.0.0.0 ollama serve
 ollama run llama3.2
 ```
 Der erste Befehl startet den Ollama-Server und macht ihn auf allen Netzwerk-Interfaces erreichbar. Dies ist notwendig, damit die Docker Container im Lokalen Netzwerk mit den KI-Modellen von ollama zugreifen können.  
 Der zweite Befehl startet die LLM mit dem Model `llama3.2`. Hierfür kann ein beliebiges Model angegeben werden. (**Wichtig! Modelle können mehr als 10GB groß sein, weshalb der erste Download eines LLM-Model-Images entsprechend lange dauern kann.**)
 
 Informationen zur Installation von Ollama und dessen Modellen finden Sie [hier](https://ollama.com/).  
-Im `Backend` Ordner des Repository befindet sich das **build-and-deploy.sh** Shell-Skript.
+Im `Backend` Ordner des Repository befindet sich das **build-and-run.sh** Shell-Skript.
 ```bash
 cd $PROJECT_ROOT/Backend/
 ```
 Dies kann wie folgt eingesetzt werden:
 ```bash
-./build-and-deploy.sh
+./build-and-run.sh
 ```
 
 Zusätzlich können folgende Flags gesetzt werden:
 ```bash
-./build-and-deploy.sh -f -s ~/.m2/some-settings.xml
+./build-and-run.sh -f -s ~/.m2/some-settings.xml
 ```
 
 Flag **-f** erlaubt es dem Benutzer, den build step der Quarkus Applikationen zu überspringen. Dies ist hilfreich, wenn der **target** Ordner der Applikationen schon vorhanden ist.  
@@ -70,8 +70,23 @@ Die flag **-s [settings.xml]** erlaubt es während dem build Step eine andere se
 #### Umgebungsvariablen (Backend)
 Das **docker-compose.yml** nimmt für einige Werte einen Standardwert an. Diese können bzw. sollten mithilfe einer .env Datei, oder dem hinzufügen von Umgebungsvariablen im Terminal überschrieben werden.  
 Die [.env.example](./.env.example) Datei im Hauptordner zeigt ein kurzes Beispiel der möglichen Umgebungsvariablen.  
+
+| Umgebungsvariable                                         | Beschreibung                                                                  | Standardwert               |
+|-----------------------------------------------------------|-------------------------------------------------------------------------------|----------------------------|
+| `HOST_IP_ADDRESS`                                         | IP-Adresse des Hosts, die aus dem Docker-Container heraus erreichbar ist.     | `host.docker.internal`     |
+| `QUARKUS_PROFILE`                                         | Aktiviert das Docker-spezifische Konfigurationsprofil in Quarkus.             | `docker`                   |
+| `QUARKUS_LANGCHAIN4J_OLLAMA__LLAMA__CHAT_MODEL_MODEL_ID`  | Gibt das KI-Modell an, das von LangChain4J über Ollama verwendet wird.        | `qwen3:14b`                |
+| `OPENAI_API_CHATBOT_KEY`                                  | API-Schlüssel für die Authentifizierung bei der OpenAI-Schnittstelle.         |                  |
+| `OPENAI_API_CHATBOT_BASE_URL`                             | Basis-URL für Anfragen an die OpenAI API (z. B. für lokale Instanzen/Proxys). | `https://api.openai.com/v1/` |
+| `OPENAI_API_CHATBOT_MODEL_NAME`                           | GPT Model, welches für die Anfrage benutzt werden soll                        | `gpt-4o-mini` |
+| `USE_OPENAI`                                              | Aktiviert OpenAI und deaktiviert Ollama, wenn auf `true` gesetzt; bei `false` wird Ollama verwendet. | `false` |
+
+
 #### ❗️ Wichtig!
-Die Variable `QUARKUS_LANGCHAIN4J_OLLAMA__LLAMA__CHAT_MODEL_MODEL_ID` muss entweder als Umgebungsvariable exportiert oder in die `.env`-Datei eingetragen werden. Sie wird im Build-Prozess benötigt – unabhängig davon, ob Ollama oder ein anderer Anbieter verwendet wird bzw. ob eine Ollama-Instanz gestartet wurde oder nicht.
+Die Variable `QUARKUS_LANGCHAIN4J_OLLAMA__LLAMA__CHAT_MODEL_MODEL_ID` muss entweder als Umgebungsvariable exportiert oder in die `.env`-Datei eingetragen werden. Sie wird im Build-Prozess benötigt – unabhängig davon, ob Ollama oder ein anderer Anbieter verwendet wird bzw. ob eine Ollama-Instanz gestartet wurde oder nicht.  
+Die Variable `OPENAI_API_CHATBOT_BASE_URL` bezieht sich auf die OpenAI API, über die Abfragen an das Sprachmodell gesendet werden.
+Damit die Sprachmodelle von OpenAI benutzt werden können, muss vorerst ein API Key generiert werden, dieser wird anschließend in der Ubgebungsvariable `OPENAI_API_CHATBOT_KEY` gesetzt.  
+Der API Key kann [hier](https://platform.openai.com/api-keys) generiert werden.  
 
 ### Bauen und Deployen des Frontends (Lokal über Android Studio/VSCode/command Line)
 #### ⚠️ Hinweis!
