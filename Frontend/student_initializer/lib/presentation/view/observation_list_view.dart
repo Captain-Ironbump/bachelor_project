@@ -184,6 +184,7 @@ class _ObservationListViewState extends State<ObservationListView>
         BlocListener<MarkdownUsedEndpointCubit, GetSettingsStringState>(
           listener: (context, state) {
             if (state is GetSettingsStringLoaded) {
+              print("Markdown endpoint: ${state.value}");
               _markdownEndpoint = state.value;
             }
           },
@@ -280,7 +281,8 @@ class _ObservationDetailView extends StatelessWidget {
   void _showReportsDialog(BuildContext context, int? learnerId, int? eventId) {
     final sortOrder = context.read<SortOrderCubit>().state;
     final sortParameter = context.read<SortParameterCubit>().state;
-
+    final markdownUsedEndpoint = context.read<MarkdownUsedEndpointCubit>().state;
+    
     animationController.forward();
     showCupertinoModalPopup(
       context: context,
@@ -349,7 +351,9 @@ class _ObservationDetailView extends StatelessWidget {
                                           eventId: eventId,
                                           learnerId: learnerId,
                                           length: "short",
-                                          endpoint: markdownEndpoint!,
+                                          endpoint: (markdownUsedEndpoint
+                                                  as GetSettingsStringLoaded)
+                                              .value!,
                                         );
                                   }),
                             );

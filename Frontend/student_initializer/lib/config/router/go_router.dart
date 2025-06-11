@@ -412,6 +412,12 @@ class GoRouterCustom {
                                   ProviderScope.containerOf(context);
                               return MultiBlocProvider(
                                   providers: [
+                                    BlocProvider<MarkdownUsedEndpointCubit>(
+                                      create: (context) => container.read(
+                                          getSettingsStringMarkdownUsedEndpointCubitProvider)
+                                        ..getSettingsValueByKey(
+                                            key: "markdownUsedEndpoint"),
+                                    ),
                                     BlocProvider(
                                       create: (context) => container.read(
                                           getSettingsStringSortOrderCubitProvider)
@@ -775,7 +781,8 @@ class GoRouterCustom {
                                 BlocProvider<SortParameterCubit>(
                                   create: (context) => container.read(
                                       getSettingsStringSortParameterCubitProvider)
-                                    ..getSettingsValueByKey(key: "sortParameter"),
+                                    ..getSettingsValueByKey(
+                                        key: "sortParameter"),
                                 ),
                                 BlocProvider<SaveSettingsStringCubit>(
                                   create: (context) => container
