@@ -61,12 +61,12 @@ class LearnerSettingsEditView extends StatelessWidget {
                       );
                       Navigator.of(context).pop();
                     },
-                    child: const Text("Hinzufügen"),
+                    child: const Text("Add"),
                   ),
                 ],
                 cancelButton: CupertinoActionSheetAction(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text("Abbrechen"),
+                  child: const Text("Cancel"),
                 ),
               ),
             ),
@@ -131,7 +131,7 @@ class LearnerSettingsEditView extends StatelessWidget {
               child: CupertinoPageScaffold(
                 backgroundColor: CupertinoColors.systemGrey6,
                 navigationBar: CupertinoNavigationBar(
-                  middle: const Text("Events"),
+                  middle: const Text("Learners"),
                   trailing: CupertinoButton(
                     padding: EdgeInsets.zero,
                     onPressed: () {

@@ -43,6 +43,9 @@ class _HomeViewState extends State<HomeView> {
           ),
           CupertinoSliverRefreshControl(
             onRefresh: () async {
+              context.read<EventWithLearnerCountCubit>().getSettingsValueByKey(
+                key: 'withLearnerCount',
+              );
               _tryTriggerEventFetch(context);
               await Future.delayed(const Duration(milliseconds: 500));
             },
