@@ -18,6 +18,10 @@ class PlattformUri {
   }
 
   static String getLlUri() {
+    const bool kIsWeb = bool.fromEnvironment('dart.library.js_util');
+    if (kIsWeb) {
+      return 'http://127.0.0.1:8082/api';
+    }
     if (Platform.isAndroid) {
       return dotenv.env['ANDROID_BASE_LLM_HTTP']!;
     }
