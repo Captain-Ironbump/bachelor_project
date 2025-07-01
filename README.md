@@ -47,10 +47,13 @@ Für [Linux](https://ollama.com/download/linux) ist eine manuelle Installation e
 Zum Start eines Modells kann folgender Befehl verwendet werden:
 
 ```bash
-ollama run llama3.2
+ollama run llama3.2:3b
 ```
-Dieser Befehl lädt beim ersten Ausführen automatisch das entsprechende Modell (in diesem Fall `llama3.2`) herunter und startet es.  
+Dieser Befehl lädt beim ersten Ausführen automatisch das entsprechende Modell (in diesem Fall `llama3.2:3b`) herunter und startet es.
 (**Wichtig! Modelle können mehr als 10GB groß sein, weshalb der erste Download eines LLM-Model-Images entsprechend lange dauern kann.**)
+Zusätzlich sollte in der Umgebungsvariable `QUARKUS_LANGCHAIN4J_OLLAMA__LLAMA__CHAT_MODEL_MODEL_ID` auf das entsprechende ausgeführte Ollama Model angepasst werden.
+In diesem Beispiel bedeutet das, falls `ollama run llama3.2` ausgefürt wurde, muss vor dem ausfüren des `deploy-and-run.sh` Shell Skript die Umgebungsvariable `QUARKUS_LANGCHAIN4J_OLLAMA__LLAMA__CHAT_MODEL_MODEL_ID` auf `llama3.2:3b` gesetztw werden.
+Erst dannach kann die Anwendung gebaut und als Docker-Container ausgerollt werden.
 
 Informationen zur Installation von Ollama und dessen Modellen finden Sie [hier](https://ollama.com/).  
 Im `Backend` Ordner des Repository befindet sich das **build-and-run.sh** Shell-Skript.
